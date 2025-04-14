@@ -59,9 +59,6 @@ def insert_levels():
         while id in ids:
             id = generate_id()
         run_query_insert('INSERT INTO Level (level_id, name) VALUES (?, ?)', (id, level))
-
-
-
 def id_il_categories():
     categories_temp = run_query_select('SELECT Il_category.name FROM Il_category')
     categories = []
@@ -83,4 +80,23 @@ def id_il_categories():
         print(query)
         run_query_update(query)
 
-id_il_categories()
+def individual_levels():
+    category_ids = ['3eadb0eb','f49213bb','061a9cce','75f87514','1a682a2a','40ce5c88']
+    level_ids = ['75cdc954','91dbb1b1','f993ae32','2abf90d5','68000667','48762587','12768c3f','b1798bf3']
+
+    for i in category_ids:
+        for j in level_ids:
+            id = generate_id()
+            ids_temp = run_query_select('SELECT Individual_level.il_id FROM Individual_level')
+            ids = []
+            for k in ids_temp:
+                ids.append(k[0])
+            while id in ids:
+                id = generate_id()
+            
+            run_query_insert('INSERT INTO Individual_level (il_id, level_id, il_category_id) VALUES (?, ?, ?)', (id, j, i))
+            
+
+
+
+print(generate_id(), generate_id())
