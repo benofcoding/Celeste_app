@@ -2,7 +2,16 @@ import srcomapi, srcomapi.datatypes as dt
 import sqlite3
 import random
 import time
-import datetime
+from datetime import datetime
+
+def time_since_1980_iso(date_str):
+    dt = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
+    ref_date = datetime(1980, 1, 1)
+    delta = dt - ref_date
+    return delta.total_seconds()
+
+
+import hashlib
 api = srcomapi.SpeedrunCom(); api.debug = 1
 
 
@@ -340,6 +349,12 @@ def get_users2():
 
 
 
+# for i in run_query_select('SELECT player_id, name FROM Player'):
+#     i = i[1]
+#     print(i)
+#     i = i.encode()
+#     i = hashlib.sha256(i).hexdigest()
+#     print(i)
 
 
 
@@ -397,10 +412,40 @@ def get_users2():
 #             player = v['id']
 #             if len(run_query_select(f'SELECT name FROM Player WHERE name = "{player}"')) == 0:
 #                 run_query_insert(f'INSERT INTO Player (player_id, name) VALUES (?, ?)', (generate_id(), player))
-
+verified = True
 users = run_query_select('SELECT name FROM Player')
-for i in users:
-    print(i[0])
-    i = i[0]
-    runs = api.get(f'runs?user={i}')
+count = 1
+for j in users:
+    print(count)
+    print(j[0])
+    j = j[0]
+    runs = api.get(f'runs?user={j}&game={game_id}')
+    print(runs)
 
+    for i in runs:
+        verified = True
+        if i['level'] == None:
+            if i['status']['status'] == 'new':
+                verified = False
+            else:
+                verifier_idd = run_query_select(f"SELECT verifier_id FROM Verifier JOIN Player On Verifier.player_id = Player.player_id WHERE Player.name = '{i['status']['examiner']}'")
+            if len(verifier_idd) == 0:
+                verified = False
+            else:
+                verifier_idd = verifier_idd[0][0]
+            user_idd = run_query_select(f"SELECT player_id FROM Player WHERE name = '{i['players'][0]['id']}'")[0][0]
+            fullgame_category_idd = run_query_select(f"SELECT fullgame_category_id FROM Fullgame_category WHERE name = '{fullgame[i['category']]}'")[0][0]
+            platform_idd = run_query_select(f"SELECT platform_id FROM Platform WHERE name = '{platforms[i['system']['platform']]}'")[0][0]
+            timee = i['times']['primary_t']
+            datesubmittedd = time_since_1980(i['submitted'])
+            if 'links' in i['videos']:
+                linkk = i['videos']['links'][0]['uri']
+            else:
+                linkk = False
+
+            if linkk:
+                if verified:
+                    run_query_insert('INSERT INTO Run (run_id, verifier_id, player_id, fullgame_category_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, fullgame_category_idd, platform_idd, timee, datesubmittedd, linkk))
+                else:
+                    run_query_insert('INSERT INTO Run (run_id, player_id, fullgame_category_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?)', (generate_id(), user_idd, fullgame_category_idd, platform_idd, timee, datesubmittedd, linkk))
+    count += 1
