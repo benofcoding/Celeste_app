@@ -29,13 +29,31 @@ fullgame = {
 'zd36mqyd':'All B-Sides',
 'xd1ex5r2':'All C-Sides'}
 
+
+version_variable = '38do9y4l'
+
+dts_variable = 'j84gw3w8'
+
+full_clear = '9l790jzn'
+
+b_side = '5dw5q7gd'
+c_side = 'wk67rved'
+clear = '7dgr144k'
+
+clear__2 = '40ce5c88'
+
+b_side2 = 'f49213bb'
+c_side_2 = '3eadb0eb'
+
+foresaken_city = 'ywe5zq7w'
+
 platforms = {'nzelkr6q': 'PlayStation 4', 'o7e2mx6w': 'Xbox One', '8gej2n93': 'PC', '7m6ylw9p': 'Switch', '4p9z0r6r': 'Xbox One X', 'o064j163': 'Xbox One S', 'o064z1e3': 'Google Stadia', '4p9zjrer': 'PlayStation 5', 'nzelyv9q': 'Xbox Series X', 'o7e2xj9w': 'Xbox Series S'}
 
-levels = {'ywe5zq7w': 'Forsaken City', '69z2m8g9': 'Old Site', 'r9g4k7p9': 'Celestial Resort', 'o9x7mxpd': 'Golden Ridge', '4955vm39': 'Mirror Temple', 'rdq76n29': 'Reflection', '5d746x6d': 'The Summit', 'kwjzo679': 'Core', '5wknr4qw': 'Farewell'}
+levels = {'ywe5zq7w': '75cdc954', '69z2m8g9': '91dbb1b1', 'r9g4k7p9': 'f993ae32', 'o9x7mxpd': '2abf90d5', '4955vm39': '68000667', 'rdq76n29': 'f14db8cd', '5d746x6d': '48762587', 'kwjzo679': '12768c3f', '5wknr4qw': 'b1798bf3'}
 
-categorys = {'7dgr144k': 'Clear', 'mkezwq9k': 'Collectibles', '5dw5q7gd': 'B-Side', 'wk67rved': 'C-Side'}
+categorys = {'Full Clear': '1a682a2a', 'All Red Berries+Heart': 'ae450c5b', 'Heart+Cassette': '061a9cce', 'All Red Berries': '75f87514', 'Dash': '40ce5c88', 'Dashless': 'Dashless', 'Moon Berry': 'cdce0562'}
 
-
+il_categories = {'Full Clear': '1a682a2a', 'Yes': '1a682a2a', 'All Red Berries+Heart': 'ae450c5b', 'Heart+Cassette': '061a9cce', 'All Red Berries': '75f87514', 'Dash': '40ce5c88', 'Dashless': 'a8fd5a3b', 'Moon Berry': 'cdce0562'}
 
 def time_since_1980(date_str):
     dt = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%SZ")
@@ -420,11 +438,45 @@ for j in users:
     print(j[0])
     j = j[0]
     runs = api.get(f'runs?user={j}&game={game_id}')
-    print(runs)
 
     for i in runs:
         verified = True
         if i['level'] == None:
+            pass
+            # if i['status']['status'] == 'new':
+            #     verified = False
+            # else:
+            #     verifier_idd = run_query_select(f"SELECT verifier_id FROM Verifier JOIN Player On Verifier.player_id = Player.player_id WHERE Player.name = '{i['status']['examiner']}'")
+            # if len(verifier_idd) == 0:
+            #     verified = False
+            # else:
+            #     verifier_idd = verifier_idd[0][0]
+            # user_idd = run_query_select(f"SELECT player_id FROM Player WHERE name = '{i['players'][0]['id']}'")[0][0]
+            # fullgame_category_idd = run_query_select(f"SELECT fullgame_category_id FROM Fullgame_category WHERE name = '{fullgame[i['category']]}'")[0][0]
+            # platform_idd = run_query_select(f"SELECT platform_id FROM Platform WHERE name = '{platforms[i['system']['platform']]}'")[0][0]
+            # timee = i['times']['primary_t']
+            # datesubmittedd = time_since_1980(i['submitted'])
+            # if 'links' in i['videos']:
+            #     linkk = i['videos']['links'][0]['uri']
+            # else:
+            #     linkk = False
+
+            # if linkk:
+            #     if verified:
+            #         run_query_insert('INSERT INTO Run (run_id, verifier_id, player_id, fullgame_category_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, fullgame_category_idd, platform_idd, timee, datesubmittedd, linkk))
+    
+        elif i['level'] == foresaken_city:
+            if (i['category'] != b_side) and (i['category'] != c_side):
+                for c in i['values']:
+                    if (c != (version_variable) and (c != dts_variable)):
+                        il_category_idd = il_categories[api.get(f'variables/{c}')['values']['values'][i['values'][c]]['label']]
+            elif i['category'] == b_side:
+                il_category_idd = b_side2
+            else:
+                il_category_idd = c_side_2
+
+            level_idd = '75cdc954'
+            individual_level = run_query_select(f"SELECT il_id FROM Individual_level WHERE level_id = '{level_idd}' and il_category_id = '{il_category_idd}'")[0][0]
             if i['status']['status'] == 'new':
                 verified = False
             else:
@@ -434,7 +486,6 @@ for j in users:
             else:
                 verifier_idd = verifier_idd[0][0]
             user_idd = run_query_select(f"SELECT player_id FROM Player WHERE name = '{i['players'][0]['id']}'")[0][0]
-            fullgame_category_idd = run_query_select(f"SELECT fullgame_category_id FROM Fullgame_category WHERE name = '{fullgame[i['category']]}'")[0][0]
             platform_idd = run_query_select(f"SELECT platform_id FROM Platform WHERE name = '{platforms[i['system']['platform']]}'")[0][0]
             timee = i['times']['primary_t']
             datesubmittedd = time_since_1980(i['submitted'])
@@ -445,7 +496,43 @@ for j in users:
 
             if linkk:
                 if verified:
-                    run_query_insert('INSERT INTO Run (run_id, verifier_id, player_id, fullgame_category_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, fullgame_category_idd, platform_idd, timee, datesubmittedd, linkk))
-                else:
-                    run_query_insert('INSERT INTO Run (run_id, player_id, fullgame_category_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?)', (generate_id(), user_idd, fullgame_category_idd, platform_idd, timee, datesubmittedd, linkk))
-    count += 1
+                    run_query_insert(f'INSERT INTO Run (run_id, verifier_id, player_id, il_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, individual_level, platform_idd, timee, datesubmittedd, linkk))
+
+
+
+        else:
+            if (i['category'] != b_side) and (i['category'] != c_side) and (i['category'] != clear):
+                for c in i['values']:
+                    if (c != version_variable) and (c != dts_variable) and (c != full_clear):
+                        il_category_idd = il_categories[api.get(f'variables/{c}')['values']['values'][i['values'][c]]['label']]
+            elif i['category'] == b_side:
+                il_category_idd = b_side2
+            elif i['category'] == clear:
+                il_category_idd = clear__2
+            else:
+                il_category_idd = c_side_2
+            
+            level_idd = i['level']
+            print(levels[level_idd], il_category_idd)
+            individual_level = run_query_select(f"SELECT il_id FROM Individual_level WHERE level_id = '{levels[level_idd]}' and il_category_id = '{il_category_idd}'")[0][0]
+            print(individual_level)
+            if i['status']['status'] == 'new':
+                verified = False
+            else:
+                verifier_idd = run_query_select(f"SELECT verifier_id FROM Verifier JOIN Player On Verifier.player_id = Player.player_id WHERE Player.name = '{i['status']['examiner']}'")
+            if len(verifier_idd) == 0:
+                verified = False
+            else:
+                verifier_idd = verifier_idd[0][0]
+            user_idd = run_query_select(f"SELECT player_id FROM Player WHERE name = '{i['players'][0]['id']}'")[0][0]
+            platform_idd = run_query_select(f"SELECT platform_id FROM Platform WHERE name = '{platforms[i['system']['platform']]}'")[0][0]
+            timee = i['times']['primary_t']
+            datesubmittedd = time_since_1980(i['submitted'])
+            if 'links' in i['videos']:
+                linkk = i['videos']['links'][0]['uri']
+            else:
+                linkk = False
+
+            if linkk:
+                if verified:
+                    run_query_insert(f'INSERT INTO Run (run_id, verifier_id, player_id, il_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, individual_level, platform_idd, timee, datesubmittedd, linkk))
