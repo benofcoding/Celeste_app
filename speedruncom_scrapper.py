@@ -98,10 +98,10 @@ def run_query_update(query):
     conn.close()
 
 
-game = api.search(srcomapi.datatypes.Game, {"name": "Celeste"})[0]
-game_id = game.id
+# game = api.search(srcomapi.datatypes.Game, {"name": "Celeste"})[0]
+# game_id = game.id
 
-categories = api.get(f'games/{game_id}/categories')
+# categories = api.get(f'games/{game_id}/categories')
 
 
 
@@ -541,16 +541,21 @@ def get_users2():
 
 
 
-users = run_query_select('SELECT player_id FROM Player WHERE hash IS NULL')
-for i in users:
-    i = i[0]
-    response = requests.get(f'https://www.speedrun.com/api/v1/users/{run_query_select(f"SELECT name FROM Player WHERE player_id = '{i}'")[0][0]}')
-    print(response.status_code)
-    print(response.text)
-    data = response.json()
-    real_name = data['data']['names']['international']
-    hash = real_name.encode()
-    hash = hashlib.sha256(hash).hexdigest()
-    print(hash)
-    run_query_update(f"UPDATE Player SET name = '{real_name}', hash = '{hash}' WHERE player_id = '{i}'")
+# users = run_query_select('SELECT player_id FROM Player WHERE hash IS NULL')
+# for i in users:
+#     i = i[0]
+#     response = requests.get(f'https://www.speedrun.com/api/v1/users/{run_query_select(f"SELECT name FROM Player WHERE player_id = '{i}'")[0][0]}')
+#     print(response.status_code)
+#     print(response.text)
+#     data = response.json()
+#     real_name = data['data']['names']['international']
+#     hash = real_name.encode()
+#     hash = hashlib.sha256(hash).hexdigest()
+#     print(hash)
+#     run_query_update(f"UPDATE Player SET name = '{real_name}', hash = '{hash}' WHERE player_id = '{i}'")
     
+
+updates = run_query_select('SELECT run_id FROM Run WHERE obsolete IS NULL')
+for i in updates:
+    run_query_update(f"UPDATE Run SET obsolete = 1 WHERE run_id = '{i[0]}'")
+    print(i)
