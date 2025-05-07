@@ -17,18 +17,18 @@ api = srcomapi.SpeedrunCom(); api.debug = 1
 
 
 fullgame = { 
-'7kjpl1gk':'Any%',
-'jdz8oprd':'All Red Berries',
-'zdn0m372':'True Ending',
-'q2517ggd':'All Cassettes',
-'q2550mw2':'Bny%',
-'xd1718wd':'All Hearts',
-'xk9ry6xk':'100%',
-'jdrvgy02':'202 Berries',
-'z27rpe5d':'All Chapters',
-'zd365jyd':'All A-Sides',
-'zd36mqyd':'All B-Sides',
-'xd1ex5r2':'All C-Sides'}
+'7kjpl1gk':'30831e37',
+'jdz8oprd':'dca850de',
+'zdn0m372':'6c8251a4',
+'q2517ggd':'de0870f6',
+'q2550mw2':'3cdc5096',
+'xd1718wd':'4453fbd7',
+'xk9ry6xk':'ad9f481f',
+'jdrvgy02':'4e706b4d',
+'z27rpe5d':'082275eb',
+'zd365jyd':'1d83c7c3',
+'zd36mqyd':'a51ab0b5',
+'xd1ex5r2':'7ff07208'}
 
 
 version_variable = '38do9y4l'
@@ -52,7 +52,7 @@ platforms = {'nzelkr6q': 'PlayStation 4', 'o7e2mx6w': 'Xbox One', '8gej2n93': 'P
 
 levels = {'ywe5zq7w': '75cdc954', '69z2m8g9': '91dbb1b1', 'r9g4k7p9': 'f993ae32', 'o9x7mxpd': '2abf90d5', '4955vm39': '68000667', 'rdq76n29': 'f14db8cd', '5d746x6d': '48762587', 'kwjzo679': '12768c3f', '5wknr4qw': 'b1798bf3'}
 
-categorys = {'Full Clear': '1a682a2a', 'All Red Berries+Heart': 'ae450c5b', 'Heart+Cassette': '061a9cce', 'All Red Berries': '75f87514', 'Dash': '40ce5c88', 'Dashless': 'Dashless', 'Moon Berry': 'cdce0562'}
+categorys = ['mkezwq9k','7dgr144k', '5dw5q7gd', 'wk67rved']
 
 il_categories = {'Full Clear': '1a682a2a', 'Yes': '1a682a2a', 'All Red Berries+Heart': 'ae450c5b', 'Heart+Cassette': '061a9cce', 'All Red Berries': '75f87514', 'Dash': '40ce5c88', 'Dashless': 'a8fd5a3b', 'Moon Berry': 'cdce0562'}
 
@@ -68,7 +68,7 @@ def generate_id():
     return id
 def run_query_select(query):
 
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect('database_new.db')
     cursor = conn.cursor()
     
     cursor.execute(query)
@@ -79,7 +79,7 @@ def run_query_select(query):
 
     return rows
 def run_query_insert(query, values):
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect('database_new.db')
     cursor = conn.cursor()
 
     cursor.execute(query, values)
@@ -88,7 +88,7 @@ def run_query_insert(query, values):
     cursor.close()
     conn.close()
 def run_query_update(query):
-    conn = sqlite3.connect('database.db')
+    conn = sqlite3.connect('database_new.db')
     cursor = conn.cursor()
 
     cursor.execute(query)
@@ -98,10 +98,10 @@ def run_query_update(query):
     conn.close()
 
 
-# game = api.search(srcomapi.datatypes.Game, {"name": "Celeste"})[0]
-# game_id = game.id
+game = api.search(srcomapi.datatypes.Game, {"name": "Celeste"})[0]
+game_id = game.id
 
-# categories = api.get(f'games/{game_id}/categories')
+categories = api.get(f'games/{game_id}/categories')
 
 
 
@@ -409,8 +409,8 @@ def get_users2():
 
 
 
-# for i in fullgame:
-#     pagnation = api.get(f'leaderboards/{game_id}/category/{i}?embed=players')
+# for j in fullgame:
+#     pagnation = api.get(f'leaderboards/{game_id}/category/{j}?embed=players')
 #     players = pagnation['players']['data']
 #     for i in players:
 #         print(i)
@@ -426,14 +426,23 @@ def get_users2():
 #         players = pagnation['players']['data']
 #         for v in players:
 #             print(v)
-# #             if v['rel'] == 'guest':
-# #                 continue
-# #             player = v['id']
-# #             if len(run_query_select(f'SELECT name FROM Player WHERE name = "{player}"')) == 0:
-# #                 run_query_insert(f'INSERT INTO Player (player_id, name) VALUES (?, ?)', (generate_id(), player))
+#             if v['rel'] == 'guest':
+#                 continue
+#             player = v['id']
+#             if len(run_query_select(f'SELECT name FROM Player WHERE name = "{player}"')) == 0:
+#                 run_query_insert(f'INSERT INTO Player (player_id, name) VALUES (?, ?)', (generate_id(), player))
+
+
+
+
+
 # verified = True
 # users = run_query_select('SELECT name FROM Player')
 # count = 1
+
+
+
+
 # for j in users:
 #     print(count)
 #     print(j[0])
@@ -555,7 +564,52 @@ def get_users2():
 #     run_query_update(f"UPDATE Player SET name = '{real_name}', hash = '{hash}' WHERE player_id = '{i}'")
     
 
-updates = run_query_select('SELECT run_id FROM Run WHERE obsolete IS NULL')
-for i in updates:
-    run_query_update(f"UPDATE Run SET obsolete = 1 WHERE run_id = '{i[0]}'")
-    print(i)
+# updates = run_query_select('SELECT run_id FROM Run WHERE obsolete IS NULL')
+# for i in updates:
+#     run_query_update(f"UPDATE Run SET obsolete = 1 WHERE run_id = '{i[0]}'")
+#     print(i)
+
+verified = True
+users = run_query_select('SELECT name FROM Player')
+count = 1
+
+for v, j in enumerate(users):
+    j = j[0]
+    offset = 0
+    runs = []
+    while len(runs)%200 == 0:
+        print(v)
+        runs = api.get(f'runs?user={j}&game={game_id}&max=200&offset={offset}&orderby=submitted')
+        if (len(runs) == 0) and (offset == 0):
+            break
+        for i in runs:
+            verified = True
+            if (i['level'] == None):
+                print(i)
+                print('')
+                if i['status']['status'] == 'new' or i['status']['status'] == 'rejected':
+                    verified = False
+                else:
+                    verifier_idd = run_query_select(f"SELECT verifier_id FROM Verifier JOIN Player On Verifier.player_id = Player.player_id WHERE Player.name = '{i['status']['examiner']}'")
+                if len(verifier_idd) == 0:
+                    verified = False
+                else:
+                    verifier_idd = verifier_idd[0][0]
+                user_idd = run_query_select(f"SELECT player_id FROM Player WHERE name = '{i['players'][0]['id']}'")[0][0]
+                platform_idd = run_query_select(f"SELECT platform_id FROM Platform WHERE name = '{platforms[i['system']['platform']]}'")[0][0]
+                timee = i['times']['primary_t']
+                datesubmittedd = time_since_1980(i['submitted'])
+                if i['videos'] != None:
+                    if 'links' in i['videos']:
+                        linkk = i['videos']['links'][0]['uri']
+                    else:
+                        linkk = False
+                else: 
+                    linkk = False
+
+                if linkk:
+                    if verified:
+                        print('INSERT INTO Run (run_id, verifier_id, player_id, fullgame_category_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, fullgame[i['category']], platform_idd, timee, datesubmittedd, linkk))
+                        run_query_insert('INSERT INTO Run (run_id, verifier_id, player_id, fullgame_category_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, fullgame[i['category']], platform_idd, timee, datesubmittedd, linkk))
+
+        offset += 200

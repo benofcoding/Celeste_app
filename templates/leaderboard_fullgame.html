@@ -1,6 +1,51 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<h1>HIII</h1>
+<div class="leaderboardfullgame-categories-container">
+    <div class="categories">
+        <button class="dropdown-button">{{ categories[category_id] }}</button>
+            <div class="dropdown-content">
+            {% for i in categories: %}
+                <a href="/leaderboard_fullgame/{{ i }}/0">{{ categories[i] }}</a>
+            {% endfor %}
+            </div>
 
+    </div>
+
+    <div class="runs">
+        <div class="column-names">
+            <div class="run">
+                <div>place</div>
+                <div>name</div>
+                <div>time</div>
+                <div>date</div>
+                <div>platform</div>
+            </div>
+        </div>
+        {% for i in runs %}
+        <hr>
+        <div class="run">
+            <div>{{ loop.index + page*100 }}</div>
+            <div>{{ i[1] }}</div>
+            <div>{{ i[3] }}</div>
+            <div>{{ i[7] }}</div>
+            <div>{{ i[6] }}</div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="buttons">
+        <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/0">
+            <<
+        </a>
+        <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/{{ page-1 }}">
+            <
+        </a>
+        <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/{{ page+1 }}">
+            >
+        </a>
+        <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/{{ maxpage }}">
+            >>
+        </a>
+    </div>
+</div>
 {% endblock %}

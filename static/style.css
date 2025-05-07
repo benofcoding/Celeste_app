@@ -1,0 +1,138 @@
+body {
+    background-color: #202020;
+    color: #fff; /* default text color */
+    font-family: sans-serif;
+  }
+
+
+* {
+transition: all 0.2s ease-in-out;
+}
+
+
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-start;
+  }
+
+.leaderboardfullgame-categories-container {
+    background-color: #191919;
+    border: 2px solid #9CC9F5;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 700px;
+    margin: 40px auto;
+    box-shadow: 0 0 15px rgba(156, 201, 245, 0.2);
+}
+
+
+.runs {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: large;
+}
+
+.run {
+    display: grid;
+    align-items: center;
+    grid-template-columns: 5fr 15fr 15fr 15fr 10fr;
+}
+
+.run > div:nth-child(5n + 4), .run > div:nth-child(5n + 3), .run > div:nth-child(5n + 5){
+    margin: auto;
+}
+
+
+.button-mode {
+    text-decoration: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.column-names{
+    padding-top: 10px;
+}
+
+hr {
+    margin: 0px;
+    width: 700px;
+    border-color: #000000;
+}
+
+.buttons {
+    text-align: center;
+    padding-top: 10px;
+}
+
+.leaderboardfullgame-categories-container{
+    border: 2px solid #ccc;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.categories {
+    position: relative;
+    display: inline-block;
+    min-width: 700px;
+}
+
+.dropdown-button {
+    padding: 10px;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    background-color: #F7BFE7;
+    color: #FFF;
+    padding: 10px 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    min-width: 200px;
+}
+
+.dropdown-button:hover {
+    background-color: #9A7CC3;
+    color: #fff;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #323232;
+    z-index: 1;
+    min-width: 700px;
+    background-color: #F7BFE7;
+    color: #202020;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+
+.categories:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: rgb(255, 255, 255);
+}
+
+.dropdown-content a:hover {
+    background-color: #717171;
+}
+
+.nextpage{
+    margin: 10px;
+    text-decoration: none;
+    color: #fff;
+}
