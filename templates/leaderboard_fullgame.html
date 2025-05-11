@@ -14,7 +14,7 @@
 
     <div class="runs">
         <div class="column-names">
-            <div class="run">
+            <div class="run-header">
                 <div>place</div>
                 <div>name</div>
                 <div>time</div>
@@ -27,7 +27,7 @@
         <div class="run">
             <div>{{ loop.index + page*100 }}</div>
             <div>{{ i[1] }}</div>
-            <div>{{ i[3] }}</div>
+            <a class="run-link" href="/view_fullgame_run/{{ i[0] }}">{{ i[3] }}</a>
             <div>{{ i[7] }}</div>
             <div>{{ i[6] }}</div>
         </div>

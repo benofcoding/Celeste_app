@@ -4,10 +4,16 @@ body {
     font-family: sans-serif;
   }
 
+a {
+    color: #FFF;
+    text-decoration: none;
+}
 
 * {
 transition: all 0.2s ease-in-out;
 }
+
+
 
 
 .categories {
@@ -35,16 +41,23 @@ transition: all 0.2s ease-in-out;
     font-size: large;
 }
 
-.run {
+.run, .run-header {
     display: grid;
     align-items: center;
     grid-template-columns: 5fr 15fr 15fr 15fr 10fr;
 }
 
-.run > div:nth-child(5n + 4), .run > div:nth-child(5n + 3), .run > div:nth-child(5n + 5){
+.run-header > div:nth-child(5n + 4), .run-header > div:nth-child(5n + 3), .run-header > div:nth-child(5n + 5){
     margin: auto;
 }
 
+.run > div:nth-child(5n + 5), .run > div:nth-child(5n+4){
+    margin: auto;
+}
+
+.run-link{
+    margin: auto;
+}
 
 .button-mode {
     text-decoration: none;
@@ -81,21 +94,19 @@ hr {
     position: relative;
     display: inline-block;
     min-width: 700px;
+    font-size: 15px;
 }
 
 .dropdown-button {
-    padding: 10px;
-    cursor: pointer;
+    font-size: 15px;
     text-align: left;
     width: 100%;
-    background-color: #F7BFE7;
+    background-color: #5EA4EF;
     color: #FFF;
-    padding: 10px 16px;
     font-weight: bold;
     border: none;
-    border-radius: 6px;
     cursor: pointer;
-    min-width: 200px;
+    padding: 12px;
 }
 
 .dropdown-button:hover {
@@ -106,10 +117,11 @@ hr {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #323232;
     z-index: 1;
-    min-width: 700px;
-    background-color: #F7BFE7;
+    width: 100%;    
+    background-color: #5EA4EF;
+    top: 0;
+    left: 0;
     color: #202020;
     font-weight: bold;
     border: none;
@@ -122,7 +134,7 @@ hr {
 
 .dropdown-content a {
     display: block;
-    padding: 8px 12px;
+    padding: 12px;
     text-decoration: none;
     color: rgb(255, 255, 255);
 }
@@ -133,6 +145,4 @@ hr {
 
 .nextpage{
     margin: 10px;
-    text-decoration: none;
-    color: #fff;
 }
