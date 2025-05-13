@@ -87,7 +87,28 @@ def leaderboard_fullgame(category_id, page):
 
 
 
+@app.route('/view_fullgame_run/<run_id>')
+def view_fullgame_run(run_id):
+    query = f"SELECT Run.run_id, Run.time, Run.date_submitted, Run.fullgame_category_id, Run.video_link, Run.player_id, Player.name, Fullgame_category.name, Verifier.player_id FROM Run JOIN Verifier ON Run.verifier_id = Verifier.verifier_id JOIN Player ON Run.player_id = Player.player_id JOIN Platform ON Run.platform_id = Platform.platform_id JOIN Fullgame_category on Run.fullgame_category_id = Fullgame_category.fullgame_category_id WHERE Run.run_id = '{run_id}'"
+    run1 = run_query_select(query)
+    run_temp = run1[0]
 
+    run = []
+    for i in run_temp:
+        run.append(i)
+
+
+    video_url = run[4]
+    if "youtu.be" in video_url:
+        video_id = video_url.split("/")[-1]
+        embed_url = f"https://www.youtube.com/embed/{video_id}"
+    else:
+        embed_url = video_url  
+
+    run[4] = embed_url
+
+
+    return render_template('view_fullgame_run.html', run=run)
 
 
 
