@@ -454,30 +454,10 @@ for j in users:
             break
         for i in runs:
             verified = True
+            print(i)
             if i['level'] == None:
                 pass
-    #             # if i['status']['status'] == 'new':
-    #             #     verified = False
-    #             # else:
-    #             #     verifier_idd = run_query_select(f"SELECT verifier_id FROM Verifier JOIN Player On Verifier.player_id = Player.player_id WHERE Player.name = '{i['status']['examiner']}'")
-    #             # if len(verifier_idd) == 0:
-    #             #     verified = False
-    #             # else:
-    #             #     verifier_idd = verifier_idd[0][0]
-    #             # user_idd = run_query_select(f"SELECT player_id FROM Player WHERE name = '{i['players'][0]['id']}'")[0][0]
-    #             # fullgame_category_idd = run_query_select(f"SELECT fullgame_category_id FROM Fullgame_category WHERE name = '{fullgame[i['category']]}'")[0][0]
-    #             # platform_idd = run_query_select(f"SELECT platform_id FROM Platform WHERE name = '{platforms[i['system']['platform']]}'")[0][0]
-    #             # timee = i['times']['primary_t']
-    #             # datesubmittedd = time_since_1980(i['submitted'])
-    #             # if 'links' in i['videos']:
-    #             #     linkk = i['videos']['links'][0]['uri']
-    #             # else:
-    #             #     linkk = False
 
-    #             # if linkk:
-    #             #     if verified:
-    #             #         run_query_insert('INSERT INTO Run (run_id, verifier_id, player_id, fullgame_category_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, fullgame_category_idd, platform_idd, timee, datesubmittedd, linkk))
-        
             elif i['level'] == foresaken_city:
                 if (i['category'] != b_side) and (i['category'] != c_side):
                     for c in i['values']:
@@ -502,7 +482,9 @@ for j in users:
                 platform_idd = run_query_select(f"SELECT platform_id FROM Platform WHERE name = '{platforms[i['system']['platform']]}'")[0][0]
                 timee = i['times']['primary_t']
                 datesubmittedd = time_since_1980(i['submitted'])
-                if 'links' in i['videos']:
+                if i['videos'] == None:
+                    linkk = False
+                elif 'links' in i['videos']:
                     linkk = i['videos']['links'][0]['uri']
                 else:
                     linkk = False
@@ -510,9 +492,6 @@ for j in users:
                 if linkk:
                     if verified:
                         run_query_insert(f'INSERT INTO Run (run_id, verifier_id, player_id, il_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, individual_level, platform_idd, timee, datesubmittedd, linkk))
-
-
-
             else:
                 if (i['category'] != b_side) and (i['category'] != c_side) and (i['category'] != clear):
                     for c in i['values']:
@@ -541,11 +520,12 @@ for j in users:
                 platform_idd = run_query_select(f"SELECT platform_id FROM Platform WHERE name = '{platforms[i['system']['platform']]}'")[0][0]
                 timee = i['times']['primary_t']
                 datesubmittedd = time_since_1980(i['submitted'])
-                if 'links' in i['videos']:
+                if i['videos'] == None:
+                    linkk = False
+                elif 'links' in i['videos']:
                     linkk = i['videos']['links'][0]['uri']
                 else:
                     linkk = False
-
                 if linkk:
                     if verified:
                         run_query_insert(f'INSERT INTO Run (run_id, verifier_id, player_id, il_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, individual_level, platform_idd, timee, datesubmittedd, linkk))
@@ -616,3 +596,32 @@ for j in users:
 #                         run_query_insert('INSERT INTO Run (run_id, verifier_id, player_id, fullgame_category_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, fullgame[i['category']], platform_idd, timee, datesubmittedd, linkk))
 
 #         offset += 200
+
+
+
+
+
+
+
+    #             # if i['status']['status'] == 'new':
+    #             #     verified = False
+    #             # else:
+    #             #     verifier_idd = run_query_select(f"SELECT verifier_id FROM Verifier JOIN Player On Verifier.player_id = Player.player_id WHERE Player.name = '{i['status']['examiner']}'")
+    #             # if len(verifier_idd) == 0:
+    #             #     verified = False
+    #             # else:
+    #             #     verifier_idd = verifier_idd[0][0]
+    #             # user_idd = run_query_select(f"SELECT player_id FROM Player WHERE name = '{i['players'][0]['id']}'")[0][0]
+    #             # fullgame_category_idd = run_query_select(f"SELECT fullgame_category_id FROM Fullgame_category WHERE name = '{fullgame[i['category']]}'")[0][0]
+    #             # platform_idd = run_query_select(f"SELECT platform_id FROM Platform WHERE name = '{platforms[i['system']['platform']]}'")[0][0]
+    #             # timee = i['times']['primary_t']
+    #             # datesubmittedd = time_since_1980(i['submitted'])
+    #             # if 'links' in i['videos']:
+    #             #     linkk = i['videos']['links'][0]['uri']
+    #             # else:
+    #             #     linkk = False
+
+    #             # if linkk:
+    #             #     if verified:
+    #             #         run_query_insert('INSERT INTO Run (run_id, verifier_id, player_id, fullgame_category_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, fullgame_category_idd, platform_idd, timee, datesubmittedd, linkk))
+        

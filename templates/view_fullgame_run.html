@@ -1,18 +1,55 @@
 {% extends "layout.html" %}
 {% block content %}
-<p>WOOOOOOOO</p>
+
 <div class="fullgame-run-container">
-    <iframe 
-  width="560" 
-  height="315" 
-  src="{{ run[4] }}" 
-  title="YouTube video player" 
-  frameborder="0" 
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-  allowfullscreen>
-</iframe>
-
-
+  <div class="individual-run-path">
+    <a href="/leaderboard_fullgame/30831e37/0">Leaderboard</a>
+    <p>/</p>
+    <a href="/leaderboard_fullgame/{{ run[3] }}/0">{{ run[7] }}</a>
+  </div>
+  <div class="run-title">
+    <p>{{ run[7] }} in {{ run[1] }}</p>
+  </div>
+  <iframe 
+    width="800" 
+    height="450" 
+    src="{{ run[4] }}" 
+    title="YouTube video player" 
+    frameborder="0" 
+    allowfullscreen>
+  </iframe>
+  <div class="individual-run-information-container">
+    <div class="individual-run-information-column">
+      <div class="individual-run-information">
+        <p class="individual-run-information-title">Category</p>
+        <p class="individual-run-information-info"> {{ run[7] }}</p>
+      </div>
+      <div class="individual-run-information">
+        <p class="individual-run-information-title">Platform</p>
+        <p class="individual-run-information-info">{{ run[9] }}</p>
+      </div>
+    </div>
+    <div class="individual-run-information-column">
+      <div class="individual-run-information">
+        <p class="individual-run-information-title">Player</p>
+        <p class="individual-run-information-info">{{ run[6] }}</p>
+      </div>
+    </div>
+    <div class="individual-run-information-column">
+      <div class="individual-run-information">
+        <p class="individual-run-information-title">Place</p>
+        <p class="individual-run-information-info"> {{ run[10] }}</p>
+      </div>
+      <div class="individual-run-information">
+        <p class="individual-run-information-title">Time</p>
+        <p class="individual-run-information-info">{{ run[1] }}</p>
+      </div>
+      <div class="individual-run-information">
+        <p class="individual-run-information-title">Date submitted</p>
+        <p class="individual-run-information-info">{{ run[2] }}</p>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock %}

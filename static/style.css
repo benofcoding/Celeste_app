@@ -1,21 +1,165 @@
-body {
-    background-color: #202020;
-    color: #fff; /* default text color */
-    font-family: sans-serif;
-  }
 
+body {
+    margin: 0px;
+    padding: 0px;
+    background-color: #202020;
+    color: #eee;
+    font-family: sans-serif;
+}
+
+h1{
+    margin: 0px;
+}
+
+iframe {
+    display: block;
+    margin: 0;
+    padding: 0;
+    border: none;
+    padding-bottom: 10px;
+
+}
 a {
-    color: #FFF;
+    color: #eee;
     text-decoration: none;
+}
+
+
+.fullgame_recent_runs hr{
+    width: 100%;
+}
+
+.rules {
+    row-gap: 20px;
+    place-items: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    background-color: #191919;
+    border: 2px solid #9CC9F5;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(156, 201, 245, 0.2);
+}
+
+.rule {
+    word-break: break-word;
+}
+.fullgame_recent_runs_title {
+    padding-top: 71px;
+}
+.recent_run, .fullgame_recent_runs_title{
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+
+.PLACEHOLDER {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 10px;
+    font-size: normal;
+}
+.fullgame_recent_runs{
+    row-gap: 20px;
+    place-items: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    background-color: #191919;
+    border: 2px solid #9CC9F5;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 0 15px rgba(156, 201, 245, 0.2);
+}
+
+.navbar-item {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    padding: 0px 20px 0px 20px;
+}
+
+.navbar-item:hover{
+    background-color: #8d71b4;
+}
+
+.navbar {
+    margin-bottom: 40px;
+    background-color: #9a7cc3;
+    display: grid;
+    grid-template-columns: repeat(5, max-content);
+    place-items: center;
+    height: 50px;
 }
 
 * {
 transition: all 0.2s ease-in-out;
 }
 
+.fullgame-run-container {
+    margin: auto;
+    width: 800px;
+    background-color: #191919;
+    border: 2px solid #9CC9F5;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 800px;
+    margin: 40px auto;
+    box-shadow: 0 0 15px rgba(156, 201, 245, 0.2);
+}
+
+.individual-run-path {
+    display: flex;
+    align-items: center;
+    height: auto;
+    gap: 5px;
+    line-height: 1;
+    font-size: 16px;
+    padding-bottom: 20px;
+}
+  
+.individual-run-information-container{
+    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    place-items: start center;
+    row-gap: 10px;
+}
+
+.individual-run-information-column{
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+    row-gap: 10px;
+}
+.individual-run-information{
+    border-radius: 8px;
+    row-gap: 10px;
+    place-items: center;
+    display: grid;
+    grid-template-columns: 1fr;
+    background-color: #202020;
+    width: 100%;
+
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.individual-run-information-title {
+    font-size: 18px;
+}
+
+.individual-run-information-info {
+    color: #aaa;
+}
 
 
-
+p{
+    margin: 0;
+    padding: 0;
+}
+  
 .categories {
     display: flex;
     flex-wrap: wrap;
@@ -23,22 +167,34 @@ transition: all 0.2s ease-in-out;
     justify-content: flex-start;
   }
 
+.leaderboard_fullgame{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 40px;
+    place-items: start center;
+    margin: 0px 40px 0px 40px;
+
+}
 .leaderboardfullgame-categories-container {
+    row-gap: 20px;
+    place-items: center;
+    display: grid;
+    grid-template-columns: 1fr;
     background-color: #191919;
     border: 2px solid #9CC9F5;
     border-radius: 12px;
     padding: 20px;
-    max-width: 700px;
-    margin: 40px auto;
+    margin: 0px;
     box-shadow: 0 0 15px rgba(156, 201, 245, 0.2);
 }
 
 
 .runs {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    font-size: large;
+    width: 600px;
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 10px;
+    font-size: normal;
 }
 
 .run, .run-header {
@@ -59,6 +215,14 @@ transition: all 0.2s ease-in-out;
     margin: auto;
 }
 
+.run-link:hover {
+    color:#999
+}
+
+.run-title {
+    padding-bottom: 10px;
+}
+
 .button-mode {
     text-decoration: none;
     padding: 10px 16px;
@@ -75,7 +239,7 @@ transition: all 0.2s ease-in-out;
 
 hr {
     margin: 0px;
-    width: 700px;
+    width: 600px;
     border-color: #000000;
 }
 
@@ -84,16 +248,12 @@ hr {
     padding-top: 10px;
 }
 
-.leaderboardfullgame-categories-container{
-    border: 2px solid #ccc;
-    padding: 20px;
-    border-radius: 10px;
-}
+
 
 .categories {
     position: relative;
     display: inline-block;
-    min-width: 700px;
+    min-width: 600px;
     font-size: 15px;
 }
 
@@ -145,4 +305,8 @@ hr {
 
 .nextpage{
     margin: 10px;
+}
+
+.recent_run_title_time {
+    margin:auto;
 }

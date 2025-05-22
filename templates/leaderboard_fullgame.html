@@ -1,51 +1,98 @@
 {% extends "layout.html" %}
 {% block content %}
-
-<div class="leaderboardfullgame-categories-container">
-    <div class="categories">
-        <button class="dropdown-button">{{ categories[category_id] }}</button>
-            <div class="dropdown-content">
+<div class="leaderboard_fullgame">
+    <div class="rules">
+        <h1>Rules</h1>
+        <p class="rule">The sun dipped below the horizon, casting a warm orange glow across the sky. Birds fluttered between tree branches, chirping their final songs of the day. Along the winding path through the meadow, a soft breeze carried the scent of wildflowers and freshly cut grass. A lone traveler strolled slowly, his thoughts drifting with the rhythm of his footsteps. He had no destination, only a desire to wander and see where the world might lead him. Each step felt like a new beginning, a quiet rebellion against routine and the ordinary.<br><br>In the distance, a river whispered secrets to the shore, its surface glimmering with fading sunlight. Crickets began their nightly chorus as stars emerged, one by one, in the deepening sky. The traveler paused, closing his eyes to soak in the peace of the moment. Life, he thought, wasn't always about reaching a goal. Sometimes, it was about standing still and simply feeling the world turn.</p>
+    </div>
+    <div class="leaderboardfullgame-categories-container">
+        <h1 class="leaderboard_fullgame_header">Leaderboard</h1>
+        <div class="categories">
+            <button id="toggleBtn" class="dropdown-button">{{ categories[category_id] }}</button>
+            <div id="myGrid" class="dropdown-content">
             {% for i in categories: %}
                 <a href="/leaderboard_fullgame/{{ i }}/0">{{ categories[i] }}</a>
             {% endfor %}
             </div>
 
-    </div>
-
-    <div class="runs">
-        <div class="column-names">
-            <div class="run-header">
-                <div>place</div>
-                <div>name</div>
-                <div>time</div>
-                <div>date</div>
-                <div>platform</div>
+        </div>
+        <div class="runs">
+            <div class="column-names">
+                <div class="run-header">
+                    <div>#</div>
+                    <div>Player</div>
+                    <div>IGT</div>
+                    <div>Date</div>
+                    <div>Platform</div>
+                </div>
             </div>
+            {% for i in runs %}
+            <hr>
+            <div class="run">
+                <div>{{ loop.index + page*100 }}</div>
+                <div>{{ i[1] }}</div>
+                <a class="run-link" href="/view_fullgame_run/{{ i[0] }}">{{ i[3] }}</a>
+                <div>{{ i[7] }}</div>
+                <div>{{ i[6] }}</div>
+            </div>
+            {% endfor %}
         </div>
-        {% for i in runs %}
-        <hr>
-        <div class="run">
-            <div>{{ loop.index + page*100 }}</div>
-            <div>{{ i[1] }}</div>
-            <a class="run-link" href="/view_fullgame_run/{{ i[0] }}">{{ i[3] }}</a>
-            <div>{{ i[7] }}</div>
-            <div>{{ i[6] }}</div>
+        <div class="buttons">
+            <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/0">
+                <<
+            </a>
+            {% if page != 0 %}
+            <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/{{ page-1 }}">
+                <
+            </a>
+            {% else %}
+            <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/0">
+                <
+            </a>
+            {% endif %}
+            <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/{{ page+1 }}">
+                >
+            </a>
+            <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/{{ maxpage }}">
+                >>
+            </a>
         </div>
-        {% endfor %}
     </div>
-    <div class="buttons">
-        <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/0">
-            <<
-        </a>
-        <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/{{ page-1 }}">
-            <
-        </a>
-        <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/{{ page+1 }}">
-            >
-        </a>
-        <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/{{ maxpage }}">
-            >>
-        </a>
+    <div class="fullgame_recent_runs">
+        <h1>Recent Runs</h1>
+        <div class="PLACEHOLDER">
+            <div class="fullgame_recent_runs_title">
+                <p>Name</p>
+                <p class="recent_run_title_time">Time</p>
+            </div>
+            {% for i in recent_runs %}
+            <hr>
+            <div class="recent_run">
+                <p>{{ i[1] }}</p>
+                <a class="run-link" href="/view_fullgame_run/{{ i[2] }}">{{ i[3] }}</a>
+            </div>
+            {% endfor %}
+        </div>
     </div>
 </div>
+<script>
+    const grid = document.getElementById("myGrid");
+    const button = document.getElementById("toggleBtn");
+
+    // Show/hide grid when button is clicked
+    button.addEventListener("click", function (event) {
+      event.stopPropagation(); // Stop the click from reaching the document
+      grid.style.display = (grid.style.display === "grid") ? "none" : "grid";
+    });
+
+    // Prevent clicks inside the grid from closing it
+    grid.addEventListener("click", function (event) {
+      event.stopPropagation();
+    });
+
+    // Hide the grid when clicking anywhere else on the page
+    document.addEventListener("click", function () {
+      grid.style.display = "none";
+    });
+  </script>
 {% endblock %}
