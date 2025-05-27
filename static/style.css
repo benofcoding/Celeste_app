@@ -7,6 +7,15 @@ body {
     font-family: sans-serif;
 }
 
+.header {
+    height: 100px;
+    display: grid;
+    grid-template-columns: 1fr;
+    place-items: center;
+    font-size: 50px;
+    background-color: #ab91d0;
+    border-bottom: solid black 2px;
+}
 h1{
     margin: 0px;
 }

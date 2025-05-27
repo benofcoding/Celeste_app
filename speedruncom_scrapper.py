@@ -531,6 +531,7 @@ for j in users:
                         run_query_insert(f'INSERT INTO Run (run_id, verifier_id, player_id, il_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, individual_level, platform_idd, timee, datesubmittedd, linkk))
 
         offset += 200
+    count += 1
 
 
 # users = run_query_select('SELECT player_id FROM Player WHERE hash IS NULL')
