@@ -1,41 +1,41 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="leaderboard-fullgame">
-    <div class="rules leaderboard-fullgame-item">
-        <h1 class="leaderboard-fullgame-item-header">Rules</h1>
+<div class="leaderboard">
+    <div class="rules leaderboard-item">
+        <h1 class="leaderboard-item-header">Rules</h1>
         <p class="rule">The sun dipped below the horizon, casting a warm orange glow across the sky. Birds fluttered between tree branches, chirping their final songs of the day. Along the winding path through the meadow, a soft breeze carried the scent of wildflowers and freshly cut grass. A lone traveler strolled slowly, his thoughts drifting with the rhythm of his footsteps. He had no destination, only a desire to wander and see where the world might lead him. Each step felt like a new beginning, a quiet rebellion against routine and the ordinary.<br><br>In the distance, a river whispered secrets to the shore, its surface glimmering with fading sunlight. Crickets began their nightly chorus as stars emerged, one by one, in the deepening sky. The traveler paused, closing his eyes to soak in the peace of the moment. Life, he thought, wasn't always about reaching a goal. Sometimes, it was about standing still and simply feeling the world turn.</p>
     </div>
-    <div class="leaderboardfullgame-categories-container leaderboard-fullgame-item">
-        <h1 class="leaderboard-fullgame-item-header">Leaderboard</h1>
-        <div class="leaderboard-fullgame-categories-ILtoggle">
-            <div class="IL-toggle">
-                <div class="IL-toggle-fullgame">
-                    Fullgame
-                </div>
-                <div class="IL-toggle-IL">
-                    Individual Level
+    <div class="leaderboard-container leaderboard-item">
+        <h1 class="leaderboard-item-header">Leaderboard</h1>
+        <div class="leaderboard-dropdown-ILtoggle">
+            <div class="IL-toggle-container">
+                <div class="IL-toggle">
+                    <div id="IL-toggle-fullgame" class="IL-toggle-fullgame">
+                        Fullgame
+                    </div>
+                    <div id="IL-toggle-IL" class="IL-toggle-IL">
+                        Individual Level
+                    </div>
                 </div>
             </div>
-            <div class="leaderboard-fullgame-category-buttons">
-                <div class="leaderboard-fullgame-dropdown">
-                    <div id="dropdown-open" class="leaderboard-fullgame-category-button-main leaderboard-fullgame-category-button" href="/leaderboard_fullgame/{{ category_id }}/0">
-                        <div>
-                            {{ categories[category_id] }}
-                        </div>
-                        <div class="dropdown-arrow">
-                            v
-                        </div>
+            <div class="leaderboard-dropdown">
+                <div id="dropdown-open" class="leaderboard-dropdown-open leaderboard-dropdown-buttons">
+                    <div>
+                        {{ categories[category_id] }}
                     </div>
-                    {% for i in categories: %}
-                        {% if i != category_id %}
-                        <a id="dropdown-content" class="leaderboard-fullgame-category-button-dropdown leaderboard-fullgame-category-button" href="/leaderboard_fullgame/{{ i }}/0">{{ categories[i] }}</a>
-                        {% endif %}
-                {% endfor %}
+                    <div class="dropdown-arrow">
+                        v
+                    </div>
                 </div>
+                {% for i in categories: %}
+                    {% if i != category_id %}
+                    <a id="dropdown-content" class="leaderboard-dropdown-button leaderboard-dropdown-buttons" href="/leaderboard_fullgame/{{ i }}/0">{{ categories[i] }}</a>
+                    {% endif %}
+                {% endfor %}
             </div>
         </div>
-        <div class="leaderboard-fullgame-runs">
-            <div class="column-names leaderboard-fullgame-columns-runs">
+        <div class="leaderboard-runs">
+            <div class="column-names leaderboard-columns-runs">
                 <div>#</div>
                 <div>Player</div>
                 <div>IGT</div>
@@ -44,9 +44,9 @@
             </div>
             {% for i in runs %}
             <hr>
-            <div class="leaderboard-fullgame-run leaderboard-fullgame-columns-runs">
+            <div class="leaderboard-run leaderboard-columns-runs">
                 <div>{{ loop.index + page*100 }}</div>
-                <div>snugmarshmallow</div>
+                <div>{{ i[1] }}</div>
                 <div><a class="run-link" href="/view_fullgame_run/{{ i[0] }}">{{ i[3] }}</a></div>
                 <div>{{ i[7] }}</div>
                 <div>{{ i[6] }}</div>
@@ -75,17 +75,17 @@
             </a>
         </div>
     </div>
-    <div class="leaderboard-dfullgame-recent-runs-container leaderboard-fullgame-item">
-        <h1 class="leaderboard-fullgame-item-header">Recent Runs</h1>
-        <div class="leaderboard-fullgame-recent-runs">
-            <div class="fullgame_recent_runs_title leaderboard-fullgame-recent-runs-columns-runs">
+    <div class="leaderboard-recent-runs-container leaderboard-item">
+        <h1 class="leaderboard-item-header">Recent Runs</h1>
+        <div class="leaderboard-recent-runs">
+            <div class="leaderboard-recent-runs-columns leaderboard-recent-runs-columns-runs">
                 <div>Player</div>
                 <div>Time</div>
             </div>
             {% for i in recent_runs %}
             <hr>
-            <div class="recent_run leaderboard-fullgame-recent-runs-columns-runs">
-                <div>{{ i[1] }}</div>
+            <div class="recent_run leaderboard-recent-runs-columns-runs">
+                <div>{{ i[0] }}</div>
                 <div><a class="run-link" href="/view_fullgame_run/{{ i[2] }}">{{ i[3] }}</a></div>
             </div>
             {% endfor %}
@@ -93,7 +93,7 @@
     </div>
 </div>
 <script>
-    const dropdown_content = document.querySelectorAll('.leaderboard-fullgame-category-button-dropdown')
+    const dropdown_content = document.querySelectorAll('.leaderboard-dropdown-button')
     const dropdown_content_style = window.getComputedStyle(dropdown_content[0])
     const dropdown_open = document.getElementById('dropdown-open')
 
@@ -113,7 +113,7 @@
 
     function close_dropdown(click_information) {
         console.log('HEHEHEH')
-        if (!click_information.target.closest('.leaderboard-fullgame-dropdown')) {
+        if (!click_information.target.closest('.leaderboard-dropdown')) {
             dropdown_content.forEach(button => {
                 button.style.display = 'none';
                 });
@@ -124,6 +124,11 @@
 
     dropdown_open.addEventListener('click', toggle_dropdown)
     document.addEventListener('click', close_dropdown)
+
+    const IL_toggle_fullgame = document.getElementById('IL-toggle-fullgame')
+    IL_toggle_fullgame.style.border = 'solid 0.25em #9CC9F5';
+    IL_toggle_fullgame.style.borderRadius = '0.25em';
+    IL_toggle_fullgame.style.backgroundColor = '#9CC9F5';
 </script>
 
 {% endblock %}

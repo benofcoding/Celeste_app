@@ -75,7 +75,7 @@ def leaderboard_fullgame(category_id, page):
     Run.video_link, Run.date_submitted, Platform.name FROM Run 
     JOIN Player ON Run.player_id = Player.player_id 
     JOIN Platform ON Run.platform_id = Platform.platform_id 
-    WHERE Fullgame_category_id = '{category_id}' AND Run.verifier_id IS NOT NULL 
+    WHERE Fullgame_category_id = '{category_id}' AND Run.verifier_id IS NOT NULL AND Run.obsolete = 0
     ORDER BY Run.time ASC"""
     
     runs = run_query_select(query)

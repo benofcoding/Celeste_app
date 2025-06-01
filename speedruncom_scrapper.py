@@ -368,12 +368,12 @@ def get_users2():
 
 
 
-# for i in run_query_select('SELECT player_id, name FROM Player'):
-#     i = i[1]
-#     print(i)
-    i = i.encode()
-    i = hashlib.sha256(i).hexdigest()
-#     print(i)
+# # for i in run_query_select('SELECT player_id, name FROM Player'):
+# #     i = i[1]
+# #     print(i)
+#     i = i.encode()
+#     i = hashlib.sha256(i).hexdigest()
+# #     print(i)
 
 
 
@@ -409,129 +409,129 @@ def get_users2():
 
 
 
-# for j in fullgame:
-#     pagnation = api.get(f'leaderboards/{game_id}/category/{j}?embed=players')
-#     players = pagnation['players']['data']
-#     for i in players:
-#         print(i)
-#         if i['rel'] == 'guest':
-#             continue
-#         player = i['id']
-#         if len(run_query_select(f'SELECT name FROM Player WHERE name = "{player}"')) == 0:
-#             run_query_insert(f'INSERT INTO Player (player_id, name) VALUES (?, ?)', (generate_id(), player))
+# # for j in fullgame:
+# #     pagnation = api.get(f'leaderboards/{game_id}/category/{j}?embed=players')
+# #     players = pagnation['players']['data']
+# #     for i in players:
+# #         print(i)
+# #         if i['rel'] == 'guest':
+# #             continue
+# #         player = i['id']
+# #         if len(run_query_select(f'SELECT name FROM Player WHERE name = "{player}"')) == 0:
+# #             run_query_insert(f'INSERT INTO Player (player_id, name) VALUES (?, ?)', (generate_id(), player))
 
-# for i in levels:
-#     for j in categorys:
-#         pagnation = api.get(f'leaderboards/{game_id}/level/{i}/{j}?embed=players')
-#         players = pagnation['players']['data']
-#         for v in players:
-#             print(v)
-#             if v['rel'] == 'guest':
-#                 continue
-#             player = v['id']
-#             if len(run_query_select(f'SELECT name FROM Player WHERE name = "{player}"')) == 0:
-#                 run_query_insert(f'INSERT INTO Player (player_id, name) VALUES (?, ?)', (generate_id(), player))
-
-
-
-
-
-verified = True
-users = run_query_select('SELECT name FROM Player')
-count = 1
+# # for i in levels:
+# #     for j in categorys:
+# #         pagnation = api.get(f'leaderboards/{game_id}/level/{i}/{j}?embed=players')
+# #         players = pagnation['players']['data']
+# #         for v in players:
+# #             print(v)
+# #             if v['rel'] == 'guest':
+# #                 continue
+# #             player = v['id']
+# #             if len(run_query_select(f'SELECT name FROM Player WHERE name = "{player}"')) == 0:
+# #                 run_query_insert(f'INSERT INTO Player (player_id, name) VALUES (?, ?)', (generate_id(), player))
 
 
 
 
-for j in users:
-    print(count)
-    j = j[0]
-    offset = 0
-    runs = []
-    while len(runs)%200 == 0:
-        runs = api.get(f'runs?user={j}&game={game_id}&max=200&offset={offset}&orderby=submitted')
-        if (len(runs) == 0) and (offset == 0):
-            break
-        for i in runs:
-            verified = True
-            print(i)
-            if i['level'] == None:
-                pass
 
-            elif i['level'] == foresaken_city:
-                if (i['category'] != b_side) and (i['category'] != c_side):
-                    for c in i['values']:
-                        if (c != (version_variable) and (c != dts_variable)):
-                            il_category_idd = il_categories[api.get(f'variables/{c}')['values']['values'][i['values'][c]]['label']]
-                elif i['category'] == b_side:
-                    il_category_idd = b_side2
-                else:
-                    il_category_idd = c_side_2
+# verified = True
+# users = run_query_select('SELECT name FROM Player')
+# count = 1
 
-                level_idd = '75cdc954'
-                individual_level = run_query_select(f"SELECT il_id FROM Individual_level WHERE level_id = '{level_idd}' and il_category_id = '{il_category_idd}'")[0][0]
-                if i['status']['status'] == 'new' or i['status']['status'] == 'rejected':
-                    verified = False
-                else:
-                    verifier_idd = run_query_select(f"SELECT verifier_id FROM Verifier JOIN Player On Verifier.player_id = Player.player_id WHERE Player.name = '{i['status']['examiner']}'")
-                if len(verifier_idd) == 0:
-                    verified = False
-                else:
-                    verifier_idd = verifier_idd[0][0]
-                user_idd = run_query_select(f"SELECT player_id FROM Player WHERE name = '{i['players'][0]['id']}'")[0][0]
-                platform_idd = run_query_select(f"SELECT platform_id FROM Platform WHERE name = '{platforms[i['system']['platform']]}'")[0][0]
-                timee = i['times']['primary_t']
-                datesubmittedd = time_since_1980(i['submitted'])
-                if i['videos'] == None:
-                    linkk = False
-                elif 'links' in i['videos']:
-                    linkk = i['videos']['links'][0]['uri']
-                else:
-                    linkk = False
 
-                if linkk:
-                    if verified:
-                        run_query_insert(f'INSERT INTO Run (run_id, verifier_id, player_id, il_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, individual_level, platform_idd, timee, datesubmittedd, linkk))
-            else:
-                if (i['category'] != b_side) and (i['category'] != c_side) and (i['category'] != clear):
-                    for c in i['values']:
-                        if (c != version_variable) and (c != dts_variable) and (c != full_clear):
-                            il_category_idd = il_categories[api.get(f'variables/{c}')['values']['values'][i['values'][c]]['label']]
-                elif i['category'] == b_side:
-                    il_category_idd = b_side2
-                elif i['category'] == clear:
-                    il_category_idd = clear__2
-                else:
-                    il_category_idd = c_side_2
+
+
+# for j in users:
+#     print(count)
+#     j = j[0]
+#     offset = 0
+#     runs = []
+#     while len(runs)%200 == 0:
+#         runs = api.get(f'runs?user={j}&game={game_id}&max=200&offset={offset}&orderby=submitted')
+#         if (len(runs) == 0) and (offset == 0):
+#             break
+#         for i in runs:
+#             verified = True
+#             print(i)
+#             if i['level'] == None:
+#                 pass
+
+#             elif i['level'] == foresaken_city:
+#                 if (i['category'] != b_side) and (i['category'] != c_side):
+#                     for c in i['values']:
+#                         if (c != (version_variable) and (c != dts_variable)):
+#                             il_category_idd = il_categories[api.get(f'variables/{c}')['values']['values'][i['values'][c]]['label']]
+#                 elif i['category'] == b_side:
+#                     il_category_idd = b_side2
+#                 else:
+#                     il_category_idd = c_side_2
+
+#                 level_idd = '75cdc954'
+#                 individual_level = run_query_select(f"SELECT il_id FROM Individual_level WHERE level_id = '{level_idd}' and il_category_id = '{il_category_idd}'")[0][0]
+#                 if i['status']['status'] == 'new' or i['status']['status'] == 'rejected':
+#                     verified = False
+#                 else:
+#                     verifier_idd = run_query_select(f"SELECT verifier_id FROM Verifier JOIN Player On Verifier.player_id = Player.player_id WHERE Player.name = '{i['status']['examiner']}'")
+#                 if len(verifier_idd) == 0:
+#                     verified = False
+#                 else:
+#                     verifier_idd = verifier_idd[0][0]
+#                 user_idd = run_query_select(f"SELECT player_id FROM Player WHERE name = '{i['players'][0]['id']}'")[0][0]
+#                 platform_idd = run_query_select(f"SELECT platform_id FROM Platform WHERE name = '{platforms[i['system']['platform']]}'")[0][0]
+#                 timee = i['times']['primary_t']
+#                 datesubmittedd = time_since_1980(i['submitted'])
+#                 if i['videos'] == None:
+#                     linkk = False
+#                 elif 'links' in i['videos']:
+#                     linkk = i['videos']['links'][0]['uri']
+#                 else:
+#                     linkk = False
+
+#                 if linkk:
+#                     if verified:
+#                         run_query_insert(f'INSERT INTO Run (run_id, verifier_id, player_id, il_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, individual_level, platform_idd, timee, datesubmittedd, linkk))
+#             else:
+#                 if (i['category'] != b_side) and (i['category'] != c_side) and (i['category'] != clear):
+#                     for c in i['values']:
+#                         if (c != version_variable) and (c != dts_variable) and (c != full_clear):
+#                             il_category_idd = il_categories[api.get(f'variables/{c}')['values']['values'][i['values'][c]]['label']]
+#                 elif i['category'] == b_side:
+#                     il_category_idd = b_side2
+#                 elif i['category'] == clear:
+#                     il_category_idd = clear__2
+#                 else:
+#                     il_category_idd = c_side_2
                 
-                level_idd = i['level']
-                print(levels[level_idd], il_category_idd)
-                individual_level = run_query_select(f"SELECT il_id FROM Individual_level WHERE level_id = '{levels[level_idd]}' and il_category_id = '{il_category_idd}'")[0][0]
-                print(individual_level)
-                if i['status']['status'] == 'new' or i['status']['status'] == 'rejected':
-                    verified = False
-                else:
-                    verifier_idd = run_query_select(f"SELECT verifier_id FROM Verifier JOIN Player On Verifier.player_id = Player.player_id WHERE Player.name = '{i['status']['examiner']}'")
-                if len(verifier_idd) == 0:
-                    verified = False
-                else:
-                    verifier_idd = verifier_idd[0][0]
-                user_idd = run_query_select(f"SELECT player_id FROM Player WHERE name = '{i['players'][0]['id']}'")[0][0]
-                platform_idd = run_query_select(f"SELECT platform_id FROM Platform WHERE name = '{platforms[i['system']['platform']]}'")[0][0]
-                timee = i['times']['primary_t']
-                datesubmittedd = time_since_1980(i['submitted'])
-                if i['videos'] == None:
-                    linkk = False
-                elif 'links' in i['videos']:
-                    linkk = i['videos']['links'][0]['uri']
-                else:
-                    linkk = False
-                if linkk:
-                    if verified:
-                        run_query_insert(f'INSERT INTO Run (run_id, verifier_id, player_id, il_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, individual_level, platform_idd, timee, datesubmittedd, linkk))
+#                 level_idd = i['level']
+#                 print(levels[level_idd], il_category_idd)
+#                 individual_level = run_query_select(f"SELECT il_id FROM Individual_level WHERE level_id = '{levels[level_idd]}' and il_category_id = '{il_category_idd}'")[0][0]
+#                 print(individual_level)
+#                 if i['status']['status'] == 'new' or i['status']['status'] == 'rejected':
+#                     verified = False
+#                 else:
+#                     verifier_idd = run_query_select(f"SELECT verifier_id FROM Verifier JOIN Player On Verifier.player_id = Player.player_id WHERE Player.name = '{i['status']['examiner']}'")
+#                 if len(verifier_idd) == 0:
+#                     verified = False
+#                 else:
+#                     verifier_idd = verifier_idd[0][0]
+#                 user_idd = run_query_select(f"SELECT player_id FROM Player WHERE name = '{i['players'][0]['id']}'")[0][0]
+#                 platform_idd = run_query_select(f"SELECT platform_id FROM Platform WHERE name = '{platforms[i['system']['platform']]}'")[0][0]
+#                 timee = i['times']['primary_t']
+#                 datesubmittedd = time_since_1980(i['submitted'])
+#                 if i['videos'] == None:
+#                     linkk = False
+#                 elif 'links' in i['videos']:
+#                     linkk = i['videos']['links'][0]['uri']
+#                 else:
+#                     linkk = False
+#                 if linkk:
+#                     if verified:
+#                         run_query_insert(f'INSERT INTO Run (run_id, verifier_id, player_id, il_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, individual_level, platform_idd, timee, datesubmittedd, linkk))
 
-        offset += 200
-    count += 1
+#         offset += 200
+#     count += 1
 
 
 # users = run_query_select('SELECT player_id FROM Player WHERE hash IS NULL')
@@ -548,12 +548,12 @@ for j in users:
 #     run_query_update(f"UPDATE Player SET name = '{real_name}', hash = '{hash}' WHERE player_id = '{i}'")
     
 
-# updates = run_query_select('SELECT run_id FROM Run WHERE obsolete IS NULL')
-# for i in updates:
-#     run_query_update(f"UPDATE Run SET obsolete = 1 WHERE run_id = '{i[0]}'")
-#     print(i)
+updates = run_query_select('SELECT run_id FROM Run WHERE obsolete IS NULL')
+for i in updates:
+    run_query_update(f"UPDATE Run SET obsolete = 1 WHERE run_id = '{i[0]}'")
+    print(i)
 
-# verified = True
+# verified = Trues
 # users = run_query_select('SELECT name FROM Player')
 # count = 1
 
@@ -626,3 +626,17 @@ for j in users:
     #             #     if verified:
     #             #         run_query_insert('INSERT INTO Run (run_id, verifier_id, player_id, fullgame_category_id, platform_id, time, date_submitted, video_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)', (generate_id(), verifier_idd, user_idd, fullgame_category_idd, platform_idd, timee, datesubmittedd, linkk))
         
+
+# verified = True
+# users = run_query_select('SELECT player_id, name FROM Player')
+# count = 1
+
+# for i in users:
+#     fullgame_categories_BLEEP = run_query_select('SELECT fullgame_category_id FROM Fullgame_category')
+#     il_categories_BLEEP = run_query_select('SELECT il_id FROM Individual_level')
+#     print(il_categories_BLEEP)
+#     for j in il_categories_BLEEP:
+#         run_id = run_query_select(f"SELECT Run.run_id FROM Run WHERE Run.il_id = '{j[0]}' AND Run.player_id = '{i[0]}' ORDER BY Run.time ASC LIMIT 1")
+#         if len(run_id) != 0:
+#             run_id = run_id[0][0]
+#             run_query_update(f"UPDATE Run SET obsolete = 0 WHERE Run.run_id = '{run_id}'")
