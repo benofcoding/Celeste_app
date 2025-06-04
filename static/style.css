@@ -59,18 +59,28 @@ p {
 
 .navbar{
     width: 100vw;
-    display: grid;
-    grid-template-columns: repeat(5, max-content);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: #ab91d0;
     margin-bottom: 2.5vw;
     height: 3em;
-    place-items: center;
+}
+
+.navbar-section{
+    height: 100%;
+    display: grid;
+    grid-template-columns: repeat(5, max-content);
 }
 
 .navbar-item {
+    font-weight: bold;
+    font-size: 1em;
+    background-color: #ab91d0;
+    border: none;
     display: flex;
     align-items: center;
-    padding: 0 2.5vw 0 2.5vw;
+    padding: 0 1vw 0 1vw;
     height: 100%;
 }
 
@@ -211,11 +221,34 @@ p {
 
 /* Leaderboard Fullgame end */
 
+.IL-category-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1vw;
+}
 
+.IL-category-button, .IL-category-button-match {
+    white-space: nowrap;
+    width: fit-content;
+    padding: 0 0.5em 0 0.5em;
+    height: 2.3em;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    background: #9CC9F5;
+    display: flex;
+    justify-content: space-between; /* pushes items to edges */
+    align-items: center;
+    border-radius: 0.25em; 
+}
 
+.IL-category-button-match {
+    background-color: #b59dd6;
+}
 
-
-
+.IL-category-button:hover {
+    background-color: #88bdf3;
+}
 
 
 

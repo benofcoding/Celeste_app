@@ -1,8 +1,26 @@
 <div class="navbar">
-    <a class="navbar-item" href="/">
-        HOME
-    </a>
-    <a class="navbar-item" href="/leaderboard_fullgame/30831e37/0">
-        LEADERBOARD
-    </a>
+    <div class="left-navbar navbar-section">
+        <a class="navbar-item" href="/">
+            Home
+        </a>
+        <a class="navbar-item" href="/leaderboard_fullgame/30831e37/0">
+            Leaderboard
+        </a>
+    </div>
+    <div class="right-navbar navbar-section">
+        {% if logged_in %}
+        <a class="navbar-item" href="/leaderboard_fullgame/30831e37/0">
+            {{ logged_in }}
+        </a>
+        <form method="POST" action="/">
+            <button class="navbar-item" type="submit">
+                logout
+            </button>
+        </form>
+        {% else %}
+        <a class="navbar-item" href="/login">
+            sign in / sign up
+        </a>
+        {% endif %}
+    </div>
 </div>

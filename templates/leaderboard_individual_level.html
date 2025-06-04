@@ -11,28 +11,33 @@
             <div class="IL-toggle-container">
                 <div class="IL-toggle">
                     <div id="IL-toggle-fullgame" class="IL-toggle-fullgame">
-                        Fullgame
+                        <a href="/leaderboard_fullgame/30831e37/0">Fullgame</a>
                     </div>
                     <div id="IL-toggle-IL" class="IL-toggle-IL">
-                        <a href="/leaderboard_individual_level/8099f2fc/0">Individual Level</a>
+                        Individual Level
                     </div>
                 </div>
             </div>
             <div class="leaderboard-dropdown">
                 <div id="dropdown-open" class="leaderboard-dropdown-open leaderboard-dropdown-buttons">
                     <div>
-                        {{ categories[category_id] }}
+                        {{ levels[level[1]][0] }}
                     </div>
                     <div class="dropdown-arrow">
                         v
                     </div>
                 </div>
-                {% for i in categories: %}
-                    {% if i != category_id %}
-                    <a id="dropdown-content" class="leaderboard-dropdown-button leaderboard-dropdown-buttons" href="/leaderboard_fullgame/{{ i }}/0">{{ categories[i] }}</a>
+                {% for i in levels: %}
+                    {% if i != level[1] %}
+                    <a id="dropdown-content" class="leaderboard-dropdown-button leaderboard-dropdown-buttons" href="/leaderboard_individual_level/{{ levels[i][1] }}/0">{{ levels[i][0] }}</a>
                     {% endif %}
                 {% endfor %}
             </div>
+        </div>
+        <div class="IL-category-buttons">
+            {% for i in categories %}
+                <a class="{% if i != category[1] %} IL-category-button {% else %} IL-category-button-match {% endif %}" href="/leaderboard_individual_level/{{ categories[i][1] }}/0">{{ categories[i][0] }}</a>
+            {% endfor %}
         </div>
         <div class="leaderboard-runs">
             <div class="column-names leaderboard-columns-runs">
@@ -55,28 +60,28 @@
         </div>
 
         <div class="nextpage-buttons">
-            <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/0">
+            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/0">
                 <<
             </a>
             {% if page != 0 %}
-            <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/{{ page-1 }}">
+            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/{{ page-1 }}">
                 <
             </a>
             {% else %}
-            <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/0">
+            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/0">
                 <
             </a>
             {% endif %}
             {% if page != maxpage %}
-            <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/{{ page+1 }}">
+            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/{{ page+1 }}">
                 >
             </a>
             {% else %}
-            <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/{{ page }}">
+            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/{{ page }}">
                 >
             </a>
             {% endif %}
-            <a class="nextpage" href="/leaderboard_fullgame/{{ category_id }}/{{ maxpage }}">
+            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/{{ maxpage }}">
                 >>
             </a>
         </div>
@@ -131,7 +136,7 @@
     dropdown_open.addEventListener('click', toggle_dropdown)
     document.addEventListener('click', close_dropdown)
 
-    const IL_toggle_fullgame = document.getElementById('IL-toggle-fullgame')
+    const IL_toggle_fullgame = document.getElementById('IL-toggle-IL')
     IL_toggle_fullgame.style.border = 'solid 0.25em #9CC9F5';
     IL_toggle_fullgame.style.borderRadius = '0.25em';
     IL_toggle_fullgame.style.backgroundColor = '#9CC9F5';

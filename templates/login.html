@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>login</h1>
+{% if failed %}
+<p class="login-fail-message"> YOU FAILED! </p>
+{% endif %}
+<form method="post" action="/check_valid_login">
+    <input id="username" name="username">
+    <input id="password" name="password" type="password">
+    <input type="submit">
+</form>
+{% endblock %}
