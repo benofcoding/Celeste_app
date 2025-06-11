@@ -9,8 +9,8 @@
     </div>
     <div class="right-navbar navbar-section">
         {% if logged_in %}
-        <a class="navbar-item" href="/leaderboard_fullgame/30831e37/0">
-            {{ logged_in }}
+        <a class="navbar-item" href="/player_account_fullgame/{{ logged_in[1] }}">
+            {{ logged_in[0] }}
         </a>
         <form method="POST" action="/">
             <button class="navbar-item" type="submit">

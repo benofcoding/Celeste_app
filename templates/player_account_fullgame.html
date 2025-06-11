@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="player-account">
+    {% for i in runs %}
+    <div class="player-account-category-group">
+        <div class="player-account-category-header">
+            {{ categories[i] }}
+        </div>
+        {% for j in runs[i] %}
+        <div class="player-account-run">
+            <div class="player-account-run-time-place">
+                <p>{{ j[5] }}</p>
+                <p>{{ j[1] }}</p>
+            </div>
+            <div class="player-account-run-date-platform">
+                <p>{{ j[2] }}</p>
+                <p>{{ j[3] }}</p>
+            </div>
+            <div class="player-account-run-video-thumbnail">
+                HEHHEHE
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+
+
+
+{% endblock %}

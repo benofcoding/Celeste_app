@@ -7,6 +7,30 @@ import hashlib
 app = Flask(__name__)
 app.secret_key = 'a055b9695803b8412f81833adde61422ed86b4d928ebbd5846b99f8b4f687c78'
 
+def get_run_rank(run_id, obsolete=False):
+
+    category_id = run_query_select(f"SELECT Fullgame_category.fullgame_category_id FROM Run JOIN Fullgame_category ON Run.fullgame_category_id = Fullgame_category.fullgame_category_id WHERE Run.run_id = '{run_id}'")
+    if obsolete:
+        allruns = run_query_select(f"SELECT Run.run_id FROM Run WHERE Run.fullgame_category_id = '{category_id[0][0]}' AND obsolete = 0 ORDER BY Run.time")
+    else:
+        allruns = run_query_select(f"SELECT Run.run_id FROM Run WHERE Run.fullgame_category_id = '{category_id[0][0]}' ORDER BY Run.time")
+    for index, runinallruns in enumerate(allruns):
+        if runinallruns[0] == run_id:
+            if (str(index)[-2:] == '10') or (str(index)[-2:] == '11') or (str(index)[-2:] == '12'):
+                return f'{index+1}th'
+            elif str(index)[-1] == '0':
+                return f'{index+1}st'
+
+            elif str(index)[-1] == '1':
+                return f'{index+1}nd'
+
+            elif str(index)[-1] == '2':
+                return f'{index+1}rd'
+            else:
+                return f'{index+1}th'
+    
+    return False
+
 
 def run_query_select(query):
 
@@ -74,6 +98,8 @@ def check_logged_in():
 
 @app.route('/', methods = ['GET', 'POST'])
 def home():
+    if 'login_failed' in session:
+        del session['login_failed']
     if request.method == 'POST':
         del session['username']
     return render_template('home.html', logged_in=check_logged_in())
@@ -177,10 +203,8 @@ def individual_level_leaderboard(individual_level_id, page):
 
 @app.route('/login')
 def login():
-    if session['login_failed']:
-        failed=session['login_failed']  
-        session['login_failed'] = False
-        return render_template('login.html', failed=failed)
+    if 'login_failed' in session:
+        return render_template('login.html', failed=True)
     else:
         return render_template('login.html', failed=False)
 
@@ -198,7 +222,7 @@ def check_valid_login():
             return redirect(url_for('login'))
         user_hash = user_hash[0][0]
         if user_hash == given_hash:
-            session['username'] = username
+            session['username'] = [username, run_query_select(f"SELECT Player.player_id FROM Player WHERE Player.name = '{username}'")[0][0]]
             return redirect(url_for('home'))
         else:
             session['login_failed'] = True
@@ -219,6 +243,8 @@ def check_valid_login():
 def view_fullgame_run(run_id):
     query = f"SELECT Run.run_id, Run.time, Run.date_submitted, Run.fullgame_category_id, Run.video_link, Run.player_id, Player.name, Fullgame_category.name, Verifier.player_id, Platform.name FROM Run JOIN Verifier ON Run.verifier_id = Verifier.verifier_id JOIN Player ON Run.player_id = Player.player_id JOIN Platform ON Run.platform_id = Platform.platform_id JOIN Fullgame_category on Run.fullgame_category_id = Fullgame_category.fullgame_category_id WHERE Run.run_id = '{run_id}'"
     run1 = run_query_select(query)
+    verifier_id = run_query_select(f"SELECT Run.verifier_id FROM Run WHERE Run.run_id = '{run_id}'")
+    verifier = run_query_select(f"SELECT Player.name FROM Verifier JOIN Player ON Verifier.player_id = Player.player_id WHERE Verifier.verifier_id = '{verifier_id[0][0]}'")
     run_temp = run1[0]
 
     run = []
@@ -236,28 +262,42 @@ def view_fullgame_run(run_id):
         embed_url = video_url  
 
     run[4] = embed_url
-    allruns = run_query_select(f"SELECT Run.run_id FROM Run WHERE Run.fullgame_category_id = '{run[3]}' ORDER BY Run.time")
-    for index, runinallruns in enumerate(allruns):
-        if runinallruns[0] == run[0]:
-            if (str(index)[-2:] == '10') or (str(index)[-2:] == '11') or (str(index)[-2:] == '12'):
-                run.append(f'{index+1}th')
-                break
-            elif str(index)[-1] == '0':
-                run.append(f'{index+1}st')
-                break
-            elif str(index)[-1] == '1':
-                run.append(f'{index+1}nd')
-                break
-            elif str(index)[-1] == '2':
-                run.append(f'{index+1}rd')
-                break
-            else:
-                run.append(f'{index+1}th')
-                break
-
-
+    run.append(get_run_rank(run_id, True))
+    run.append(verifier[0][0])
     return render_template('view_fullgame_run.html', run=run)
 
+
+
+@app.route('/player_account_fullgame/<player_id>')
+def player_account(player_id):
+    temp_categories = run_query_select(f"SELECT fullgame_category_id, name FROM Fullgame_category")
+    runs = {}
+    for i in temp_categories:
+        temp_runs = run_query_select(f"SELECT Run.run_id, Run.time, Run.date_submitted, Platform.name, Run.video_link FROM Run JOIN Platform ON Run.platform_id = Platform.platform_id WHERE Run.fullgame_category_id = '{i[0]}' AND Run.player_id = '{player_id}' AND Run.verifier_id IS NOT NULL ORDER BY Run.time ASC")
+        if temp_runs:
+            temp_runs_three = []
+            for j in temp_runs:
+                temp_runs_two = list(j)
+                temp_runs_two[1] = converttime(temp_runs_two[1])
+                temp_runs_two[2] = seconds_since_1980_to_date(temp_runs_two[2])
+                temp_runs_three.append(temp_runs_two)
+            runs[i[0]] = temp_runs_three
+    categories = {}
+    for i in temp_categories:
+        categories[i[0]] = i[1]
+
+    for i in runs:
+        for j in runs[i]:
+            j.append(get_run_rank(j[0]))
+            video_url = j[4]
+            if "youtu.be" in video_url:
+                video_id = video_url.split("/")[-1]
+                embed_url = f"https://www.youtube.com/embed/{video_id}"
+            else:
+                embed_url = video_url
+            j[4] = embed_url
+
+    return render_template('player_account_fullgame.html', runs=runs, categories=categories)
 
 
 

@@ -1,13 +1,13 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="fullgame-run-container">
+<div class="individual-run-container">
   <div class="individual-run-path">
-    <a href="/leaderboard_fullgame/30831e37/0">Leaderboard</a>
-    <p>/</p>
-    <a href="/leaderboard_fullgame/{{ run[3] }}/0">{{ run[7] }}</a>
+    <a class="individual-run-path-item" href="/leaderboard_fullgame/30831e37/0">Leaderboard</a>
+    <p class="individual-run-path-item">/</p>
+    <a class="individual-run-path-item" href="/leaderboard_fullgame/{{ run[3] }}/0">{{ run[7] }}</a>
   </div>
-  <div class="run-title">
+  <div class="individual-run-title">
     <p>{{ run[7] }} in {{ run[1] }}</p>
   </div>
   <iframe 
@@ -22,30 +22,41 @@
     <div class="individual-run-information-column">
       <div class="individual-run-information">
         <p class="individual-run-information-title">Category</p>
+        <hr>
         <p class="individual-run-information-info"> {{ run[7] }}</p>
       </div>
       <div class="individual-run-information">
         <p class="individual-run-information-title">Platform</p>
+        <hr>
         <p class="individual-run-information-info">{{ run[9] }}</p>
       </div>
     </div>
     <div class="individual-run-information-column">
       <div class="individual-run-information">
         <p class="individual-run-information-title">Player</p>
+        <hr>
         <p class="individual-run-information-info">{{ run[6] }}</p>
+      </div>
+      <div class="individual-run-information">
+        <p class="individual-run-information-title">Verified</p>
+        <hr>
+        <p class="individual-run-information-info">{{ run[11] }}</p>
       </div>
     </div>
     <div class="individual-run-information-column">
       <div class="individual-run-information">
         <p class="individual-run-information-title">Place</p>
+        <hr>
         <p class="individual-run-information-info"> {{ run[10] }}</p>
       </div>
       <div class="individual-run-information">
         <p class="individual-run-information-title">Time</p>
+        <hr>
         <p class="individual-run-information-info">{{ run[1] }}</p>
       </div>
       <div class="individual-run-information">
         <p class="individual-run-information-title">Date submitted</p>
+        <hr>
         <p class="individual-run-information-info">{{ run[2] }}</p>
       </div>
     </div>
