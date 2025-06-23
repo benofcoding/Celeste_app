@@ -6,6 +6,11 @@
         <a class="navbar-item" href="/leaderboard_fullgame/30831e37/0">
             Leaderboard
         </a>
+        {% if verifier %}
+        <a class="navbar-item" href="/verify_runs">
+            Verify Runs
+        </a>
+        {% endif %}
     </div>
     <div class="right-navbar navbar-section">
         {% if logged_in %}

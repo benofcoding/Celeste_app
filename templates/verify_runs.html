@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+<div class="verify-runs-container">
+    {% for i in runs %}
+        <div class="verify-runs-run">
+            <div>{{i[2]}}</div>
+            {% if i[-1] %}
+                <a href="/view_individual_level_run/{{ i[1] }}">{{i[3]}}</a>
+                <div>{{ i[6] }} | {{ i[7] }}</div>
+            {% else %}
+                <a href="/view_fullgame_run/{{ i[1] }}">{{i[3]}}</a>
+                <div>{{ i[5] }}</div>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

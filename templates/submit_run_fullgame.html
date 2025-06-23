@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="submit-run-container">
+    <form class="submit-run-form" action="/process_run" method="POST">
+        <label>link</label>
+        <input type="text" name="submit_run_link" required>
+
+        <label>category</label>
+        <select name="submit_run_category_dropwdown" required>
+            <option value="">--Select--</option>
+            {% for i in categories %}
+            <option value="{{ i }}">{{ categories[i] }}</option>
+            {% endfor %}
+        </select>
+        <label>time</label>
+        <input type="text" name="time" required>
+
+        <label>Platform</label>
+
+        <select name="platforms" required>
+            <option value="">--Select--</option>
+            {% for i in platforms %}
+            <option value="{{ i }}">{{ platforms[i] }}</option>
+            {% endfor %}
+        </select>
+
+
+        <button type="submit">submit</button>
+    </form>
+</div>
+
+{% endblock %}

@@ -37,11 +37,13 @@
         <hr>
         <p class="individual-run-information-info">{{ run[6] }}</p>
       </div>
+      {% if run[11] %}
       <div class="individual-run-information">
         <p class="individual-run-information-title">Verified</p>
         <hr>
         <p class="individual-run-information-info">{{ run[11] }}</p>
       </div>
+      {% endif %}
     </div>
     <div class="individual-run-information-column">
       <div class="individual-run-information">
@@ -61,6 +63,21 @@
       </div>
     </div>
   </div>
+  {% if verifier %}
+  <div class="verify-buttons">
+    <form action="/verify_run" method="POST">
+      <input type="hidden" name="verify_run" value="{{ run[0] }}">
+      <input type="hidden" name="verify_deny" value="verify">
+      <button type="submit">Verify</button>
+    </form>
+    <form action="/verify_run" method="POST">
+      <input type="hidden" name="verify_run" value="{{ run[0] }}">
+      <input type="hidden" name="verify_deny" value="deny">
+      <button type="submit">Deny</button>
+    </form>
+  </div>
+  {% endif %}
+
 </div>
 
 {% endblock %}

@@ -295,7 +295,7 @@ p {
 
 /* Individual Run Fullgame */
 
-.individual-run-container {
+.individual-run-container, .submit-run-container{
     justify-self: center;
     border: 0.15vw solid #9CC9F5;
     border-radius: 1vw;
@@ -344,4 +344,44 @@ p {
     background-color: #333;
     width: 90%;
     margin: 0.5vh;
+}
+
+/* Individual Run Fullgame end */
+
+
+
+/* Submit Run Fullgame start */
+
+.submit-run-form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Submit Run Fullgame end */
+
+
+
+
+
+
+/* Verify Runs start */
+
+.verify-runs-container{
+    justify-self: center;
+    width: 35vw;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5vw;
+    align-items: start;
+}
+
+.verify-runs-run {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 2fr 2fr;
+    margin-bottom: 0.25vw;
+    margin-top: 0.25vw;
+    border: solid black 0.25vw;
+    border-radius: 0.5vw;
+    padding: 0.25em;
 }
