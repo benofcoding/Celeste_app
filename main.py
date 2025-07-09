@@ -17,13 +17,21 @@ def generate_id():
         id += random.choices('0123456789abcdef', k=1)[0]
     return id
 
-def get_run_rank(run_id, obsolete=False):
+def get_run_rank(run_id, fullgame, obsolete=False):
 
-    category_id = run_query_select(f"SELECT Fullgame_category.fullgame_category_id FROM Run JOIN Fullgame_category ON Run.fullgame_category_id = Fullgame_category.fullgame_category_id WHERE Run.run_id = '{run_id}'")
-    if obsolete:
-        allruns = run_query_select(f"SELECT Run.run_id FROM Run WHERE Run.fullgame_category_id = '{category_id[0][0]}' AND obsolete = 0 ORDER BY Run.time")
+    if fullgame:
+        category_id = run_query_select(f"SELECT Run.fullgame_category_id FROM Run WHERE Run.run_id = '{run_id}'")
+        if obsolete:
+            allruns = run_query_select(f"SELECT Run.run_id FROM Run WHERE Run.fullgame_category_id = '{category_id[0][0]}' AND obsolete = 0 ORDER BY Run.time")
+        elif obsolete == False:
+            allruns = run_query_select(f"SELECT Run.run_id FROM Run WHERE Run.fullgame_category_id = '{category_id[0][0]}' ORDER BY Run.time")
     else:
-        allruns = run_query_select(f"SELECT Run.run_id FROM Run WHERE Run.fullgame_category_id = '{category_id[0][0]}' ORDER BY Run.time")
+        category_id = run_query_select(f"SELECT Run.il_id FROM Run WHERE Run.run_id = '{run_id}'")
+        if obsolete:
+            allruns = run_query_select(f"SELECT Run.run_id FROM Run WHERE Run.il_id = '{category_id[0][0]}' AND obsolete = 0 ORDER BY Run.time")
+        elif obsolete == False:
+            allruns = run_query_select(f"SELECT Run.run_id FROM Run WHERE Run.il_id = '{category_id[0][0]}' ORDER BY Run.time")
+
     for index, runinallruns in enumerate(allruns):
         if runinallruns[0] == run_id:
             if (str(index)[-2:] == '10') or (str(index)[-2:] == '11') or (str(index)[-2:] == '12'):
@@ -273,6 +281,7 @@ def individual_level_leaderboard(individual_level_id, page):
 @app.route('/login')
 def login():
     if 'login_failed' in session:
+        del session['login_failed']
         return render_template('login.html', failed=True)
     else:
         return render_template('login.html', failed=False)
@@ -298,59 +307,78 @@ def check_valid_login():
         
 @app.route('/view_fullgame_run/<run_id>')
 def view_fullgame_run(run_id):
-    if run_query_select(f"SELECT * FROM Run WHERE Run.verifier_id IS NOT NULL AND Run.run_id = '{run_id}'"):
-        query = f"SELECT Run.run_id, Run.time, Run.date_submitted, Run.fullgame_category_id, Run.video_link, Run.player_id, Player.name, Fullgame_category.name, Verifier.player_id, Platform.name FROM Run JOIN Verifier ON Run.verifier_id = Verifier.verifier_id JOIN Player ON Run.player_id = Player.player_id JOIN Platform ON Run.platform_id = Platform.platform_id JOIN Fullgame_category on Run.fullgame_category_id = Fullgame_category.fullgame_category_id WHERE Run.run_id = '{run_id}'"
-        run1 = run_query_select(query)
-        verifier_id = run_query_select(f"SELECT Run.verifier_id FROM Run WHERE Run.run_id = '{run_id}'")
-        verifier = run_query_select(f"SELECT Player.name FROM Verifier JOIN Player ON Verifier.player_id = Player.player_id WHERE Verifier.verifier_id = '{verifier_id[0][0]}'")
-        run_temp = run1[0]
+    run1 = run_query_select(f"SELECT Run.run_id, Run.time, Run.date_submitted, Run.fullgame_category_id, Run.video_link, Run.player_id, Player.name, Fullgame_category.name, Platform.name FROM Run JOIN Player ON Run.player_id = Player.player_id JOIN Platform ON Run.platform_id = Platform.platform_id JOIN Fullgame_category on Run.fullgame_category_id = Fullgame_category.fullgame_category_id WHERE Run.run_id = '{run_id}'")
+    run_temp = run1[0]
 
-        run = []
-        for i in run_temp:
-            run.append(i)
+    run = []
+    for i in run_temp:
+        run.append(i)
 
-        run[1] = converttime(run[1])
-        video_url = run[4]
-        run[2] = seconds_since_1980_to_date(run[2])
-        print(run)
-        if "youtu.be" in video_url:
-            video_id = video_url.split("/")[-1]
-            embed_url = f"https://www.youtube.com/embed/{video_id}"
-        else:
-            embed_url = video_url  
-
-        run[4] = embed_url
-        run.append(get_run_rank(run_id, True))
-        run.append(verifier[0][0])
-        return render_template('view_fullgame_run.html', run=run, logged_in=check_logged_in(), verifier=check_verifier())
+    run[1] = converttime(run[1])
+    video_url = run[4]
+    run[2] = seconds_since_1980_to_date(run[2])
+    print(run)
+    if "youtu.be" in video_url:
+        video_id = video_url.split("/")[-1]
+        embed_url = f"https://www.youtube.com/embed/{video_id}"
+    elif 'watch' in video_url:
+        video_id = video_url.split("=")[-1]
+        embed_url = f"https://www.youtube.com/embed/{video_id}"
     else:
-        query = f"SELECT Run.run_id, Run.time, Run.date_submitted, Run.fullgame_category_id, Run.video_link, Run.player_id, Player.name, Fullgame_category.name, Platform.name FROM Run JOIN Player ON Run.player_id = Player.player_id JOIN Platform ON Run.platform_id = Platform.platform_id JOIN Fullgame_category on Run.fullgame_category_id = Fullgame_category.fullgame_category_id WHERE Run.run_id = '{run_id}'"
-        run1 = run_query_select(query)
+        embed_url = video_url  
+
+    run[4] = embed_url
+
+    run.append(get_run_rank(run_id, True, True))
+
+    if run_query_select(f"SELECT * FROM Run WHERE Run.verifier_id IS NOT NULL AND Run.run_id = '{run_id}'"):
         verifier_id = run_query_select(f"SELECT Run.verifier_id FROM Run WHERE Run.run_id = '{run_id}'")
-        verifier = run_query_select(f"SELECT Player.name FROM Verifier JOIN Player ON Verifier.player_id = Player.player_id WHERE Verifier.verifier_id = '{verifier_id[0][0]}'")
-        run_temp = run1[0]
-
-        run = []
-        for i in run_temp:
-            run.append(i)
-
-        run[1] = converttime(run[1])
-        video_url = run[4]
-        run[2] = seconds_since_1980_to_date(run[2])
-        print(run)
-        if "youtu.be" in video_url:
-            video_id = video_url.split("/")[-1]
-            embed_url = f"https://www.youtube.com/embed/{video_id}"
-        else:
-            embed_url = video_url  
-
-        run[4] = embed_url
-        run.append(get_run_rank(run_id, True))
+        verifier = run_query_select(f"SELECT Player.name FROM Verifier JOIN Player ON Verifier.player_id = Player.player_id WHERE Verifier.verifier_id = '{verifier_id[0][0]}'")   
+        run.append(verifier[0][0])
+    else:
         run.append(False)
-        return render_template('view_fullgame_run.html', run=run, logged_in=check_logged_in(), verifier=check_verifier())
+    return render_template('view_fullgame_run.html', run=run, logged_in=check_logged_in(), verifier=check_verifier())
+
+@app.route('/view_individual_level_run/<run_id>')
+def view_individual_level_run(run_id):
+    run1 = run_query_select(f"SELECT Run.run_id, Run.time, Run.date_submitted, Run.il_id, Run.video_link, Run.player_id, Player.name, Platform.name FROM Run JOIN Player ON Run.player_id = Player.player_id JOIN Platform ON Run.platform_id = Platform.platform_id WHERE Run.run_id = '{run_id}'")
+    run_temp = run1[0]
+
+    run = []
+    for i in run_temp:
+        run.append(i)
+
+    level_category = run_query_select(f"SELECT Individual_level.il_id, IL_category.name, IL_category.il_category_id, Level.name, Level.level_id FROM Individual_level JOIN IL_category ON Individual_level.il_category_id = IL_category.il_category_id JOIN Level ON Individual_level.level_id = Level.level_id WHERE Individual_level.il_id = '{run[3]}'")
+
+    run[3] = level_category[0]
+
+    run[1] = converttime(run[1])
+    video_url = run[4]
+    run[2] = seconds_since_1980_to_date(run[2])
+    print(run)
+    if "youtu.be" in video_url:
+        video_id = video_url.split("/")[-1]
+        embed_url = f"https://www.youtube.com/embed/{video_id}"
+    elif 'watch' in video_url:
+        video_id = video_url.split("=")[-1]
+        embed_url = f"https://www.youtube.com/embed/{video_id}"
+    else:
+        embed_url = video_url  
+
+    run[4] = embed_url
+
+    run.append(get_run_rank(run_id, False, True))
+
+    if run_query_select(f"SELECT * FROM Run WHERE Run.verifier_id IS NOT NULL AND Run.run_id = '{run_id}'"):
+        verifier_id = run_query_select(f"SELECT Run.verifier_id FROM Run WHERE Run.run_id = '{run_id}'")
+        verifier = run_query_select(f"SELECT Player.name FROM Verifier JOIN Player ON Verifier.player_id = Player.player_id WHERE Verifier.verifier_id = '{verifier_id[0][0]}'")   
+        run.append(verifier[0][0])
+    else:
+        run.append(False)
+    return render_template('view_individual_level_run.html', run=run, logged_in=check_logged_in(), verifier=check_verifier())
 
 @app.route('/player_account_fullgame/<player_id>')
-def player_account(player_id):
+def player_account_fullgame(player_id):
     temp_categories = run_query_select(f"SELECT fullgame_category_id, name FROM Fullgame_category")
     runs = {}
     for i in temp_categories:
@@ -369,7 +397,7 @@ def player_account(player_id):
 
     for i in runs:
         for j in runs[i]:
-            j.append(get_run_rank(j[0]))
+            j.append(get_run_rank(j[0], True, False))
             video_url = j[4]
             if "youtu.be" in video_url:
                 video_id = video_url.split("/")[-1]
@@ -468,8 +496,9 @@ def verify_run():
         if pb:
             if run_time <= pb[0][1]:
                 obsolete = 0
+                run_query_update(f"UPDATE Run SET obsolete = 1 WHERE run_id = '{pb[0][0]}'")
 
-    run_query_update(f"UPDATE Run SET verifier_id = '{session['username'][1]}', obsolete = '{obsolete}' WHERE run_id = '{run_id}'")
+    run_query_update(f"UPDATE Run SET verifier_id = '{run_query_select(f"SELECT Verifier.verifier_id FROM Verifier WHERE Verifier.player_id = '{session['username'][1]}'")[0][0]}', obsolete = '{obsolete}' WHERE run_id = '{run_id}'")
 
     return redirect(url_for('home'))
 

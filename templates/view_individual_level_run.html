@@ -3,12 +3,12 @@
 
 <div class="individual-run-container">
   <div class="individual-run-path">
-    <a class="individual-run-path-item" href="/leaderboard_fullgame/30831e37/0">Leaderboard</a>
+    <a class="individual-run-path-item" href="/leaderboard_individual_level/8099f2fc/0">Leaderboard</a>
     <p class="individual-run-path-item">/</p>
-    <a class="individual-run-path-item" href="/leaderboard_fullgame/{{ run[3] }}/0">{{ run[7] }}</a>
+    <a class="individual-run-path-item" href="/leaderboard_individual_level/{{ run[3][0] }}/0">{{ run[3][3] }} / {{ run[3][1] }}</a>
   </div>
   <div class="individual-run-title">
-    <p>{{ run[7] }} in {{ run[1] }}</p>
+    <p>{{ run[3][3] }} {{ run[3][1] }} in {{ run[1] }}</p>
   </div>
   <iframe 
     width="800" 
@@ -21,14 +21,19 @@
   <div class="individual-run-information-container">
     <div class="individual-run-information-column">
       <div class="individual-run-information">
+        <p class="individual-run-information-title">Level</p>
+        <hr>
+        <p class="individual-run-information-info"> {{ run[3][3] }}</p>
+      </div>
+      <div class="individual-run-information">
         <p class="individual-run-information-title">Category</p>
         <hr>
-        <p class="individual-run-information-info"> {{ run[7] }}</p>
+        <p class="individual-run-information-info"> {{ run[3][1] }}</p>
       </div>
       <div class="individual-run-information">
         <p class="individual-run-information-title">Platform</p>
         <hr>
-        <p class="individual-run-information-info">{{ run[8] }}</p>
+        <p class="individual-run-information-info">{{ run[7] }}</p>
       </div>
     </div>
     <div class="individual-run-information-column">
@@ -37,20 +42,20 @@
         <hr>
         <p class="individual-run-information-info">{{ run[6] }}</p>
       </div>
-      {% if run[10] %}
+      {% if run[9] %}
       <div class="individual-run-information">
         <p class="individual-run-information-title">Verified</p>
         <hr>
-        <p class="individual-run-information-info">{{ run[10] }}</p>
+        <p class="individual-run-information-info">{{ run[9] }}</p>
       </div>
       {% endif %}
     </div>
     <div class="individual-run-information-column">
-      {% if run[9] %}
+      {% if run[8] %}
       <div class="individual-run-information">
         <p class="individual-run-information-title">Place</p>
         <hr>
-        <p class="individual-run-information-info"> {{ run[9] }}</p>
+        <p class="individual-run-information-info"> {{ run[8] }}</p>
       </div>
       {% endif %}
       <div class="individual-run-information">
