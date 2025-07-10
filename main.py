@@ -178,6 +178,10 @@ def run_query_update(query):
 
 @app.route('/', methods = ['GET', 'POST'])
 def home():
+    if 'signup_password_falied' in session:
+        del session['signup_passord_falied']
+    if 'signup_username_failed' in session:
+        del session['signup_username_falied']
     if 'login_failed' in session:
         del session['login_failed']
     if request.method == 'POST':
@@ -285,7 +289,7 @@ def login():
         return render_template('login.html', failed=True)
     else:
         return render_template('login.html', failed=False)
-
+    
 @app.route('/check_valid_login', methods = ['GET', 'POST'])
 def check_valid_login():
     if request.method == 'POST':
@@ -304,7 +308,38 @@ def check_valid_login():
         else:
             session['login_failed'] = True
             return redirect(url_for('login'))
+
+@app.route('/signup')
+def signup():
+    if 'signup_password_failed' in session:
+        del session['signup_password_failed']
+        return render_template('signup.html', password_failed=True, username_failed=False)
+    elif 'signup_username_failed' in session:
+        del session['signup_username_failed']
+        return render_template('signup.html', password_failed=False, username_failed=True)
+    else:
+        return render_template('signup.html', password_failed=False, username_failed=False)
+
+@app.route('/check_valid_signup', methods = ['GET', 'POST'])
+def check_valid_signup():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        password_confirm = request.form['password_confirm']
+        if not password == password_confirm:
+            session['signup_password_failed'] = True
+            return redirect(url_for('signup'))
         
+        hash = password.encode()
+        hash = hashlib.sha256(hash).hexdigest()
+
+        if len(run_query_select(f"SELECT Player.name FROM Player WHERE name = '{username}'")) != 0:
+            session['signup_username_failed'] = True
+            return redirect(url_for('signup'))
+
+        run_query_insert(f"INSERT INTO Player (player_id, name, pfp, hash) VALUES (?, ?, ?, ?)", (generate_id(), username, None, hash))
+        return redirect(url_for('home'))
+
 @app.route('/view_fullgame_run/<run_id>')
 def view_fullgame_run(run_id):
     run1 = run_query_select(f"SELECT Run.run_id, Run.time, Run.date_submitted, Run.fullgame_category_id, Run.video_link, Run.player_id, Player.name, Fullgame_category.name, Platform.name FROM Run JOIN Player ON Run.player_id = Player.player_id JOIN Platform ON Run.platform_id = Platform.platform_id JOIN Fullgame_category on Run.fullgame_category_id = Fullgame_category.fullgame_category_id WHERE Run.run_id = '{run_id}'")

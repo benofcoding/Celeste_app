@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>login</h1>
+{% if username_failed %}
+<p class="signup-fail-message"> that username is currently being used </p>
+{% endif %}
+{% if password_failed %}
+<p class="signup-fail-message"> the passwords provided do not match </p>
+{% endif %}
+<form method="post" action="/check_valid_signup">
+    <input id="username" name="username">
+    <input id="password" name="password" type="password">
+    <input id="password_confirm" name="password_confirm" type="password">
+    <input type="submit">
+</form>
+{% endblock %}
