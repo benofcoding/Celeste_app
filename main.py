@@ -409,7 +409,7 @@ def player_account_fullgame(player_id):
     return render_template('player_account_fullgame.html', runs=runs, categories=categories, logged_in=check_logged_in(), verifier=check_verifier())
 
 @app.route('/submit_run_fullgame')
-def submit_run():
+def submit_run_fullgame():
     temp_categories = run_query_select(f"SELECT fullgame_category_id, name FROM Fullgame_category")
     categories = {}
     for i in temp_categories:
@@ -424,10 +424,31 @@ def submit_run():
         return render_template('submit_run_fullgame.html',categories=categories, platforms=platforms, logged_in=check_logged_in(), verifier=check_verifier())
     else:
         return render_template('login.html')
+    
+@app.route('/submit_run_individual_level')
+def submit_run_individual_level():
+    temp_categories = run_query_select(f"SELECT il_category_id, name FROM IL_category")
+    categories = {}
+    for i in temp_categories:
+        categories[i[0]] = i[1]
 
-@app.route('/process_run', methods=['GET', 'POST'])
-def process_run():
+    temp_platforms = run_query_select(f"SELECT platform_id, name FROM Platform")
+    platforms = {}
+    for i in temp_platforms:
+        platforms[i[0]] = i[1]
 
+    temp_levels = run_query_select(f"SELECT level_id, name FROM Level")
+    levels = {}
+    for i in temp_levels:
+        levels[i[0]] = i[1]
+
+    if check_logged_in():
+        return render_template('submit_run_individual_level.html',categories=categories, platforms=platforms, levels=levels, logged_in=check_logged_in(), verifier=check_verifier())
+    else:
+        return render_template('login.html')
+
+@app.route('/process_run_fullgame', methods=['GET', 'POST'])
+def process_run_fullgame():
     link = request.form['submit_run_link']
     category = request.form['submit_run_category_dropwdown']
     time = request.form['time']
@@ -441,6 +462,28 @@ def process_run():
 
 
     run_query_insert("INSERT INTO Run (run_id, fullgame_category_id, il_id, verifier_id, time, date_submitted, player_id, platform_id, video_link, obsolete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (generate_id(), category, None, None, time, date_submitted, session['username'][1], platform, link, None))
+    return redirect(url_for('home'))
+
+@app.route('/process_run_individual_level', methods=['GET', 'POST'])
+def process_run_individual_level():
+    link = request.form['submit_run_link']
+    category = request.form['submit_run_category_dropwdown']
+    time = request.form['time']
+    platform = request.form['platforms']
+    level = request.form['submit_run_level_dropwdown']
+
+    il_id = run_query_select(f"SELECT il_id from Individual_level WHERE level_id = '{level}' AND il_category_id = '{category}'")
+    if len(il_id) == 0:
+        return redirect(url_for('submit_run_individual_level'))
+
+    time = convert_time_to_seconds(time)
+
+    today = datetime.date.today()
+    date_submitted = int((today - start_date).total_seconds())
+
+
+
+    run_query_insert("INSERT INTO Run (run_id, fullgame_category_id, il_id, verifier_id, time, date_submitted, player_id, platform_id, video_link, obsolete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (generate_id(), None, il_id[0][0], None, time, date_submitted, session['username'][1], platform, link, None))
     return redirect(url_for('home'))
 
 @app.route('/verify_runs')
