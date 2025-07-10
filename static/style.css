@@ -154,6 +154,8 @@ p {
 }
 
 .IL-toggle-container {
+    background-color: white;
+    width: fit-content;
     border: solid 0.15em black;
     border-radius: 0.5em;
     padding: 0.25em;
@@ -161,6 +163,7 @@ p {
 }
 
 .IL-toggle {
+    width: fit-content;
     display: flex;
     background-color: white;
     align-items: center;

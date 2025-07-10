@@ -2,6 +2,16 @@
 {% block content %}
 
 <div class="player-account">
+    <div class="IL-toggle-container">
+        <div class="IL-toggle">
+            <div id="IL-toggle-fullgame" class="IL-toggle-fullgame">
+                Fullgame
+            </div>
+            <div id="IL-toggle-IL" class="IL-toggle-IL">
+                <a href="/player_account_individual_level/{{ player_id }}">Individual Level</a>
+            </div>
+        </div>
+    </div>
     {% for i in runs %}
     <div class="player-account-category-group">
         <div class="player-account-category-header">
@@ -25,6 +35,12 @@
     </div>
     {% endfor %}
 </div>
+<script>
+    const IL_toggle_fullgame = document.getElementById('IL-toggle-fullgame')
+    IL_toggle_fullgame.style.border = 'solid 0.25em #9CC9F5';
+    IL_toggle_fullgame.style.borderRadius = '0.25em';
+    IL_toggle_fullgame.style.backgroundColor = '#9CC9F5';
+</script>
 
 
 

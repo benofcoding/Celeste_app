@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="player-account">
+    <div class="IL-toggle-container">
+        <div class="IL-toggle">
+            <div id="IL-toggle-fullgame" class="IL-toggle-fullgame">
+                <a href="/player_account_fullgame/{{ player_id }}">Fullgame</a>
+            </div>
+            <div id="IL-toggle-IL" class="IL-toggle-IL">
+                Individual Level
+            </div>
+        </div>
+    </div>
+    {% for level in runs %}
+    <div class="player-account-level-group">
+        <div class="player-account-category-header">
+            {{ levels[level] }}
+        </div>
+        {% for i in runs[level] %}
+        <div class="player-account-category-group">
+            <div class="player-account-category-header">
+                {{ categories[i] }}
+            </div>
+            {% for j in runs[level][i] %}
+            <div class="player-account-run">
+                <div class="player-account-run-time-place">
+                    <p>{{ j[5] }}</p>
+                    <a href="/view_fullgame_run/{{ j[0] }}">{{ j[1] }}</a>
+                </div>
+                <div class="player-account-run-date-platform">
+                    <p>{{ j[2] }}</p>
+                    <p>{{ j[3] }}</p>
+                </div>
+                <div class="player-account-run-video-thumbnail">
+                    HEHHEHE
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+</div>
+<script>
+    const IL_toggle_fullgame = document.getElementById('IL-toggle-IL')
+    IL_toggle_fullgame.style.border = 'solid 0.25em #9CC9F5';
+    IL_toggle_fullgame.style.borderRadius = '0.25em';
+    IL_toggle_fullgame.style.backgroundColor = '#9CC9F5';
+</script>
+
+
+{% endblock %}

@@ -406,7 +406,62 @@ def player_account_fullgame(player_id):
                 embed_url = video_url
             j[4] = embed_url
 
-    return render_template('player_account_fullgame.html', runs=runs, categories=categories, logged_in=check_logged_in(), verifier=check_verifier())
+    return render_template('player_account_fullgame.html',player_id=player_id, runs=runs, categories=categories, logged_in=check_logged_in(), verifier=check_verifier())
+
+@app.route('/player_account_individual_level/<player_id>')
+def player_account_individual_level(player_id):
+    temp_categories = run_query_select(f"SELECT IL_category_id, name FROM IL_category")
+    temp_levels = run_query_select(f"SELECT level_id, name FROM Level")
+    runs = {}
+    for i in temp_levels:
+        runs[i[0]] = {}
+
+    for i in temp_categories:
+        for c in temp_levels:
+            il_id = run_query_select(f"SELECT il_id FROM Individual_level WHERE level_id = '{c[0]}' AND IL_category_id = '{i[0]}'")
+            if not il_id:
+                continue
+            temp_runs = run_query_select(f"SELECT Run.run_id, Run.time, Run.date_submitted, Platform.name, Run.video_link FROM Run JOIN Platform ON Run.platform_id = Platform.platform_id WHERE Run.il_id = '{il_id[0][0]}' AND Run.player_id = '{player_id}' AND Run.verifier_id IS NOT NULL ORDER BY Run.time ASC")
+            if temp_runs:
+                temp_runs_three = []
+                for j in temp_runs:
+                    temp_runs_two = list(j)
+                    temp_runs_two[1] = converttime(temp_runs_two[1])
+                    temp_runs_two[2] = seconds_since_1980_to_date(temp_runs_two[2])
+                    temp_runs_three.append(temp_runs_two)
+                runs[c[0]][i[0]] = temp_runs_three
+    
+
+    categories = {}
+    for i in temp_categories:
+        categories[i[0]] = i[1]
+
+    levels = {}
+    for i in temp_levels:
+        levels[i[0]] = i[1]
+
+    to_be_deleted = []
+
+    for i in runs:
+        if len(runs[i]) == 0:
+            to_be_deleted.append(i)
+        for j in runs[i]:
+            for c in runs[i][j]:
+                c.append(get_run_rank(c[0], False, False))
+                video_url = c[4]
+                if "youtu.be" in video_url:
+                    video_id = video_url.split("/")[-1]
+                    embed_url = f"https://www.youtube.com/embed/{video_id}"
+                else:
+                    embed_url = video_url
+                c[4] = embed_url
+
+    for i in to_be_deleted:
+        del runs[i]
+
+
+
+    return render_template('player_account_individual_level.html',player_id=player_id, runs=runs, categories=categories, levels=levels, logged_in=check_logged_in(), verifier=check_verifier())
 
 @app.route('/submit_run_fullgame')
 def submit_run_fullgame():
