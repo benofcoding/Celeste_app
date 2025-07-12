@@ -18,6 +18,9 @@
                     </div>
                 </div>
             </div>
+            <div class="submit-run-button-container">
+                <a class="submit-run-button" href="/submit_run_individual_level">submit run</a>
+            </div>
             <div class="leaderboard-dropdown">
                 <div id="dropdown-open" class="leaderboard-dropdown-open leaderboard-dropdown-buttons">
                     <div>
@@ -48,10 +51,10 @@
                 <div>Platform</div>
             </div>
             {% for i in runs %}
-            <hr>
+            <hr class="leaderboard-row-gap">
             <div class="leaderboard-run leaderboard-columns-runs">
                 <div>{{ loop.index + page*100 }}</div>
-                <div>{{ i[1] }}</div>
+                <div><a class="run-link" href="/player_account_individual_level/{{ i[2] }}">{{ i[1] }}</a></div>
                 <div><a class="run-link" href="/view_individual_level_run/{{ i[0] }}">{{ i[3] }}</a></div>
                 <div>{{ i[7] }}</div>
                 <div>{{ i[6] }}</div>
@@ -89,7 +92,7 @@
     <div class="leaderboard-recent-runs-container leaderboard-item">
         <h1 class="leaderboard-item-header">Recent Runs</h1>
         <div class="leaderboard-recent-runs">
-            <div class="leaderboard-recent-runs-columns leaderboard-recent-runs-columns-runs">
+            <div class="column-names leaderboard-recent-runs-columns leaderboard-recent-runs-columns-runs">
                 <div>Player</div>
                 <div>Time</div>
             </div>

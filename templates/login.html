@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 {% block content %}
 <h1>login</h1>
+{% if submit_run %}
+<p class="login-fail-message"> You must be logged in to submit a run </p>
+{% endif %}
 {% if failed %}
 <p class="login-fail-message"> YOU FAILED! </p>
 {% endif %}

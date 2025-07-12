@@ -284,11 +284,14 @@ def individual_level_leaderboard(individual_level_id, page):
 
 @app.route('/login')
 def login():
-    if 'login_failed' in session:
+    if 'submit_run' in session:
+        del session['submit_run']
+        return render_template('login.html', failed=False, submit_run=True)
+    elif 'login_failed' in session:
         del session['login_failed']
-        return render_template('login.html', failed=True)
+        return render_template('login.html', failed=True, submit_run=False)
     else:
-        return render_template('login.html', failed=False)
+        return render_template('login.html', failed=False, submit_run=False)
     
 @app.route('/check_valid_login', methods = ['GET', 'POST'])
 def check_valid_login():
@@ -513,7 +516,8 @@ def submit_run_fullgame():
     if check_logged_in():
         return render_template('submit_run_fullgame.html',categories=categories, platforms=platforms, logged_in=check_logged_in(), verifier=check_verifier())
     else:
-        return render_template('login.html')
+        session['submit_run'] = True
+        return redirect(url_for('login'))
     
 @app.route('/submit_run_individual_level')
 def submit_run_individual_level():

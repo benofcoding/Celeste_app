@@ -18,6 +18,9 @@
                     </div>
                 </div>
             </div>
+            <div class="submit-run-button-container">
+                <a class="submit-run-button" href="/submit_run_fullgame">submit run</a>
+            </div>
             <div class="leaderboard-dropdown">
                 <div id="dropdown-open" class="leaderboard-dropdown-open leaderboard-dropdown-buttons">
                     <div>
@@ -43,7 +46,7 @@
                 <div>Platform</div>
             </div>
             {% for i in runs %}
-            <hr>
+            <hr class="leaderboard-row-gap">
             <div class="leaderboard-run leaderboard-columns-runs">
                 <div>{{ loop.index + page*100 }}</div>
                 <div><a href="/player_account_fullgame/{{ i[2] }}">{{ i[1] }}</a></div>
@@ -84,7 +87,7 @@
     <div class="leaderboard-recent-runs-container leaderboard-item">
         <h1 class="leaderboard-item-header">Recent Runs</h1>
         <div class="leaderboard-recent-runs">
-            <div class="leaderboard-recent-runs-columns leaderboard-recent-runs-columns-runs">
+            <div class="column-names leaderboard-recent-runs-columns leaderboard-recent-runs-columns-runs">
                 <div>Player</div>
                 <div>Time</div>
             </div>
