@@ -11,6 +11,11 @@
     <hr class="signup-login-line">
 
     <form class="signup-login-form" method="post" action="/check_valid_login">
+        {% if submit_run %}
+        <input type="hidden" name="submit_run" value="True">
+        {% else %}
+        <input type="hidden" name="submit_run" value="False">
+        {% endif %}
         <div class="signup-login-input-header-container">
             <label class="signup-login-header">Username:</label>
             <input class="signup-login-input" id="username" name="username">

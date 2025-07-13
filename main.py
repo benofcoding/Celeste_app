@@ -298,6 +298,7 @@ def check_valid_login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        submit_run = request.form['submit_run']
         given_hash = password.encode()
         given_hash = hashlib.sha256(given_hash).hexdigest()
         user_hash = run_query_select(f"SELECT Player.hash FROM Player WHERE Player.name = '{username}'")
@@ -305,12 +306,15 @@ def check_valid_login():
             session['login_failed'] = True
             return redirect(url_for('login'))
         user_hash = user_hash[0][0]
-        if user_hash == given_hash:
+        if user_hash != given_hash:
+            session['login_failed'] = True
+            return redirect(url_for('login'))
+        elif submit_run == 'False':
             session['username'] = [username, run_query_select(f"SELECT Player.player_id FROM Player WHERE Player.name = '{username}'")[0][0]]
             return redirect(url_for('home'))
         else:
-            session['login_failed'] = True
-            return redirect(url_for('login'))
+            session['username'] = [username, run_query_select(f"SELECT Player.player_id FROM Player WHERE Player.name = '{username}'")[0][0]]
+            return redirect(url_for('submit_run_fullgame'))
 
 @app.route('/signup')
 def signup():
