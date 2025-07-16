@@ -643,6 +643,10 @@ def verify_run():
         if pb:
             if run_time <= pb[0][1]:
                 obsolete = 0
+                run_query_update(f"UPDATE Run SET obsolete = 1 WHERE run_id = '{pb[0][0]}'")
+
+        else:
+            obsolete = 0
     else:
         category_id = run_query_select(f"SELECT Run.fullgame_category_id FROM Run WHERE Run.run_id = '{run_id}'")[0][0]
         player_id = run_query_select(f"SELECT Run.player_id FROM Run WHERE Run.run_id = '{run_id}'")[0][0]
@@ -653,10 +657,12 @@ def verify_run():
             if run_time <= pb[0][1]:
                 obsolete = 0
                 run_query_update(f"UPDATE Run SET obsolete = 1 WHERE run_id = '{pb[0][0]}'")
+        else:
+            obsolete = 0
 
     run_query_update(f"UPDATE Run SET verifier_id = '{run_query_select(f"SELECT Verifier.verifier_id FROM Verifier WHERE Verifier.player_id = '{session['username'][1]}'")[0][0]}', obsolete = '{obsolete}' WHERE run_id = '{run_id}'")
 
-    return redirect(url_for('home'))
+    return redirect(url_for('verify_runs'))
 
 
 
