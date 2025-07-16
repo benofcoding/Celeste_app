@@ -549,10 +549,18 @@ def submit_run_individual_level():
 def process_run_fullgame():
     link = request.form['submit_run_link']
     category = request.form['submit_run_category_dropwdown']
-    time = request.form['time']
+    time_hours = request.form['time-hours'] or '0'
+    time_seconds = request.form['time-seconds'] or '0'
+    time_minutes = request.form['time-minutes'] or '0'
+    time_milliseconds = request.form['time-milliseconds'] or '0'
     platform = request.form['platforms']
 
+
+    time = time_hours + ':' + time_minutes + ':' + time_seconds + '.' + time_milliseconds
     time = convert_time_to_seconds(time)
+
+
+
 
     today = datetime.date.today()
     date_submitted = int((today - start_date).total_seconds())
@@ -566,15 +574,22 @@ def process_run_fullgame():
 def process_run_individual_level():
     link = request.form['submit_run_link']
     category = request.form['submit_run_category_dropwdown']
-    time = request.form['time']
-    platform = request.form['platforms']
     level = request.form['submit_run_level_dropwdown']
+    time_hours = request.form['time-hours'] or '0'
+    time_seconds = request.form['time-seconds'] or '0'
+    time_minutes = request.form['time-minutes'] or '0'
+    time_milliseconds = request.form['time-milliseconds'] or '0'
+    platform = request.form['platforms']
+
+
+    time = time_hours + ':' + time_minutes + ':' + time_seconds + '.' + time_milliseconds
+    time = convert_time_to_seconds(time)
+
 
     il_id = run_query_select(f"SELECT il_id from Individual_level WHERE level_id = '{level}' AND il_category_id = '{category}'")
     if len(il_id) == 0:
         return redirect(url_for('submit_run_individual_level'))
 
-    time = convert_time_to_seconds(time)
 
     today = datetime.date.today()
     date_submitted = int((today - start_date).total_seconds())

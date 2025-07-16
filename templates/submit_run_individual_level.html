@@ -2,39 +2,66 @@
 {% block content %}
 
 <div class="submit-run-container">
+    <h1 class="submit-run-title">Submit Run</h1>
     <form class="submit-run-form" action="/process_run_individual_level" method="POST">
-        <label>link</label>
-        <input type="text" name="submit_run_link" required>
+        <div class="submit-run-input-header-container">
+            <label>Link:</label>
+            <input class="submit-run-input" type="text" name="submit_run_link" required>
+        </div>
 
-        <label>Level</label>
-        <select name="submit_run_level_dropwdown" required>
-            <option value="">--Select--</option>
-            {% for i in levels %}
-            <option value="{{ i }}">{{ levels[i] }}</option>
-            {% endfor %}
-        </select>
+        <div class="submit-run-input-header-container">
+            <label>Level:</label>
+            <select class="submit-run-dropdown" name="submit_run_level_dropwdown" required>
+                <option class="submit-run-dropdown-option" value="">--Select--</option>
+                {% for i in levels %}
+                <option class="submit-run-dropdown-option" value="{{ i }}">{{ levels[i] }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
-        <label>category</label>
-        <select name="submit_run_category_dropwdown" required>
-            <option value="">--Select--</option>
-            {% for i in categories %}
-            <option value="{{ i }}">{{ categories[i] }}</option>
-            {% endfor %}
-        </select>
-        <label>time</label>
-        <input type="text" name="time" required>
+        <div class="submit-run-input-header-container">
+            <label>Category:</label>
+            <select class="submit-run-dropdown" name="submit_run_category_dropwdown" required>
+                <option class="submit-run-dropdown-option" value="">--Select--</option>
+                {% for i in categories %}
+                <option class="submit-run-dropdown-option" value="{{ i }}">{{ categories[i] }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
-        <label>Platform</label>
+        <div class="submit-run-input-header-container">
+            <label>Time:</label>
+            <div class="submit-run-time-input">
+                <div class="submit-run-time-input-unit-group">
+                    <input class="submit-run-input" type="text" name="time-hours" oninput="this.value = this.value.replace(/[^0-9]/g, '')"  placeholder="00" maxlength="2">
+                    <p class="submit-run-time-unit">h</p>
+                </div>
+                <div class="submit-run-time-input-unit-group">
+                    <input class="submit-run-input" type="text" name="time-minutes" oninput="this.value = this.value.replace(/[^0-9]/g, '')"  placeholder="00" maxlength="2">
+                    <p class="submit-run-time-unit">m</p>
+                </div>
+                <div class="submit-run-time-input-unit-group">
+                    <input class="submit-run-input" type="text" name="time-seconds" oninput="this.value = this.value.replace(/[^0-9]/g, '')"  placeholder="00" maxlength="2">
+                    <p class="submit-run-time-unit">s</p>
+                </div>
+                <div class="submit-run-time-input-unit-group">
+                    <input class="submit-run-input-long submit-run-input" type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '')" name="time-milliseconds"  placeholder="000" maxlength="3">
+                    <p class="submit-run-time-unit">ms</p>
+                </div>
+            </div>
+        </div>
 
-        <select name="platforms" required>
-            <option value="">--Select--</option>
-            {% for i in platforms %}
-            <option value="{{ i }}">{{ platforms[i] }}</option>
-            {% endfor %}
-        </select>
+        <div class="submit-run-input-header-container">
+            <label>Platform:</label>
+            <select class="submit-run-dropdown" name="platforms" required>
+                <option class="submit-run-dropdown-option" value="">--Select--</option>
+                {% for i in platforms %}
+                <option class="submit-run-dropdown-option" value="{{ i }}">{{ platforms[i] }}</option>
+                {% endfor %}
+            </select>
+        </div>
 
-
-        <button type="submit">submit</button>
+        <button class="submit-run-submit-button" type="submit">Submit</button>
     </form>
 </div>
 

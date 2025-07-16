@@ -36,6 +36,10 @@ hr {
     border: none;
 }
 
+button {
+    font-size: 1em;
+}
+
 /* general tags end */
 
 
@@ -78,6 +82,7 @@ hr {
 /* Navbar */
 
 .navbar{
+    box-shadow: 0em 1em 0.75em rgba(0, 0, 0, 0.2);
     width: 100vw;
     display: flex;
     justify-content: space-between;
@@ -332,7 +337,7 @@ hr {
 
 .player-account-category-group {
     overflow-y: auto;
-    max-height: 40vh;
+    max-height: 35vh;
     height: fit-content;
     background-color: white;
     border: solid #9CC9F5 0.25vw;
@@ -405,7 +410,7 @@ hr {
 
 /* Individual Run Fullgame */
 
-.individual-run-container, .submit-run-container{
+.individual-run-container{
     justify-self: center;
     border: 0.15vw solid #9CC9F5;
     border-radius: 1vw;
@@ -462,9 +467,99 @@ hr {
 
 /* Submit Run Fullgame start */
 
+.submit-run-container {
+    justify-self: center;
+    border: 0.15vw solid #9CC9F5;
+    border-radius: 1vw;
+    padding: 2vw;
+    background-color: white;
+}
+
 .submit-run-form {
     display: flex;
     flex-direction: column;
+}
+
+.submit-run-input {
+    max-width: 100%;
+    box-sizing: border-box;
+    font-size: 1.25em;
+    padding: 0.5em;
+    background-color: #dbcbf1;
+    border: solid 0.1em black;
+    border-radius: 0.2em;
+    height: 100%;
+}
+
+.submit-run-title {
+    justify-self: center;
+    margin-bottom: 0.75em;
+}
+
+.submit-run-dropdown {
+    min-width: 20vw;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 1.25em;
+    padding: 0.5em;
+    border: solid 0.1em black;
+    border-radius: 0.2em;
+    height: 100%;
+    background-color: #88bdf3;
+}
+
+.submit-run-submit-button {
+    margin-top: 1vw;
+    font-size: 1.5em;
+    justify-self: center;
+    border: solid #71a7dd 0.1em;
+    width: 35%;
+    border-radius: 0.25em;
+    background-color: #9CC9F5;
+    height: fit-content;
+    white-space: nowrap;
+    padding: 0.5em;
+}
+
+.submit-run-form {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 1vw;
+}
+
+.submit-run-form label{
+    height: fit-content;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+.submit-run-input-header-container {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.submit-run-time-input {
+    display: flex;
+    gap: 1vw;
+}
+
+.submit-run-time-input-unit-group .submit-run-input{
+    width: 3vw;
+}
+
+.submit-run-time-input-unit-group .submit-run-input-long{
+    width: 3.5vw;
+}
+
+.submit-run-time-input-unit-group {
+    display: flex;
+}
+
+.submit-run-time-unit {
+    font-size: 1.5em;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 /* Submit Run Fullgame end */
@@ -529,7 +624,7 @@ hr {
 .signup-login-form {
     display: grid;
     grid-template-columns: 1fr;
-    row-gap: 3vh;
+    row-gap: 2vw;
 }
 
 .signup-login-header {
@@ -578,7 +673,8 @@ hr {
   }
 
 .signup-login-password-show-button {
-    font-size: 0.8em;
+    padding: 0 0 0 0;
+    font-size: 0.8vw;
     justify-self: center;
     border: solid black 0.1em;
     border-radius: 2em;
@@ -593,3 +689,11 @@ hr {
 .signup-login-password-show-button:hover {
     background-color: #88bdf3;
 }
+
+
+
+
+
+
+
+
