@@ -665,7 +665,9 @@ def verify_run():
     return redirect(url_for('verify_runs'))
 
 
-
+@app.errorhandler(404)
+def fourOfour(i):
+    return render_template('404.html')
 
 
 
