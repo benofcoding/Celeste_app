@@ -2,8 +2,11 @@
 {% block content %}
 <div class="signup-login-container">
     <h1 class="signup-login-title">Signup</h1>
-    {% if username_failed %}
+    {% if username_taken %}
     <p class="signup-login-fail-message"> * that username is currently being used </p>
+    {% endif %}
+    {% if username_length_invalid %}
+    <p class="signup-login-fail-message"> * that username does not meet the length criteria </p>
     {% endif %}
     {% if password_failed %}
     <p class="signup-login-fail-message"> * the passwords provided do not match </p>
@@ -12,7 +15,7 @@
 
     <form class="signup-login-form" method="post" action="/check_valid_signup">
         <div class="signup-login-input-header-container">
-            <label class="signup-login-header">Username:</label>
+            <label class="signup-login-header">Username (3-20):</label>
             <input class="signup-login-input" id="username" name="username">
         </div>
         <div class="signup-login-input-header-container">
@@ -29,7 +32,7 @@
                 <button class="signup-login-password-show-button" id="show-hide-button-confirm" type="button" onclick="toggle_password_confirm()">Show</button>
             </div>
         </div>
-        <input class="signup-login-button" id="login-button" type="submit" value="log in">
+        <input class="signup-login-button" id="login-button" type="submit" value="sign up">
     </form>
     <a class="signup-login-signup-button" href="/login">login</a>
 </div>

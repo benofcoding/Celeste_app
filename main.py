@@ -180,8 +180,10 @@ def run_query_update(query):
 def home():
     if 'signup_password_falied' in session:
         del session['signup_passord_falied']
-    if 'signup_username_failed' in session:
-        del session['signup_username_falied']
+    if 'signup_username_taken' in session:
+        del session['signup_username_taken']
+    if 'signup_username_length_invalid' in session:
+        del session['signup_username_length_invalid']
     if 'login_failed' in session:
         del session['login_failed']
     if request.method == 'POST':
@@ -354,17 +356,29 @@ def check_valid_login():
 def signup():
     if 'signup_password_failed' in session:
         del session['signup_password_failed']
-        return render_template('signup.html', password_failed=True, username_failed=False)
-    elif 'signup_username_failed' in session:
-        del session['signup_username_failed']
-        return render_template('signup.html', password_failed=False, username_failed=True)
+        return render_template('signup.html', password_failed=True, username_taken=False, username_length_invalid=False)
+    elif 'signup_username_taken' in session:
+        del session['signup_username_taken']
+        return render_template('signup.html', password_failed=False, username_taken=True, username_length_invalid=False)
+    elif 'signup_username_length_invalid' in session:
+        del session['signup_username_length_invalid']
+        return render_template('signup.html', password_failed=False, username_taken=False, username_length_invalid=True)
     else:
-        return render_template('signup.html', password_failed=False, username_failed=False)
+        return render_template('signup.html', password_failed=False, username_taken=False, username_length_invalid=False)
 
 @app.route('/check_valid_signup', methods = ['GET', 'POST'])
 def check_valid_signup():
     if request.method == 'POST':
         username = request.form['username']
+
+        if (len(username) < 3) or (len(username) > 20):
+            session['signup_username_length_invalid'] = True
+            return redirect(url_for('signup'))
+        
+        if len(run_query_select(f"SELECT Player.name FROM Player WHERE name = '{username}'")) != 0:
+            session['signup_username_taken'] = True
+            return redirect(url_for('signup'))
+        
         password = request.form['password']
         password_confirm = request.form['password_confirm']
         if not password == password_confirm:
@@ -374,9 +388,7 @@ def check_valid_signup():
         hash = password.encode()
         hash = hashlib.sha256(hash).hexdigest()
 
-        if len(run_query_select(f"SELECT Player.name FROM Player WHERE name = '{username}'")) != 0:
-            session['signup_username_failed'] = True
-            return redirect(url_for('signup'))
+
 
         run_query_insert(f"INSERT INTO Player (player_id, name, pfp, hash) VALUES (?, ?, ?, ?)", (generate_id(), username, None, hash))
         return redirect(url_for('home'))
