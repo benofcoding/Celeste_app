@@ -75,7 +75,7 @@
                 <
             </a>
             {% endif %}
-            {% if page != maxpage %}
+            {% if page != max_page %}
             <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/{{ page+1 }}">
                 >
             </a>
@@ -84,7 +84,7 @@
                 >
             </a>
             {% endif %}
-            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/{{ maxpage }}">
+            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/{{ max_page }}">
                 >>
             </a>
         </div>

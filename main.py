@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, session, redirect, url_for
+from flask import Flask, render_template, request, session, redirect, url_for, abort
 import datetime
 import sqlite3
 import math
@@ -188,8 +188,23 @@ def home():
         del session['username']
     return render_template('home.html', logged_in=check_logged_in(), verifier=check_verifier())
 
-@app.route('/leaderboard_fullgame/<category_id>/<int:page>')
+@app.route('/leaderboard_fullgame/<category_id>/<page>')
 def leaderboard_fullgame(category_id, page):
+
+    valid_category = False
+    category_ids = run_query_select("SELECT Fullgame_category.fullgame_category_id FROM Fullgame_category")
+    for i in category_ids:
+        if i[0] == category_id:
+            valid_category = True
+    
+    if not valid_category:
+        abort(404)
+
+    if not page.isdigit():
+        return redirect(url_for('leaderboard_fullgame', category_id=category_id, page=0))
+
+    page = int(page)
+
     query = f"""SELECT Run.run_id, Player.name, Player.player_id, Run.time,
     Run.video_link, Run.date_submitted, Platform.name FROM Run 
     JOIN Player ON Run.player_id = Player.player_id 
@@ -200,11 +215,13 @@ def leaderboard_fullgame(category_id, page):
     runs = run_query_select(query)
     
     length = len(runs)
-    maxpage = math.floor(length/100)
-    print(length)
+    max_page = math.floor(length/100)
+
+    if max_page < page:
+        return redirect(url_for('leaderboard_fullgame', category_id=category_id, page=max_page))
 
     real_runs = []
-    if page != maxpage:
+    if page != max_page:
         for i in range(100):
             real_runs.append(runs[page*100 + i])
     else:
@@ -235,12 +252,27 @@ def leaderboard_fullgame(category_id, page):
     return render_template('leaderboard_fullgame.html', 
                            runs=real_runs, categories=categories, 
                            category_id=category_id,
-                           page=page, maxpage=maxpage,
+                           page=page, max_page=max_page,
                            recent_runs=recent_runs, logged_in=check_logged_in()
                            ,verifier=check_verifier())
 
-@app.route('/leaderboard_individual_level/<individual_level_id>/<int:page>')
+@app.route('/leaderboard_individual_level/<individual_level_id>/<page>')
 def individual_level_leaderboard(individual_level_id, page):
+
+    valid_individual_level_id = False
+    individual_level_ids = run_query_select("SELECT Individual_level.il_id FROM Individual_level")
+    for i in individual_level_ids:
+        if i[0] == individual_level_id:
+            valid_individual_level_id = True
+    
+    if not valid_individual_level_id:
+        abort(404)
+
+    if not page.isdigit():
+        return redirect(url_for('individual_level_leaderboard', individual_level_id=individual_level_id, page=0))
+
+    page = int(page)
+
     query = f"""SELECT Run.run_id, Player.name, Player.player_id, Run.time,
     Run.video_link, Run.date_submitted, Platform.name FROM Run 
     JOIN Player ON Run.player_id = Player.player_id 
@@ -251,11 +283,13 @@ def individual_level_leaderboard(individual_level_id, page):
     runs = run_query_select(query)
     
     length = len(runs)
-    maxpage = math.floor(length/100)
-    print(length)
+    max_page = math.floor(length/100)
+
+    if max_page < page:
+        return redirect(url_for('individual_level_leaderboard', individual_level_id=individual_level_id, page=max_page))
 
     real_runs = []
-    if page != maxpage:
+    if page != max_page:
         for i in range(100):
             real_runs.append(runs[page*100 + i])
     else:
@@ -280,7 +314,7 @@ def individual_level_leaderboard(individual_level_id, page):
     for i in categories_temp:
         categories[i[0]] = [i[1], run_query_select(f"SELECT Individual_level.il_id from Individual_level WHERE level_id = '{level[1]}' AND il_category_id = '{i[0]}'")[0][0]]
 
-    return render_template('leaderboard_individual_level.html', runs = real_runs, categories=categories, levels=levels, level=level, category=category, maxpage=maxpage, page=page, individual_level_id=individual_level_id, logged_in=check_logged_in(),verifier=check_verifier())
+    return render_template('leaderboard_individual_level.html', runs = real_runs, categories=categories, levels=levels, level=level, category=category, max_page=max_page, page=page, individual_level_id=individual_level_id, logged_in=check_logged_in(),verifier=check_verifier())
 
 @app.route('/login')
 def login():
@@ -666,7 +700,7 @@ def verify_run():
 
 
 @app.errorhandler(404)
-def fourOfour(i):
+def page_not_found(i):
     return render_template('404.html')
 
 
