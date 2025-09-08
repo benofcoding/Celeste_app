@@ -8,6 +8,12 @@
     {% if username_length_invalid %}
     <p class="signup-login-fail-message"> * that username does not meet the length criteria </p>
     {% endif %}
+    {% if username_spaces_invalid %}
+    <p class="signup-login-fail-message"> * usernames can't have spaces </p>
+    {% endif %}
+    {% if username_special_characters_invalid %}
+    <p class="signup-login-fail-message"> * usernames can't have any special characters </p>
+    {% endif %}
     {% if password_failed %}
     <p class="signup-login-fail-message"> * the passwords provided do not match </p>
     {% endif %}
@@ -16,7 +22,7 @@
     <form class="signup-login-form" method="post" action="/check_valid_signup">
         <div class="signup-login-input-header-container">
             <label class="signup-login-header">Username (3-20):</label>
-            <input class="signup-login-input" id="username" name="username">
+            <input class="signup-login-input" id="username" name="username" maxlength="20">
         </div>
         <div class="signup-login-input-header-container">
             <label class="signup-login-header ">Password:</label>
