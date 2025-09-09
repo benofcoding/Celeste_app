@@ -382,7 +382,7 @@ def check_valid_signup():
     'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
     'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z',
     '0','1','2','3','4','5','6','7','8','9','_'
-]
+    ]
 
     username = request.form['username']
 
@@ -420,7 +420,16 @@ def check_valid_signup():
 
 @app.route('/view_fullgame_run/<run_id>')
 def view_fullgame_run(run_id):
+    if len((run_checker := run_query_select(f"SELECT Run.fullgame_category_id FROM Run WHERE Run.run_id = '{run_id}'"))) == 0:
+        abort(404)
+    elif run_checker[0][0] == None:
+        abort(404)
+
+    
+    
     run1 = run_query_select(f"SELECT Run.run_id, Run.time, Run.date_submitted, Run.fullgame_category_id, Run.video_link, Run.player_id, Player.name, Fullgame_category.name, Platform.name FROM Run JOIN Player ON Run.player_id = Player.player_id JOIN Platform ON Run.platform_id = Platform.platform_id JOIN Fullgame_category on Run.fullgame_category_id = Fullgame_category.fullgame_category_id WHERE Run.run_id = '{run_id}'")
+    
+    
     run_temp = run1[0]
 
     run = []
@@ -454,6 +463,12 @@ def view_fullgame_run(run_id):
 
 @app.route('/view_individual_level_run/<run_id>')
 def view_individual_level_run(run_id):
+    if len((run_checker := run_query_select(f"SELECT Run.il_id FROM Run WHERE Run.run_id = '{run_id}'"))) == 0:
+        abort(404)
+    elif run_checker[0][0] == None:
+        abort(404)
+
+
     run1 = run_query_select(f"SELECT Run.run_id, Run.time, Run.date_submitted, Run.il_id, Run.video_link, Run.player_id, Player.name, Platform.name FROM Run JOIN Player ON Run.player_id = Player.player_id JOIN Platform ON Run.platform_id = Platform.platform_id WHERE Run.run_id = '{run_id}'")
     run_temp = run1[0]
 
@@ -492,6 +507,9 @@ def view_individual_level_run(run_id):
 
 @app.route('/player_account_fullgame/<player_id>')
 def player_account_fullgame(player_id):
+    if len(run_query_select(f"SELECT Player.player_id FROM Player WHERE Player.player_id = '{player_id}'")) == 0:
+        abort(404)
+
     temp_categories = run_query_select(f"SELECT fullgame_category_id, name FROM Fullgame_category")
     runs = {}
     for i in temp_categories:
@@ -523,6 +541,9 @@ def player_account_fullgame(player_id):
 
 @app.route('/player_account_individual_level/<player_id>')
 def player_account_individual_level(player_id):
+    if len(run_query_select(f"SELECT Player.player_id FROM Player WHERE Player.player_id = '{player_id}'")) == 0:
+        abort(404)
+    
     temp_categories = run_query_select(f"SELECT IL_category_id, name FROM IL_category")
     temp_levels = run_query_select(f"SELECT level_id, name FROM Level")
     runs = {}
