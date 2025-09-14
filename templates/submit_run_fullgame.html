@@ -3,16 +3,16 @@
 
 <div class="submit-run-container">
     <h1 class="submit-run-title">Submit Run</h1>
-    {% if link_invalid %}
+    {% if error_message_dict['submit_run_link_invalid'] %}
     <p class="signup-login-fail-message"> * that video link is invalid </p>
     {% endif %}
-    {% if category_invalid %}
+    {% if error_message_dict['submit_run_category_invalid'] %}
     <p class="signup-login-fail-message"> * that category is invalid </p>
     {% endif %}
-    {% if platform_invalid %}
+    {% if error_message_dict['submit_run_platform_invalid'] %}
     <p class="signup-login-fail-message"> * that platform is invalid </p>
     {% endif %}
-    {% if time_invalid %}
+    {% if error_message_dict['submit_run_time_invalid'] %}
     <p class="signup-login-fail-message"> * that time is invalid </p>
     {% endif %}
     <form class="submit-run-form" action="/process_run_fullgame" method="POST">

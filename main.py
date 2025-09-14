@@ -131,6 +131,34 @@ def convert_time_to_seconds(time):
         return round(int(hours)*3600 + int(minutes)*60 + float(seconds), 3)
     return False
 
+def check_valid_time_hours(hours):
+    if not hours.isdigit():
+        return False
+    if len(str(int(hours))) > 2:
+        return False
+    return True
+
+def check_valid_time_seconds(seconds):
+    if not seconds.isdigit():
+        return False
+    if int(seconds) > 59:
+        return False
+    return True
+
+def check_valid_time_minutes(minutes):
+    if not minutes.isdigit():
+        return False
+    if int(minutes) > 59:
+        return False
+    return True
+
+def check_valid_time_milliseconds(milliseconds):
+    if not milliseconds.isdigit():
+        return False
+    if len(str(int(milliseconds))) > 3:
+        return False
+    return True
+
 def seconds_since_1980_to_date(seconds):
     epoch_1980 = datetime.date(1980, 1, 1)
     date = epoch_1980 + datetime.timedelta(seconds=seconds)
@@ -609,25 +637,22 @@ def submit_run_fullgame():
     for i in temp_platforms:
         platforms[i[0]] = i[1]
 
+    error_message_dict = {'submit_run_link_invalid':False,
+                          'submit_run_category_invalid':False,
+                          'submit_run_platform_invalid':False,
+                          'submit_run_time_invalid':False}
+
     if not check_logged_in():
         session['submit_run'] = True
         return redirect(url_for('login'))
-    if 'submit_run_link_invalid' in session:
-        del session['submit_run_link_invalid']
-        return render_template('submit_run_fullgame.html',categories=categories, platforms=platforms, logged_in=check_logged_in(), verifier=check_verifier(), link_invalid=True, category_invalid=False, platform_invalid=False, time_invalid=False)
-    if 'submit_run_category_invalid' in session:
-        del session['submit_run_category_invalid']
-        return render_template('submit_run_fullgame.html',categories=categories, platforms=platforms, logged_in=check_logged_in(), verifier=check_verifier(), link_invalid=False, category_invalid=True, platform_invalid=False, time_invalid=False)
-    if 'submit_run_platform_invalid' in session:
-        del session['submit_run_platform_invalid']
-        return render_template('submit_run_fullgame.html',categories=categories, platforms=platforms, logged_in=check_logged_in(), verifier=check_verifier(), link_invalid=False, category_invalid=False, platform_invalid=True, time_invalid=False)
-    if 'submit_run_time_invalid' in session:
-        del session['submit_run_time_invalid']
-        return render_template('submit_run_fullgame.html',categories=categories, platforms=platforms, logged_in=check_logged_in(), verifier=check_verifier(), link_invalid=False, category_invalid=False, platform_invalid=False, time_invalid=True)
 
-    return render_template('submit_run_fullgame.html',categories=categories, platforms=platforms, logged_in=check_logged_in(), verifier=check_verifier(), link_invalid=False, category_invalid=False, platform_invalid=False, time_invalid=False)
+    for error_message in error_message_dict.keys():
+        if error_message in session:
+            del session[error_message]
+            error_message_dict[error_message] = True
 
-    
+    return render_template('submit_run_fullgame.html', categories=categories, platforms=platforms, logged_in=check_logged_in(), verifier=check_verifier(), error_message_dict=error_message_dict)
+
 @app.route('/submit_run_individual_level')
 def submit_run_individual_level():
     temp_categories = run_query_select(f"SELECT il_category_id, name FROM IL_category")
@@ -645,10 +670,24 @@ def submit_run_individual_level():
     for i in temp_levels:
         levels[i[0]] = i[1]
 
-    if check_logged_in():
-        return render_template('submit_run_individual_level.html',categories=categories, platforms=platforms, levels=levels, logged_in=check_logged_in(), verifier=check_verifier())
-    else:
-        return render_template('login.html')
+    error_message_dict = {'submit_run_link_invalid':False,
+                          'submit_run_category_invalid':False,
+                          'submit_run_platform_invalid':False,
+                          'submit_run_time_invalid':False,
+                          'submit_run_level_invalid':False,
+                          'submit_run_level_category_pair_invalid':False}
+
+    if not check_logged_in():
+        session['submit_run'] = True
+        return redirect(url_for('login'))
+
+    for error_message in error_message_dict.keys():
+        if error_message in session:
+            del session[error_message]
+            error_message_dict[error_message] = True
+
+    return render_template('submit_run_individual_level.html',levels=levels, categories=categories, platforms=platforms, logged_in=check_logged_in(), verifier=check_verifier(), error_message_dict=error_message_dict)
+
 
 @app.route('/process_run_fullgame', methods=['GET', 'POST'])
 def process_run_fullgame():
@@ -683,47 +722,30 @@ def process_run_fullgame():
         return redirect(url_for('submit_run_fullgame'))
 
     time_hours = request.form['time-hours'] or '0'
-    if not time_hours.isdigit():
-        session['submit_run_time_invalid'] = True
-        return redirect(url_for('submit_run_fullgame'))
-    if len(str(int(time_hours))) > 2:
+    if not check_valid_time_hours(time_hours):
         session['submit_run_time_invalid'] = True
         return redirect(url_for('submit_run_fullgame'))
 
     time_seconds = request.form['time-seconds'] or '0'
-    if not time_seconds.isdigit():
-        session['submit_run_time_invalid'] = True
-        return redirect(url_for('submit_run_fullgame'))
-    if int(time_seconds) > 59:
+    if not check_valid_time_seconds(time_seconds):
         session['submit_run_time_invalid'] = True
         return redirect(url_for('submit_run_fullgame'))
     
     time_minutes = request.form['time-minutes'] or '0'
-    if not time_minutes.isdigit():
+    if not check_valid_time_minutes(time_minutes):
         session['submit_run_time_invalid'] = True
         return redirect(url_for('submit_run_fullgame'))
-    if int(time_minutes) > 59:
-        session['submit_run_time_invalid'] = True
-        return redirect(url_for('submit_run_fullgame'))
-    
+
     time_milliseconds = request.form['time-milliseconds'] or '0'
-    if not time_milliseconds.isdigit():
-        session['submit_run_time_invalid'] = True
-        return redirect(url_for('submit_run_fullgame'))
-    if len(str(int(time_milliseconds))) > 3:
+    if not check_valid_time_milliseconds(time_milliseconds):
         session['submit_run_time_invalid'] = True
         return redirect(url_for('submit_run_fullgame'))
 
     time = time_hours + ':' + time_minutes + ':' + time_seconds + '.' + time_milliseconds
     time = convert_time_to_seconds(time)
 
-
-
-
     today = datetime.date.today()
     date_submitted = int((today - start_date).total_seconds())
-
-
 
     run_query_insert("INSERT INTO Run (run_id, fullgame_category_id, il_id, verifier_id, time, date_submitted, player_id, platform_id, video_link, obsolete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (generate_id(), category, None, None, time, date_submitted, session['username'][1], platform, link, None))
     return redirect(url_for('home'))
@@ -731,22 +753,77 @@ def process_run_fullgame():
 @app.route('/process_run_individual_level', methods=['GET', 'POST'])
 def process_run_individual_level():
     link = request.form['submit_run_link']
+    valid_link_formats = ['youtube.com/watch?v=', 'youtube.com/watch?v=', 'm.youtube.com/watch?v=', 'youtube.com/embed/', 'twitch.tv/videos/', 'twitch.tv/channelname/video/']
+    valid_link = False
+    for format in valid_link_formats:
+        if format in link:
+            valid_link = True
+    if not valid_link:
+        session['submit_run_link_invalid'] = True
+        return redirect(url_for('submit_run_individual_level'))
+
     category = request.form['submit_run_category_dropwdown']
+    valid_category = False
+    category_ids = run_query_select("SELECT IL_category.il_category_id FROM IL_category")
+    for i in category_ids:
+        if category == i[0]:
+            valid_category = True
+    if not valid_category:
+        session['submit_run_category_invalid'] = True
+        return redirect(url_for('submit_run_individual_level'))
+
     level = request.form['submit_run_level_dropwdown']
-    time_hours = request.form['time-hours'] or '0'
-    time_seconds = request.form['time-seconds'] or '0'
-    time_minutes = request.form['time-minutes'] or '0'
-    time_milliseconds = request.form['time-milliseconds'] or '0'
+    valid_level = False
+    level_ids = run_query_select("SELECT Level.level_id FROM Level")
+    for i in level_ids:
+        if level == i[0]:
+            valid_level = True
+    if not valid_level:
+        session['submit_run_level_invalid'] = True
+        return redirect(url_for('submit_run_individual_level'))
+
+    level_category_pair = run_query_select(f"SELECT il_id from Individual_level WHERE level_id = '{level}' AND il_category_id = '{category}'")
+    if len(level_category_pair) == 0:
+        session['submit_run_level_category_pair_invalid'] = True
+        return redirect(url_for('submit_run_individual_level'))
+    
     platform = request.form['platforms']
+    valid_platform = False
+    platform_ids = run_query_select("SELECT Platform.platform_id FROM Platform")
+    for i in platform_ids:
+        if platform == i[0]:
+            valid_platform = True
+    if not valid_platform:
+        session['submit_run_platform_invalid'] = True
+        return redirect(url_for('submit_run_individual_level'))
+
+    time_hours = request.form['time-hours'] or '0'
+    if not check_valid_time_hours(time_hours):
+        session['submit_run_time_invalid'] = True
+        return redirect(url_for('submit_run_fullgame'))
+
+    time_seconds = request.form['time-seconds'] or '0'
+    if not check_valid_time_seconds(time_seconds):
+        session['submit_run_time_invalid'] = True
+        return redirect(url_for('submit_run_fullgame'))
+    
+    time_minutes = request.form['time-minutes'] or '0'
+    if not check_valid_time_minutes(time_minutes):
+        session['submit_run_time_invalid'] = True
+        return redirect(url_for('submit_run_fullgame'))
+
+    time_milliseconds = request.form['time-milliseconds'] or '0'
+    if not check_valid_time_milliseconds(time_milliseconds):
+        session['submit_run_time_invalid'] = True
+        return redirect(url_for('submit_run_fullgame'))
+
 
 
     time = time_hours + ':' + time_minutes + ':' + time_seconds + '.' + time_milliseconds
     time = convert_time_to_seconds(time)
 
 
-    il_id = run_query_select(f"SELECT il_id from Individual_level WHERE level_id = '{level}' AND il_category_id = '{category}'")
-    if len(il_id) == 0:
-        return redirect(url_for('submit_run_individual_level'))
+
 
 
     today = datetime.date.today()
@@ -754,7 +831,7 @@ def process_run_individual_level():
 
 
 
-    run_query_insert("INSERT INTO Run (run_id, fullgame_category_id, il_id, verifier_id, time, date_submitted, player_id, platform_id, video_link, obsolete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (generate_id(), None, il_id[0][0], None, time, date_submitted, session['username'][1], platform, link, None))
+    run_query_insert("INSERT INTO Run (run_id, fullgame_category_id, il_id, verifier_id, time, date_submitted, player_id, platform_id, video_link, obsolete) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", (generate_id(), None, level_category_pair[0][0], None, time, date_submitted, session['username'][1], platform, link, None))
     return redirect(url_for('home'))
 
 @app.route('/verify_runs')
@@ -784,6 +861,7 @@ def verify_runs():
 
 
     return render_template('verify_runs.html', runs=runs, logged_in=check_logged_in(), verifier=check_verifier())
+
 
 @app.route('/verify_run',  methods=['GET', 'POST'])
 def verify_run():
@@ -818,7 +896,9 @@ def verify_run():
         else:
             obsolete = 0
 
-    run_query_update(f"UPDATE Run SET verifier_id = '{run_query_select(f"SELECT Verifier.verifier_id FROM Verifier WHERE Verifier.player_id = '{session['username'][1]}'")[0][0]}', obsolete = '{obsolete}' WHERE run_id = '{run_id}'")
+
+    verifier_id = run_query_select(f"SELECT Verifier.verifier_id FROM Verifier WHERE Verifier.player_id = '{session['username'][1]}'")[0][0]
+    run_query_update(f"UPDATE Run SET verifier_id = '{verifier_id}', obsolete = '{obsolete}' WHERE run_id = '{run_id}'")
 
     return redirect(url_for('verify_runs'))
 
