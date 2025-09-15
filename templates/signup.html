@@ -2,19 +2,19 @@
 {% block content %}
 <div class="signup-login-container">
     <h1 class="signup-login-title">Signup</h1>
-    {% if username_taken %}
+    {% if error_message_dict['signup_username_taken'] %}
     <p class="signup-login-fail-message"> * that username is currently being used </p>
     {% endif %}
-    {% if username_length_invalid %}
+    {% if error_message_dict['signup_username_length_invalid'] %}
     <p class="signup-login-fail-message"> * that username does not meet the length criteria </p>
     {% endif %}
-    {% if username_spaces_invalid %}
+    {% if error_message_dict['signup_username_spaces_invalid'] %}
     <p class="signup-login-fail-message"> * usernames can't have spaces </p>
     {% endif %}
-    {% if username_special_characters_invalid %}
+    {% if error_message_dict['signup_username_special_characters_invalid'] %}
     <p class="signup-login-fail-message"> * usernames can't have any special characters </p>
     {% endif %}
-    {% if password_failed %}
+    {% if error_message_dict['signup_password_failed'] %}
     <p class="signup-login-fail-message"> * the passwords provided do not match </p>
     {% endif %}
     <hr class="signup-login-line">
