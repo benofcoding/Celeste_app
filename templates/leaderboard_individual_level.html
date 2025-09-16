@@ -62,11 +62,11 @@
             {% for i in runs %}
             <hr class="leaderboard-row-gap">
             <div class="leaderboard-run leaderboard-columns-runs">
-                <div>{{ loop.index + page*100 }}</div>
-                <div><a class="run-link" href="/player_account_individual_level/{{ i[2] }}">{{ i[1] }}</a></div>
-                <div><a class="run-link" href="/view_individual_level_run/{{ i[0] }}">{{ i[3] }}</a></div>
-                <div>{{ i[7] }}</div>
-                <div>{{ i[6] }}</div>
+                <div class="leaderboard-run-column-container">{{ loop.index + page*100 }}</div>
+                <div class="leaderboard-run-column-container"><a class="run-link" href="/player_account_individual_level/{{ i[2] }}">{{ i[1] }}</a></div>
+                <div class="leaderboard-run-column-container"><a class="run-link" href="/view_individual_level_run/{{ i[0] }}">{{ i[3] }}</a></div>
+                <div class="leaderboard-run-column-container">{{ i[7] }}</div>
+                <div class="leaderboard-run-column-container">{{ i[6] }}</div>
             </div>
             {% endfor %}
         </div>
@@ -108,8 +108,8 @@
             {% for i in recent_runs %}
             <hr class="leaderboard-row-gap">
             <div class="recent_run leaderboard-recent-runs-columns-runs">
-                <div>{{ i[0] }}</div>
-                <div><a class="run-link" href="/view_individual_level_run/{{ i[2] }}">{{ i[3] }}</a></div>
+                <div class="leaderboard-run-column-container">{{ i[0] }}</div>
+                <div class="leaderboard-run-column-container"><a class="run-link" href="/view_individual_level_run/{{ i[2] }}">{{ i[3] }}</a></div>
             </div>
             {% endfor %}
         </div>
