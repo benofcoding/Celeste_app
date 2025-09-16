@@ -8,6 +8,9 @@
             Verify Runs
         </a>
         {% endif %}
+        <form class="nav-bar-search-form" action="/process_player_search" method="POST">
+            <input class="nav-bar-search" name="searchs" id="searchs" placeholder="search users">
+        </form>
     </div>
     <div class="right-navbar navbar-section">
         {% if logged_in %}

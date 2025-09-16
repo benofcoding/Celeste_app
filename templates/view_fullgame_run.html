@@ -73,12 +73,12 @@
     <form action="/verify_run" method="POST">
       <input type="hidden" name="verify_run" value="{{ run[0] }}">
       <input type="hidden" name="verify_deny" value="verify">
-      <button type="submit">Verify</button>
+      <button class="verify-button" type="submit">Verify</button>
     </form>
     <form action="/verify_run" method="POST">
       <input type="hidden" name="verify_run" value="{{ run[0] }}">
       <input type="hidden" name="verify_deny" value="deny">
-      <button type="submit">Deny</button>
+      <button class="verify-button" type="submit">Deny</button>
     </form>
   </div>
   {% endif %}

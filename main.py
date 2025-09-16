@@ -382,9 +382,14 @@ def leaderboard_fullgame(category_id, page):
         i[3] = converttime(i[3])
         recent_runs.append(i)
 
+    rules = run_query_select(f"""SELECT Fullgame_category.rules
+                             FROM Fullgame_category WHERE
+                             Fullgame_category.fullgame_category_id =
+                             '{category_id}'""")[0][0]
+
     return render_template('leaderboard_fullgame.html',
                            runs=real_runs, categories=categories,
-                           category_id=category_id,
+                           category_id=category_id, rules=rules,
                            page=page, max_page=max_page,
                            recent_runs=recent_runs,
                            logged_in=check_logged_in(),
@@ -484,10 +489,30 @@ def individual_level_leaderboard(individual_level_id, page):
                              AND il_category_id = '{i[0]}'""")[0][0]
             ]
 
+    temp_recent_runs = run_query_select(f"""SELECT Player.name, Run.player_id,
+                                        Run.run_id, Run.time FROM Run
+                                        JOIN Player ON Player.player_id = Run.player_id
+                                        WHERE Run.il_id = '{individual_level_id}'
+                                        AND Run.verifier_id IS NOT NULL
+                                        ORDER BY Run.date_submitted
+                                        DESC LIMIT 15""")
+    recent_runs = []
+    for i in temp_recent_runs:
+        i[3] = converttime(i[3])
+        recent_runs.append(i)
+
+    rules = run_query_select(f"""SELECT IL_category.rules
+                             FROM IL_category WHERE
+                             IL_category.il_category_id =
+                             '{category[1]}'""")[0][0]
+
+    rules = rules.replace('THELEVEL', f"'{level[0]}'")
+
     return render_template('leaderboard_individual_level.html', runs=real_runs,
                            categories=categories, levels=levels, level=level,
                            category=category, max_page=max_page, page=page,
                            individual_level_id=individual_level_id,
+                           recent_runs=recent_runs, rules=rules,
                            logged_in=check_logged_in(),
                            verifier=check_verifier())
 
@@ -613,9 +638,14 @@ def check_valid_signup():
     hash = password.encode()
     hash = hashlib.sha256(hash).hexdigest()
 
+    new_user_id = generate_id()
+
     run_query_insert("""INSERT INTO Player (player_id, name, pfp, hash)
                      VALUES (?, ?, ?, ?)""",
-                     (generate_id(), username, None, hash))
+                     (new_user_id, username, None, hash))
+
+    session['username'] = [username, new_user_id]
+
     return redirect(url_for('leaderboard_fullgame',
                             category_id='30831e37', page='0'))
 
@@ -755,7 +785,7 @@ def view_individual_level_run(run_id):
                            verifier=check_verifier())
 
 
-@app.route('/player_account_fullgame/<player_id>')
+@app.route('/player_account_fullgame/<player_id>', methods=['GET', 'POST'])
 def player_account_fullgame(player_id):
     """this route is the view player fullgame page, it shows all the
     fullgame runs a player has done given their player id"""
@@ -962,7 +992,7 @@ def submit_run_individual_level():
                            error_message_dict=error_message_dict)
 
 
-@app.route('/process_run_fullgame', methods=['GET', 'POST'])
+@app.route('/process_run_fullgame')
 def process_run_fullgame():
     """this route validates all the data that a user submited for a fullgame
     run before it gets added to the database, if the data doesn't meet the
@@ -1099,22 +1129,22 @@ def process_run_individual_level():
     time_hours = request.form['time-hours'] or '0'
     if not check_valid_time_hours(time_hours):
         session['submit_run_time_invalid'] = True
-        return redirect(url_for('submit_run_fullgame'))
+        return redirect(url_for('submit_run_individual_level'))
 
     time_seconds = request.form['time-seconds'] or '0'
     if not check_valid_time_seconds(time_seconds):
         session['submit_run_time_invalid'] = True
-        return redirect(url_for('submit_run_fullgame'))
+        return redirect(url_for('submit_run_individual_level'))
 
     time_minutes = request.form['time-minutes'] or '0'
     if not check_valid_time_minutes(time_minutes):
         session['submit_run_time_invalid'] = True
-        return redirect(url_for('submit_run_fullgame'))
+        return redirect(url_for('submit_run_individual_level'))
 
     time_milliseconds = request.form['time-milliseconds'] or '0'
     if not check_valid_time_milliseconds(time_milliseconds):
         session['submit_run_time_invalid'] = True
-        return redirect(url_for('submit_run_fullgame'))
+        return redirect(url_for('submit_run_individual_level'))
 
     time = time_hours + ':' + time_minutes + ':' + time_seconds + '.' + time_milliseconds
     time = convert_time_to_seconds(time)
@@ -1208,8 +1238,7 @@ def verify_run():
     run_id = request.form['verify_run']
     if verify_deny == 'deny':
         run_query_update(f"DELETE FROM Run WHERE run_id = '{run_id}'")
-        return redirect(url_for('leaderboard_fullgame',
-                                category_id='30831e37', page='0'))
+        return redirect(url_for('verify_runs'))
 
     if run_query_select(f"""SELECT * FROM Run WHERE Run.run_id = '{run_id}'
                         AND Run.il_id IS NOT NULL"""):
@@ -1234,7 +1263,7 @@ def verify_run():
         category_id = run_query_select(f"""SELECT Run.fullgame_category_id
                                        FROM Run
                                        WHERE Run.run_id = '{run_id}'""")[0][0]
-        player_id = run_query_select(f"""SSELECT Run.player_id FROM Run
+        player_id = run_query_select(f"""SELECT Run.player_id FROM Run
                                      WHERE Run.run_id = '{run_id}'""")[0][0]
         run_time = run_query_select(f"""SELECT Run.time FROM Run
                                     WHERE Run.run_id = '{run_id}'""")[0][0]
@@ -1260,6 +1289,29 @@ def verify_run():
                       WHERE run_id = '{run_id}'""")
 
     return redirect(url_for('verify_runs'))
+
+
+@app.route('/process_player_search', methods=['GET', 'POST'])
+def process_player_search():
+    """this route process the search that a user can do to search for
+    a specufic player and either redirects to that player if a valid
+    name is inouted or redirects to home page if invalid name submitted"""
+
+    player_name = request.form['searchs']
+
+    # get player id from player name because player
+    # account fullgame page needs player id
+    player_id = run_query_select(f"""SELECT Player.player_id FROM Player
+                                 WHERE Player.name = '{player_name}'""")
+
+    # if player id exists then go to player account fullgame for that player
+    if player_id:
+        return redirect(url_for('player_account_fullgame',
+                                player_id=player_id[0][0]))
+
+    # else go to home page because player isn't real
+    return redirect(url_for('leaderboard_fullgame',
+                            category_id='30831e37', page='0'))
 
 
 @app.errorhandler(404)

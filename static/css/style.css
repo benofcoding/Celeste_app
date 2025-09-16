@@ -110,6 +110,22 @@ button {
     height: 100%;
 }
 
+.nav-bar-search-form {
+    padding: 0 1vw 0 1vw;
+    display: flex;
+    align-items: center;
+
+    
+}
+
+.nav-bar-search {
+    max-width: 100%;
+    padding: 0.5em;
+    background-color: #dbcbf1;
+    border: solid 0.1em black;
+    border-radius: 0.2em;
+}
+
 .navbar-item:hover {
     background-color: #9A7CC3;
 }
@@ -480,6 +496,30 @@ button {
     background-color: #333;
     width: 90%;
     margin: 0.5vh;
+}
+
+.verify-buttons {
+    padding: 0 1em 0 1em;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin-top: 3vw;
+    place-items: center;
+}
+
+.verify-button {
+    font-size: 2em;
+    border: solid #71a7dd 0.15em;
+    white-space: nowrap;
+    padding: 0 0.5em 0 0.5em;
+    height: 2em;
+    display: flex;
+    background: #9CC9F5;
+    align-items: center;
+    border-radius: 0.25em; 
+}
+
+.verify-button:hover {
+    background-color: #88bdf3;
 }
 
 /* Individual Run Fullgame end */

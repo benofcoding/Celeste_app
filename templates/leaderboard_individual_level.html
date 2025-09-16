@@ -3,8 +3,17 @@
 <div class="leaderboard">
     <div class="rules leaderboard-item">
         <h1 class="leaderboard-item-header">Rules</h1>
-        <p class="rule">The sun dipped below the horizon, casting a warm orange glow across the sky. Birds fluttered between tree branches, chirping their final songs of the day. Along the winding path through the meadow, a soft breeze carried the scent of wildflowers and freshly cut grass. A lone traveler strolled slowly, his thoughts drifting with the rhythm of his footsteps. He had no destination, only a desire to wander and see where the world might lead him. Each step felt like a new beginning, a quiet rebellion against routine and the ordinary.<br><br>In the distance, a river whispered secrets to the shore, its surface glimmering with fading sunlight. Crickets began their nightly chorus as stars emerged, one by one, in the deepening sky. The traveler paused, closing his eyes to soak in the peace of the moment. Life, he thought, wasn't always about reaching a goal. Sometimes, it was about standing still and simply feeling the world turn.</p>
-    </div>
+        <h2>Category Objective:</h2>
+        <li>{{ rules }}</li>
+        <h2>General Rules:</h2>
+        <li>Timing is done using the in-game timer, please refrain from taking long breaks mid-run.</li> 
+        <li>Closing the game during the run is banned. This includes crashes.</li>
+        <li>Entering a level in another save file during the run is banned.</li>
+        <li>Using cheat mode, having assist or variant mode enabled, or using debug mode features during the run are banned.</li>
+        <li>Altering any game files except for settings.celeste is banned. In particular, runs done on Everest are not allowed.</li>
+        <li>You can restart into vanilla Celeste by holding right on the title screen.</li>
+        <li>The use of any third-party programs that directly affect the game are banned, with the exception of keyboard rebinders, controller mappers, and autosplitters.</li>
+        </div>
     <div class="leaderboard-container leaderboard-item">
         <h1 class="leaderboard-item-header">Leaderboard</h1>
         <div class="leaderboard-dropdown-ILtoggle">
@@ -97,10 +106,10 @@
                 <div>Time</div>
             </div>
             {% for i in recent_runs %}
-            <hr>
+            <hr class="leaderboard-row-gap">
             <div class="recent_run leaderboard-recent-runs-columns-runs">
                 <div>{{ i[0] }}</div>
-                <div><a class="run-link" href="/view_fullgame_run/{{ i[2] }}">{{ i[3] }}</a></div>
+                <div><a class="run-link" href="/view_individual_level_run/{{ i[2] }}">{{ i[3] }}</a></div>
             </div>
             {% endfor %}
         </div>
