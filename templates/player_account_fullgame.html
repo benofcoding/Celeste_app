@@ -23,7 +23,7 @@
             <div class="player-account-run">
                 <div class="player-account-run-time-place">
                     <p>{{ j[5] }}</p>
-                    <a href="/view_fullgame_run/{{ j[0] }}">{{ j[1] }}</a>
+                    <a class="run-link" href="/view_fullgame_run/{{ j[0] }}">{{ j[1] }}</a>
                 </div>
                 <div class="player-account-run-date-platform">
                     <p>{{ j[2] }}</p>
@@ -46,6 +46,11 @@
     IL_toggle_fullgame.style.border = 'solid 0.25em #9CC9F5';
     IL_toggle_fullgame.style.borderRadius = '0.25em';
     IL_toggle_fullgame.style.backgroundColor = '#9CC9F5';
+
+    const IL_toggle_IL = document.getElementById('IL-toggle-IL')
+    IL_toggle_IL.style.border = 'solid 0.2em #9CC9F5';
+    IL_toggle_IL.style.borderRadius = '0.25em';
+    IL_toggle_IL.style.padding = '0em 0.25em 0em 0.25em';
 </script>
 
 

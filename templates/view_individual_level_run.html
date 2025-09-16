@@ -3,21 +3,24 @@
 
 <div class="individual-run-container">
   <div class="individual-run-path">
-    <a class="individual-run-path-item" href="/leaderboard_individual_level/8099f2fc/0">Leaderboard</a>
+    <a class="individual-run-path-item run-link" href="/leaderboard_individual_level/8099f2fc/0">Leaderboard</a>
     <p class="individual-run-path-item">/</p>
-    <a class="individual-run-path-item" href="/leaderboard_individual_level/{{ run[3][0] }}/0">{{ run[3][3] }} / {{ run[3][1] }}</a>
+    <a class="individual-run-path-item run-link" href="/leaderboard_individual_level/{{ run[3][0] }}/0">{{ run[3][3] }} | {{ run[3][1] }}</a>
   </div>
   <div class="individual-run-title">
     <p>{{ run[3][3] }} {{ run[3][1] }} in {{ run[1] }}</p>
   </div>
-  <iframe 
-    width="800" 
-    height="450" 
+  {% if run[4] %}
+  <iframe
+    class="individual-run-iframe"
     src="{{ run[4] }}" 
-    title="YouTube video player" 
+    title="video player" 
     frameborder="0" 
     allowfullscreen>
   </iframe>
+  {% else %}
+  <img src="../static/images/video_error_image.png" alt="video_error_image">
+  {% endif %}
   <div class="individual-run-information-container">
     <div class="individual-run-information-column">
       <div class="individual-run-information">

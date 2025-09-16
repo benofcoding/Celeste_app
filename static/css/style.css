@@ -135,7 +135,7 @@ button {
     display: grid;
     grid-template-columns: 1fr;
     row-gap: 1.5vw;
-    border: 0.15vw solid #9CC9F5;
+    border: 0.25vw solid #9CC9F5;
     background-color: #ffffff;
     padding: 1em;
     border-radius: 0.5em;
@@ -251,19 +251,19 @@ button {
     height: 100%;
 }
 
-.submit-run-button-container {
-    border-radius: 0.25em;
-    background-color: #9CC9F5;
-    height: 100%;
+.submit-run-button {
+    border: solid #71a7dd 0.2em;
     white-space: nowrap;
     padding: 0 0.5em 0 0.5em;
+    height: 2em;
+    display: flex;
+    background: #9CC9F5;
+    align-items: center;
+    border-radius: 0.25em; 
 }
 
-.submit-run-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 2.3em;
+.submit-run-button:hover {
+    background-color: #88bdf3;
 }
 
 .column-names {
@@ -277,6 +277,8 @@ button {
 .run-link {
     text-decoration: underline;
 }
+
+
 /* Leaderboard Fullgame end */
 
 .IL-category-buttons {
@@ -286,21 +288,18 @@ button {
 }
 
 .IL-category-button, .IL-category-button-match {
+    border: solid #71a7dd 0.2em;
     white-space: nowrap;
-    width: fit-content;
-    padding: 0 0.5em 0 0.5em;
-    height: 2.3em;
+    padding: 0 0.3em 0 0.3em;
+    height: 2em;
     display: flex;
     align-items: center;
-    justify-content: start;
     background: #9CC9F5;
-    display: flex;
-    justify-content: space-between; /* pushes items to edges */
-    align-items: center;
     border-radius: 0.25em; 
 }
 
 .IL-category-button-match {
+    border: solid #9A7CC3 0.2em;
     background-color: #b59dd6;
 }
 
@@ -308,6 +307,9 @@ button {
     background-color: #88bdf3;
 }
 
+.IL-category-button-match:hover {
+    background-color: #af8adf;
+}
 
 /* Player Account start */
 
@@ -328,6 +330,7 @@ button {
 }
 
 .player-account-run {
+    background-color: #eeeeee;
     font-size: 0.9em;
     box-sizing: border-box;
     width: 100%;
@@ -335,7 +338,7 @@ button {
     grid-template-columns: 1fr 1fr 1fr;
     margin-bottom: 1vw;
     margin-top: 1vw;
-    border: solid black 0.15vw;
+    border: solid #9CC9F5 0.2vw;
     border-radius: 0.5vw;
     padding: 0.25em;
 }
@@ -418,7 +421,7 @@ button {
 .individual-run-container{
     background-color: white;
     justify-self: center;
-    border: 0.15vw solid #9CC9F5;
+    border: 0.25vw solid #9CC9F5;
     border-radius: 1vw;
     padding: 1vw;
 }
@@ -432,6 +435,17 @@ button {
 
 .individual-run-title {
     font-size: 2em;
+}
+
+.video-error-image {
+    width: 40vw;
+    height: auto;
+}
+
+.individual-run-iframe {
+    border-radius: 1vw;
+    width: 40vw;
+    height: 22.5vw;
 }
 
 .individual-run-information-container{
@@ -450,10 +464,11 @@ button {
 }
 
 .individual-run-information{
+    background-color: #eeeeee;
     border-radius: 0.5vw;
     place-items: center;
     display: grid;
-    border: 0.15vw solid #9CC9F5;
+    border: 0.2vw solid #9CC9F5;
     grid-template-columns: 1fr;
     width: 100%;
     padding: 0.25vw 0 0.25vw 0;
@@ -475,7 +490,7 @@ button {
 
 .submit-run-container {
     justify-self: center;
-    border: 0.15vw solid #9CC9F5;
+    border: 0.25vw solid #9CC9F5;
     border-radius: 1vw;
     padding: 2vw;
     background-color: white;
@@ -518,13 +533,17 @@ button {
     margin-top: 1vw;
     font-size: 1.5em;
     justify-self: center;
-    border: solid #71a7dd 0.1em;
+    border: solid #71a7dd 0.2em;
     width: 35%;
     border-radius: 0.25em;
     background-color: #9CC9F5;
     height: fit-content;
     white-space: nowrap;
     padding: 0.5em;
+}
+
+.submit-run-submit-button:hover {
+    background-color: #88bdf3;
 }
 
 .submit-run-form {
@@ -664,7 +683,7 @@ a.verify-run-text{
 .signup-login-button {
     font-size: 1.5em;
     justify-self: center;
-    border: solid #71a7dd 0.1em;
+    border: solid #71a7dd 0.2em;
     width: 35%;
     border-radius: 0.25em;
     background-color: #9CC9F5;

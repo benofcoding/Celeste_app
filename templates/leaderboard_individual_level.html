@@ -139,10 +139,17 @@
     dropdown_open.addEventListener('click', toggle_dropdown)
     document.addEventListener('click', close_dropdown)
 
-    const IL_toggle_fullgame = document.getElementById('IL-toggle-IL')
-    IL_toggle_fullgame.style.border = 'solid 0.25em #9CC9F5';
-    IL_toggle_fullgame.style.borderRadius = '0.25em';
-    IL_toggle_fullgame.style.backgroundColor = '#9CC9F5';
+    const IL_toggle_IL = document.getElementById('IL-toggle-IL')
+    IL_toggle_IL.style.border = 'solid 0.25em #9CC9F5';
+    IL_toggle_IL.style.borderRadius = '0.25em';
+    IL_toggle_IL.style.backgroundColor = '#9CC9F5';
+
+    const fullgame_toggle_IL = document.getElementById('IL-toggle-fullgame')
+    fullgame_toggle_IL.style.border = 'solid 0.2em #9CC9F5';
+    fullgame_toggle_IL.style.borderRadius = '0.25em';
+    fullgame_toggle_IL.style.padding = '0em 0.25em 0em 0.25em';
+
+
 </script>
 
 {% endblock %}

@@ -551,14 +551,23 @@ def view_fullgame_run(run_id):
     run[1] = converttime(run[1])
     video_url = run[4]
     run[2] = seconds_since_1980_to_date(run[2])
-    if "youtu.be" in video_url:
+
+    if "youtu.be/" in video_url:
         video_id = video_url.split("/")[-1]
         embed_url = f"https://www.youtube.com/embed/{video_id}"
-    elif 'watch' in video_url:
+    elif 'youtube.com/watch?v=' in video_url:
         video_id = video_url.split("=")[-1]
         embed_url = f"https://www.youtube.com/embed/{video_id}"
-    else:
+    elif 'youtube.com/embed/' in video_url:
         embed_url = video_url
+    elif 'twitch.tv/videos/' in video_url:
+        video_id = video_url.split("/")[-1]
+        embed_url = f"https://player.twitch.tv/?video={video_id}&parent=127.0.0.1"
+    elif 'twitch.tv/channelname/video/' in video_url:
+        video_id = video_url.split("/")[-1]
+        embed_url = f"https://player.twitch.tv/?video={video_id}&parent=127.0.0.1"
+    else:
+        embed_url = False
 
     run[4] = embed_url
 
@@ -607,20 +616,27 @@ def view_individual_level_run(run_id):
                                       Level.level_id WHERE
                                       Individual_level.il_id = '{run[3]}'""")
 
-    run[3] = level_category[0]
-
     run[1] = converttime(run[1])
-    video_url = run[4]
     run[2] = seconds_since_1980_to_date(run[2])
-    print(run)
-    if "youtu.be" in video_url:
+    run[3] = level_category[0]
+    video_url = run[4]
+
+    if "youtu.be/" in video_url:
         video_id = video_url.split("/")[-1]
         embed_url = f"https://www.youtube.com/embed/{video_id}"
-    elif 'watch' in video_url:
+    elif 'youtube.com/watch?v=' in video_url:
         video_id = video_url.split("=")[-1]
         embed_url = f"https://www.youtube.com/embed/{video_id}"
-    else:
+    elif 'youtube.com/embed/' in video_url:
         embed_url = video_url
+    elif 'twitch.tv/videos/' in video_url:
+        video_id = video_url.split("/")[-1]
+        embed_url = f"https://player.twitch.tv/?video={video_id}&parent=127.0.0.1"
+    elif 'twitch.tv/channelname/video/' in video_url:
+        video_id = video_url.split("/")[-1]
+        embed_url = f"https://player.twitch.tv/?video={video_id}&parent=127.0.0.1"
+    else:
+        embed_url = False
 
     run[4] = embed_url
 
@@ -658,8 +674,8 @@ def player_account_fullgame(player_id):
                                      Run.video_link FROM Run JOIN Platform
                                      ON Run.platform_id = Platform.platform_id
                                      WHERE Run.fullgame_category_id = '{i[0]}'
-                                     AND Run.player_id = '{player_id}' A
-                                     ND Run.verifier_id IS NOT NULL
+                                     AND Run.player_id = '{player_id}'
+                                     AND Run.verifier_id IS NOT NULL
                                      ORDER BY Run.time ASC""")
         if temp_runs:
             temp_runs_three = []
@@ -839,9 +855,9 @@ def submit_run_individual_level():
 @app.route('/process_run_fullgame', methods=['GET', 'POST'])
 def process_run_fullgame():
     link = request.form['submit_run_link']
-    valid_link_formats = ['youtube.com/watch?v=', 'youtube.com/watch?v=',
-                          'm.youtube.com/watch?v=', 'youtube.com/embed/',
-                          'twitch.tv/videos/', 'twitch.tv/channelname/video/']
+    valid_link_formats = ['youtube.com/watch?v=', 'youtube.com/embed/',
+                          'twitch.tv/videos/', 'twitch.tv/channelname/video/',
+                          'youtu.be/']
     valid_link = False
     for format in valid_link_formats:
         if format in link:
@@ -910,9 +926,9 @@ def process_run_fullgame():
 @app.route('/process_run_individual_level', methods=['GET', 'POST'])
 def process_run_individual_level():
     link = request.form['submit_run_link']
-    valid_link_formats = ['youtube.com/watch?v=', 'youtube.com/watch?v=',
-                          'm.youtube.com/watch?v=', 'youtube.com/embed/',
-                          'twitch.tv/videos/', 'twitch.tv/channelname/video/']
+    valid_link_formats = ['youtube.com/watch?v=', 'youtube.com/embed/',
+                          'twitch.tv/videos/', 'twitch.tv/channelname/video/',
+                          'youtu.be/']
     valid_link = False
     for format in valid_link_formats:
         if format in link:
@@ -1116,7 +1132,6 @@ def verify_run():
 @app.errorhandler(404)
 def page_not_found(i):
     return render_template('404.html')
-
 
 
 if __name__ == '__main__':
