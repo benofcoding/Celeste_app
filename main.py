@@ -12,6 +12,9 @@ start_date = datetime.date(1980, 1, 1)
 
 
 def generate_id():
+    """this function generates random ids for things like runs or
+    users, needed to make player ids more random incase i want to
+    add private acounts later, same with runs, future proofing"""
     id = ''
     for i in range(8):
         id += random.choices('0123456789abcdef', k=1)[0]
@@ -19,6 +22,10 @@ def generate_id():
 
 
 def get_run_rank(run_id, fullgame, obsolete=False):
+    """this function gets the placement on the leaderboardfor a given run,
+    given the run id, whether its fullgame or an il run, and whether you want
+    to include obsolete runs or not. needed to display the
+    rank of each run for the player account page"""
 
     if fullgame:
         category_id = run_query_select(f"""SELECT Run.fullgame_category_id FROM
@@ -62,6 +69,9 @@ def get_run_rank(run_id, fullgame, obsolete=False):
 
 
 def run_query_select(query):
+    """this function runs a select query given the query
+    string and the parameter values."""
+
     conn = sqlite3.connect('database_new.db')
     cursor = conn.cursor()
 
@@ -79,6 +89,9 @@ def run_query_select(query):
 
 
 def run_query_insert(query, values):
+    """this function runs an insert query given
+    the query and the parameter values"""
+
     conn = sqlite3.connect('database_new.db')
     cursor = conn.cursor()
 
@@ -89,7 +102,26 @@ def run_query_insert(query, values):
     conn.close()
 
 
+def run_query_update(query):
+    """this function runs an update query
+    given the query and the parameter values"""
+
+    conn = sqlite3.connect('database_new.db')
+    cursor = conn.cursor()
+
+    cursor.execute(query)
+    conn.commit()
+
+    cursor.close()
+    conn.close()
+
+
 def converttime(run_time):
+    """this function takes a float for the number of seconds eg 1223.456 and
+    turns it into a formated time like 20m 23s 456ms, needed because
+    run times are stored as floats of seconds in the database
+    becuase its much easier to store and easier to sort"""
+
     if run_time >= 3600:
         h, remainder = divmod(run_time, 3600)
         m, remainder = divmod(round(remainder, 3), 60)
@@ -130,6 +162,11 @@ def converttime(run_time):
 
 
 def convert_time_to_seconds(time):
+    """this function takes a formated time eg 20m 23s 456ms and turns
+    it into a float of seconds like 1223.456, needed because
+    run times are stored as floats of seconds in the database
+    becuase its much easier to store and easier to sort"""
+
     time = str(time)
     colon_count = 0
     for i in time:
@@ -147,6 +184,10 @@ def convert_time_to_seconds(time):
 
 
 def check_valid_time_hours(hours):
+    """this function checks if given a string for number of hours, checks if it
+    meet the valid critera, integer and 1-2 digits, needed to
+    make sure the times that users submit are valid"""
+
     if not hours.isdigit():
         return False
     if len(str(int(hours))) > 2:
@@ -155,6 +196,10 @@ def check_valid_time_hours(hours):
 
 
 def check_valid_time_seconds(seconds):
+    """this function checks if given a string for number of seconds, checks if
+    it meet the valid critera, integer and between 0 and 59 inclusive,
+    needed to make sure the times that users submit are valid"""
+
     if not seconds.isdigit():
         return False
     if int(seconds) > 59:
@@ -163,6 +208,10 @@ def check_valid_time_seconds(seconds):
 
 
 def check_valid_time_minutes(minutes):
+    """this function checks if given a string for number of minutes, checks if
+    it meet the valid critera, integer and between 0 and 59 inclusive,
+    needed to make sure the times that users submit are valid"""
+
     if not minutes.isdigit():
         return False
     if int(minutes) > 59:
@@ -171,6 +220,10 @@ def check_valid_time_minutes(minutes):
 
 
 def check_valid_time_milliseconds(milliseconds):
+    """this function checks if given a string for number of hours, checks if it
+    meet the valid critera, integer and 1-3 digits, needed to
+    make sure the times that users submit are valid"""
+
     if not milliseconds.isdigit():
         return False
     if len(str(int(milliseconds))) > 3:
@@ -179,12 +232,21 @@ def check_valid_time_milliseconds(milliseconds):
 
 
 def seconds_since_1980_to_date(seconds):
+    """takes a number of seconds sine 1980 january 1st 00:00.000 and
+    turns it into a date, needed because the dates in the database
+    are stored as floats as seconds since 1980 becuase its
+    easier to sort and store as consistant numbers"""
+
     epoch_1980 = datetime.date(1980, 1, 1)
     date = epoch_1980 + datetime.timedelta(seconds=seconds)
     return date.strftime("%d/%m/%Y")
 
 
 def date_to_seconds_since_1980(date):
+    """takes a date and turn it into a seconds since 1980 january 1st
+    00:00.000 becuase that is the format it must be
+    stored in the database to make it easier to sort and store"""
+
     target_date = datetime(2025, 5, 23)
 
     base_date = datetime(1980, 1, 1)
@@ -195,6 +257,10 @@ def date_to_seconds_since_1980(date):
 
 
 def check_logged_in():
+    """checks if the user is logged in or not, needed becuase the navbar
+    needs to know if the user is logged in to display the right things
+    and submit run page needs to know if logged in to allow you to enter"""
+
     if 'username' in session:
         return session['username']
     else:
@@ -202,6 +268,10 @@ def check_logged_in():
 
 
 def check_verifier():
+    """checks if the user is logged in as a verifier because the navbar
+    needs to know to display the right thing and the view run
+    page needs to know to display verify and deny buttons"""
+
     if 'username' not in session:
         return False
     print(session['username'])
@@ -213,19 +283,26 @@ def check_verifier():
         return True
 
 
-def run_query_update(query):
-    conn = sqlite3.connect('database_new.db')
-    cursor = conn.cursor()
-
-    cursor.execute(query)
-    conn.commit()
-
-    cursor.close()
-    conn.close()
-
-
 @app.route('/', methods=['GET', 'POST'])
 def home():
+    """this route only serves the purpose of imediatly redirecting to the
+    leaderboard fullgame page which is the home page, it is needed
+    because an empty url is the first thing that opens when you
+    run the app so its needed to redirect to the real home page"""
+
+    return redirect(url_for('leaderboard_fullgame',
+                            category_id='30831e37', page='0'))
+
+
+@app.route('/leaderboard_fullgame/<category_id>/<page>', methods=['GET', 'POST'])
+def leaderboard_fullgame(category_id, page):
+    """this route is the leaderboard page for fullgame runs, it shows
+    all the runs for a given category and page number, it also serves
+    as the home page becuase for any new user it makes logical sense
+    that they see the page that shows the top 100 times for the
+    most speedrun category aswell as i dont have any
+    information that i would want to put on a home page"""
+
     if 'signup_password_falied' in session:
         del session['signup_passord_falied']
     if 'signup_username_taken' in session:
@@ -240,12 +317,6 @@ def home():
         del session['login_failed']
     if request.method == 'POST':
         del session['username']
-    return render_template('home.html', logged_in=check_logged_in(),
-                           verifier=check_verifier())
-
-
-@app.route('/leaderboard_fullgame/<category_id>/<page>')
-def leaderboard_fullgame(category_id, page):
 
     valid_category = False
     category_ids = run_query_select("""SELECT Fullgame_category.fullgame_category_id
@@ -322,6 +393,9 @@ def leaderboard_fullgame(category_id, page):
 
 @app.route('/leaderboard_individual_level/<individual_level_id>/<page>')
 def individual_level_leaderboard(individual_level_id, page):
+    """this route is the leaderboard page for individual level runs, it shows
+    all the runs for a given level, category and page number"""
+
     valid_individual_level_id = False
     individual_level_ids = run_query_select("""SELECT Individual_level.il_id
                                             FROM Individual_level""")
@@ -420,6 +494,9 @@ def individual_level_leaderboard(individual_level_id, page):
 
 @app.route('/login')
 def login():
+    """this route is the login page, it is needed so that users can login
+    and interact with things that require an account"""
+
     if 'submit_run' in session:
         del session['submit_run']
         return render_template('login.html', failed=False, submit_run=True)
@@ -432,6 +509,10 @@ def login():
 
 @app.route('/check_valid_login', methods=['GET', 'POST'])
 def check_valid_login():
+    """this route checks when a user tries to login to see
+    whether they inputed valid credentials or not, if
+    they didn't then it sends them back to the login page"""
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -455,7 +536,8 @@ def check_valid_login():
                                  FROM Player
                                  WHERE Player.name = '{username}'""")[0][0]
                 ]
-            return redirect(url_for('home'))
+            return redirect(url_for('leaderboard_fullgame',
+                                    category_id='30831e37', page='0'))
         else:
             session['username'] = [
                 username,
@@ -467,6 +549,9 @@ def check_valid_login():
 
 @app.route('/signup')
 def signup():
+    """this route is the signup page, it is needed so that new users can
+    create an accout to interact with things that require an account"""
+
     error_message_dict = {
         'signup_username_taken': False,
         'signup_password_failed': False,
@@ -486,6 +571,10 @@ def signup():
 
 @app.route('/check_valid_signup', methods=['GET', 'POST'])
 def check_valid_signup():
+    """this route checks when a user tries to signup to see
+    whether they inputed valid credentials or not, if
+    they didn't then it sends them back to the signup page"""
+
     normal_characters = [
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
         'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
@@ -527,11 +616,15 @@ def check_valid_signup():
     run_query_insert("""INSERT INTO Player (player_id, name, pfp, hash)
                      VALUES (?, ?, ?, ?)""",
                      (generate_id(), username, None, hash))
-    return redirect(url_for('home'))
+    return redirect(url_for('leaderboard_fullgame',
+                            category_id='30831e37', page='0'))
 
 
 @app.route('/view_fullgame_run/<run_id>')
 def view_fullgame_run(run_id):
+    """this route is the view fullgame run page, it displays
+    information about a single fullgame run given the run id"""
+
     run_checker = run_query_select(f"""SELECT Run.fullgame_category_id
                                    FROM Run WHERE Run.run_id = '{run_id}'""")
 
@@ -592,6 +685,9 @@ def view_fullgame_run(run_id):
 
 @app.route('/view_individual_level_run/<run_id>')
 def view_individual_level_run(run_id):
+    """this route is the view individual level run page, it displays
+    information about a single individual level run given the run id"""
+
     run_checker = run_query_select(f"""SELECT Run.il_id FROM Run
                                    WHERE Run.run_id = '{run_id}'""")
 
@@ -661,11 +757,14 @@ def view_individual_level_run(run_id):
 
 @app.route('/player_account_fullgame/<player_id>')
 def player_account_fullgame(player_id):
+    """this route is the view player fullgame page, it shows all the
+    fullgame runs a player has done given their player id"""
+
     if len(run_query_select(f"""SELECT Player.player_id FROM Player
                             WHERE Player.player_id = '{player_id}'""")) == 0:
         abort(404)
 
-    temp_categories = run_query_select(f"""SELECT fullgame_category_id,
+    temp_categories = run_query_select("""SELECT fullgame_category_id,
                                        name FROM Fullgame_category""")
     runs = {}
     for i in temp_categories:
@@ -708,6 +807,9 @@ def player_account_fullgame(player_id):
 
 @app.route('/player_account_individual_level/<player_id>')
 def player_account_individual_level(player_id):
+    """this route is the view player individual level page, it shows all the
+    individual level runs a player has done given their player id"""
+
     if len(run_query_select(f"""SELECT Player.player_id FROM Player
                             WHERE Player.player_id = '{player_id}'""")) == 0:
         abort(404)
@@ -780,6 +882,10 @@ def player_account_individual_level(player_id):
 
 @app.route('/submit_run_fullgame')
 def submit_run_fullgame():
+    """this is the submit run fullgame page, it allows the user
+    to submit a fullgame run to the database for
+    it to be verified and then added to the leaderboards"""
+
     temp_categories = run_query_select("""SELECT fullgame_category_id, name
                                        FROM Fullgame_category""")
     categories = {}
@@ -813,6 +919,10 @@ def submit_run_fullgame():
 
 @app.route('/submit_run_individual_level')
 def submit_run_individual_level():
+    """this is the submit run individual level page, it allows the user
+    to submit a individual level run to the database for
+    it to be verified and then added to the leaderboards"""
+
     temp_categories = run_query_select("""SELECT il_category_id, name
                                        FROM IL_category""")
     categories = {}
@@ -854,6 +964,11 @@ def submit_run_individual_level():
 
 @app.route('/process_run_fullgame', methods=['GET', 'POST'])
 def process_run_fullgame():
+    """this route validates all the data that a user submited for a fullgame
+    run before it gets added to the database, if the data doesn't meet the
+    correct format or crieria then it doesnt get submitted and
+    the user gets sent back to the submit run fullgame page"""
+
     link = request.form['submit_run_link']
     valid_link_formats = ['youtube.com/watch?v=', 'youtube.com/embed/',
                           'twitch.tv/videos/', 'twitch.tv/channelname/video/',
@@ -920,11 +1035,17 @@ def process_run_fullgame():
                      (generate_id(), category, None, None, time, date_submitted,
                       session['username'][1], platform, link, None))
 
-    return redirect(url_for('home'))
+    return redirect(url_for('leaderboard_fullgame',
+                            category_id='30831e37', page='0'))
 
 
 @app.route('/process_run_individual_level', methods=['GET', 'POST'])
 def process_run_individual_level():
+    """this route validates all the data that a user submited for a individual
+    level run before it gets added to the database, if the data doesn't meet
+    the correct format or crieria then it doesnt get submitted and
+    the user gets sent back to the submit run individual level page"""
+
     link = request.form['submit_run_link']
     valid_link_formats = ['youtube.com/watch?v=', 'youtube.com/embed/',
                           'twitch.tv/videos/', 'twitch.tv/channelname/video/',
@@ -1007,11 +1128,16 @@ def process_run_individual_level():
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                      (generate_id(), None, level_category_pair[0][0], None, time,
                       date_submitted, session['username'][1], platform, link, None))
-    return redirect(url_for('home'))
+    return redirect(url_for('leaderboard_fullgame',
+                            category_id='30831e37', page='0'))
 
 
 @app.route('/verify_runs')
 def verify_runs():
+    """this route is the verify runs page, it is only used by verifiers
+    to see all the runs that need to be verified, they can
+    then click on any of them and check over them to verify them"""
+
     fullgame_runs = run_query_select("""SELECT Run.date_submitted, Run.run_id,
                                      Player.name, Run.time,
                                      Platform.platform_id,
@@ -1073,11 +1199,17 @@ def verify_runs():
 
 @app.route('/verify_run',  methods=['GET', 'POST'])
 def verify_run():
+    """this route handles the back end of verifiyin a run,
+    it changes the verifed status from pending to verified
+    and it checks to see it this beats a previous pb, if
+    so it changes the pb from obsolete = 0 to obsoltet = 1"""
+
     verify_deny = request.form['verify_deny']
     run_id = request.form['verify_run']
     if verify_deny == 'deny':
         run_query_update(f"DELETE FROM Run WHERE run_id = '{run_id}'")
-        return redirect(url_for('home'))
+        return redirect(url_for('leaderboard_fullgame',
+                                category_id='30831e37', page='0'))
 
     if run_query_select(f"""SELECT * FROM Run WHERE Run.run_id = '{run_id}'
                         AND Run.il_id IS NOT NULL"""):
@@ -1122,6 +1254,7 @@ def verify_run():
     verifier_id = run_query_select(f"""SELECT Verifier.verifier_id
                                    FROM Verifier WHERE Verifier.player_id =
                                    '{session['username'][1]}'""")[0][0]
+
     run_query_update(f"""UPDATE Run SET verifier_id = '{verifier_id}',
                       obsolete = '{obsolete}'
                       WHERE run_id = '{run_id}'""")
@@ -1131,6 +1264,8 @@ def verify_run():
 
 @app.errorhandler(404)
 def page_not_found(i):
+    """this route is the 404 page incase the user tries to break something"""
+
     return render_template('404.html')
 
 
