@@ -119,6 +119,7 @@ button {
 }
 
 .nav-bar-search {
+    font-size: 1em;
     max-width: 100%;
     padding: 0.5em;
     background-color: #dbcbf1;

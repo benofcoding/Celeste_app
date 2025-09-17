@@ -19,7 +19,7 @@
     allowfullscreen>
   </iframe>
   {% else %}
-  <img src="../static/images/video_error_image.png" alt="video_error_image">
+  <img class="video-error-image" src="../static/images/video_error_image.png" alt="video_error_image">
   {% endif %}
   <div class="individual-run-information-container">
     <div class="individual-run-information-column">
@@ -78,12 +78,12 @@
     <form action="/verify_run" method="POST">
       <input type="hidden" name="verify_run" value="{{ run[0] }}">
       <input type="hidden" name="verify_deny" value="verify">
-      <button type="submit">Verify</button>
+      <button class="verify-button" type="submit">Verify</button>
     </form>
     <form action="/verify_run" method="POST">
       <input type="hidden" name="verify_run" value="{{ run[0] }}">
       <input type="hidden" name="verify_deny" value="deny">
-      <button type="submit">Deny</button>
+      <button class="verify-button" type="submit">Deny</button>
     </form>
   </div>
   {% endif %}

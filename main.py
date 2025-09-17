@@ -28,28 +28,30 @@ def get_run_rank(run_id, fullgame, obsolete=False):
     rank of each run for the player account page"""
 
     if fullgame:
-        category_id = run_query_select(f"""SELECT Run.fullgame_category_id FROM
-                                       Run WHERE Run.run_id = '{run_id}'""")
+        category_id = run_query_select("""SELECT Run.fullgame_category_id FROM
+                                       Run WHERE Run.run_id = ?""", (run_id,))
         if obsolete:
-            allruns = run_query_select(f"""SELECT Run.run_id FROM Run
-                                       WHERE Run.fullgame_category_id =
-                                       '{category_id[0][0]}' AND obsolete = 0
-                                       ORDER BY Run.time""")
+            allruns = run_query_select("""SELECT Run.run_id FROM Run
+                                       WHERE Run.fullgame_category_id = ?
+                                       AND obsolete = 0 ORDER BY Run.time""",
+                                       (category_id[0][0],))
         elif not obsolete:
-            allruns = run_query_select(f"""SELECT Run.run_id FROM Run
+            allruns = run_query_select("""SELECT Run.run_id FROM Run
                                        WHERE Run.fullgame_category_id =
-                                       '{category_id[0][0]}' ORDER BY Run.time""")
+                                       ? ORDER BY Run.time""",
+                                       (category_id[0][0],))
     else:
-        category_id = run_query_select(f"""SELECT Run.il_id FROM Run
-                                       WHERE Run.run_id = '{run_id}'""")
+        category_id = run_query_select("""SELECT Run.il_id FROM Run
+                                       WHERE Run.run_id = ?""", (run_id,))
         if obsolete:
-            allruns = run_query_select(f"""SELECT Run.run_id FROM Run
-                                       WHERE Run.il_id = '{category_id[0][0]}'
-                                       AND obsolete = 0 ORDER BY Run.time""")
+            allruns = run_query_select("""SELECT Run.run_id FROM Run
+                                       WHERE Run.il_id = ? AND obsolete = 0
+                                       ORDER BY Run.time""",
+                                       (category_id[0][0],))
         elif not obsolete:
-            allruns = run_query_select(f"""SELECT Run.run_id FROM Run
-                                       WHERE Run.il_id = '{category_id[0][0]}'
-                                       ORDER BY Run.time""")
+            allruns = run_query_select("""SELECT Run.run_id FROM Run
+                                       WHERE Run.il_id = ? ORDER BY
+                                       Run.time""", (category_id[0][0],))
 
     for index, runinallruns in enumerate(allruns):
         if runinallruns[0] == run_id:
@@ -68,14 +70,14 @@ def get_run_rank(run_id, fullgame, obsolete=False):
     return False
 
 
-def run_query_select(query):
+def run_query_select(query, values):
     """this function runs a select query given the query
     string and the parameter values."""
 
     conn = sqlite3.connect('database_new.db')
     cursor = conn.cursor()
 
-    cursor.execute(query)
+    cursor.execute(query, values)
     temp_rows = cursor.fetchall()
 
     cursor.close()
@@ -102,14 +104,14 @@ def run_query_insert(query, values):
     conn.close()
 
 
-def run_query_update(query):
+def run_query_update(query, values):
     """this function runs an update query
     given the query and the parameter values"""
 
     conn = sqlite3.connect('database_new.db')
     cursor = conn.cursor()
 
-    cursor.execute(query)
+    cursor.execute(query, values)
     conn.commit()
 
     cursor.close()
@@ -190,7 +192,7 @@ def check_valid_time_hours(hours):
 
     if not hours.isdigit():
         return False
-    if len(str(int(hours))) > 2:
+    if int(hours) > 99:
         return False
     return True
 
@@ -226,7 +228,7 @@ def check_valid_time_milliseconds(milliseconds):
 
     if not milliseconds.isdigit():
         return False
-    if len(str(int(milliseconds))) > 3:
+    if len(str(int(milliseconds))) > 999:
         return False
     return True
 
@@ -275,11 +277,10 @@ def check_verifier():
     if 'username' not in session:
         return False
     print(session['username'])
-    if len(run_query_select(f"""SELECT verifier.verifier_id FROM Verifier
+    if len(run_query_select("""SELECT verifier.verifier_id FROM Verifier
                             JOIN Player on Player.player_id =
-                            Verifier.player_id
-                            WHERE Player.player_id =
-                            '{session['username'][1]}'""")) != 0:
+                            Verifier.player_id WHERE Player.player_id = ?""",
+                            (session['username'][1],))) != 0:
         return True
 
 
@@ -320,7 +321,7 @@ def leaderboard_fullgame(category_id, page):
 
     valid_category = False
     category_ids = run_query_select("""SELECT Fullgame_category.fullgame_category_id
-                                    FROM Fullgame_category""")
+                                    FROM Fullgame_category""", ())
     for i in category_ids:
         if i[0] == category_id:
             valid_category = True
@@ -334,14 +335,15 @@ def leaderboard_fullgame(category_id, page):
 
     page = int(page)
 
-    runs = run_query_select(f"""SELECT Run.run_id, Player.name,
+    runs = run_query_select("""SELECT Run.run_id, Player.name,
                             Player.player_id, Run.time,Run.video_link,
                             Run.date_submitted, Platform.name FROM Run
                             JOIN Player ON Run.player_id = Player.player_id
                             JOIN Platform ON Run.platform_id = Platform.platform_id
-                            WHERE Fullgame_category_id = '{category_id}'
+                            WHERE Fullgame_category_id = ?
                             AND Run.verifier_id IS NOT NULL
-                            AND Run.obsolete = 0 ORDER BY Run.time ASC""")
+                            AND Run.obsolete = 0 ORDER BY Run.time ASC""",
+                            (category_id,))
 
     length = len(runs)
     max_page = math.floor(length/100)
@@ -364,28 +366,28 @@ def leaderboard_fullgame(category_id, page):
         real_runs[v].append(seconds_since_1980_to_date(i[5]))
 
     categories_temp = run_query_select("""SELECT fullgame_category_id, name
-                                       FROM Fullgame_category""")
+                                       FROM Fullgame_category""", ())
     categories = {}
     for i in categories_temp:
         categories[i[0]] = i[1]
 
-    temp_recent_runs = run_query_select(f"""SELECT Player.name, Run.player_id,
+    temp_recent_runs = run_query_select("""SELECT Player.name, Run.player_id,
                                         Run.run_id, Run.time FROM Run
                                         JOIN Player ON Player.player_id = Run.player_id
-                                        WHERE Run.fullgame_category_id = '{category_id}'
+                                        WHERE Run.fullgame_category_id = ?
                                         AND Run.verifier_id IS NOT NULL
                                         ORDER BY Run.date_submitted
-                                        DESC LIMIT 15""")
+                                        DESC LIMIT 15""", (category_id,))
     recent_runs = []
     for i in temp_recent_runs:
         i = list(i)
         i[3] = converttime(i[3])
         recent_runs.append(i)
 
-    rules = run_query_select(f"""SELECT Fullgame_category.rules
+    rules = run_query_select("""SELECT Fullgame_category.rules
                              FROM Fullgame_category WHERE
-                             Fullgame_category.fullgame_category_id =
-                             '{category_id}'""")[0][0]
+                             Fullgame_category.fullgame_category_id = ?""",
+                             (category_id,))[0][0]
 
     return render_template('leaderboard_fullgame.html',
                            runs=real_runs, categories=categories,
@@ -403,7 +405,7 @@ def individual_level_leaderboard(individual_level_id, page):
 
     valid_individual_level_id = False
     individual_level_ids = run_query_select("""SELECT Individual_level.il_id
-                                            FROM Individual_level""")
+                                            FROM Individual_level""", ())
     for i in individual_level_ids:
         if i[0] == individual_level_id:
             valid_individual_level_id = True
@@ -418,15 +420,14 @@ def individual_level_leaderboard(individual_level_id, page):
 
     page = int(page)
 
-    runs = run_query_select(f"""SELECT Run.run_id, Player.name,
+    runs = run_query_select("""SELECT Run.run_id, Player.name,
                             Player.player_id, Run.time,Run.video_link,
                             Run.date_submitted, Platform.name FROM Run
                             JOIN Player ON Run.player_id = Player.player_id
                             JOIN Platform ON Run.platform_id = Platform.platform_id
-                            WHERE il_id = '{individual_level_id}'
-                            AND Run.verifier_id IS NOT NULL
+                            WHERE il_id = ? AND Run.verifier_id IS NOT NULL
                             AND Run.obsolete = 0
-                            ORDER BY Run.time ASC""")
+                            ORDER BY Run.time ASC""", (individual_level_id,))
 
     length = len(runs)
     max_page = math.floor(length/100)
@@ -449,62 +450,65 @@ def individual_level_leaderboard(individual_level_id, page):
         real_runs[v][3] = converttime(i[3])
         real_runs[v].append(seconds_since_1980_to_date(i[5]))
 
-    level = run_query_select(f"""SELECT Level.name, Level.level_id
-                             FROM Individual_level
-                             JOIN Level ON Individual_level.level_id = Level.level_id
-                             WHERE Individual_level.il_id = '{individual_level_id}'""")[0]
+    level = run_query_select("""SELECT Level.name, Level.level_id
+                             FROM Individual_level JOIN Level ON
+                             Individual_level.level_id = Level.level_id
+                             WHERE Individual_level.il_id = ?""",
+                             (individual_level_id,))[0]
 
-    category = run_query_select(f"""SELECT IL_category.name,
+    category = run_query_select("""SELECT IL_category.name,
                                 IL_category.il_category_id
                                 FROM Individual_level JOIN IL_category ON
                                 Individual_level.il_category_id =
                                 IL_category.il_category_id
-                                WHERE Individual_level.il_id =
-                                '{individual_level_id}'""")[0]
+                                WHERE Individual_level.il_id = ?""",
+                                (individual_level_id,))[0]
 
-    levels_temp = run_query_select("SELECT level_id, name FROM Level")
+    levels_temp = run_query_select("SELECT level_id, name FROM Level", ())
     levels = {}
     for i in levels_temp:
         levels[i[0]] = [
             i[1],
-            run_query_select(f"""SELECT Individual_level.il_id
-                                FROM Individual_level
-                                WHERE level_id = '{i[0]}'
-                                AND il_category_id = '40ce5c88'""")[0][0]
+            run_query_select("""SELECT Individual_level.il_id
+                             FROM Individual_level
+                             WHERE level_id = ? AND
+                             il_category_id = '40ce5c88'""", (i[0],))[0][0]
             ]
 
-    categories_temp = run_query_select(f"""SELECT IL_category.il_category_id,
+    categories_temp = run_query_select("""SELECT IL_category.il_category_id,
                                        IL_category.name FROM Individual_level
                                        JOIN IL_category ON
                                        Individual_level.il_category_id =
                                        IL_category.il_category_id
-                                       WHERE level_id = '{level[1]}'""")
+                                       WHERE level_id = ?""", (level[1],))
     categories = {}
     for i in categories_temp:
         categories[i[0]] = [
             i[1],
-            run_query_select(f"""SELECT Individual_level.il_id
+            run_query_select("""SELECT Individual_level.il_id
                              FROM Individual_level
-                             WHERE level_id = '{level[1]}'
-                             AND il_category_id = '{i[0]}'""")[0][0]
+                             WHERE level_id = ?
+                             AND il_category_id = ?""",
+                             (level[1], i[0]))[0][0]
             ]
 
-    temp_recent_runs = run_query_select(f"""SELECT Player.name, Run.player_id,
+    temp_recent_runs = run_query_select("""SELECT Player.name, Run.player_id,
                                         Run.run_id, Run.time FROM Run
                                         JOIN Player ON Player.player_id = Run.player_id
-                                        WHERE Run.il_id = '{individual_level_id}'
+                                        WHERE Run.il_id = ?
                                         AND Run.verifier_id IS NOT NULL
                                         ORDER BY Run.date_submitted
-                                        DESC LIMIT 15""")
+                                        DESC LIMIT 15""",
+                                        (individual_level_id,))
     recent_runs = []
     for i in temp_recent_runs:
         i[3] = converttime(i[3])
         recent_runs.append(i)
 
-    rules = run_query_select(f"""SELECT IL_category.rules
+    rules = run_query_select("""SELECT IL_category.rules
                              FROM IL_category WHERE
-                             IL_category.il_category_id =
-                             '{category[1]}'""")[0][0]
+                             IL_category.il_category_id = ?""",
+                             (category[1],))[0][0]
 
     rules = rules.replace('THELEVEL', f"'{level[0]}'")
 
@@ -544,9 +548,8 @@ def check_valid_login():
         submit_run = request.form['submit_run']
         given_hash = password.encode()
         given_hash = hashlib.sha256(given_hash).hexdigest()
-        user_hash = run_query_select(f"""SELECT Player.hash
-                                     FROM Player
-                                     WHERE Player.name = '{username}'""")
+        user_hash = run_query_select("""SELECT Player.hash FROM Player
+                                     WHERE Player.name = ?""", (username,))
         if not user_hash:
             session['login_failed'] = True
             return redirect(url_for('login'))
@@ -557,17 +560,16 @@ def check_valid_login():
         elif submit_run == 'False':
             session['username'] = [
                 username,
-                run_query_select(f"""SELECT Player.player_id
-                                 FROM Player
-                                 WHERE Player.name = '{username}'""")[0][0]
+                run_query_select("""SELECT Player.player_id FROM Player
+                                 WHERE Player.name = ?""", (username,))[0][0]
                 ]
             return redirect(url_for('leaderboard_fullgame',
                                     category_id='30831e37', page='0'))
         else:
             session['username'] = [
                 username,
-                run_query_select(f"""SELECT Player.player_id FROM Player
-                                 WHERE Player.name = '{username}'""")[0][0]
+                run_query_select("""SELECT Player.player_id FROM Player
+                                 WHERE Player.name = ?""", (username,))[0][0]
                 ]
             return redirect(url_for('submit_run_fullgame'))
 
@@ -619,7 +621,7 @@ def check_valid_signup():
         return redirect(url_for('signup'))
 
     if len(run_query_select(f"""SELECT Player.name FROM Player
-                            WHERE name = '{username}'""")) != 0:
+                            WHERE name = ?""", (username,))) != 0:
         session['signup_username_taken'] = True
         return redirect(url_for('signup'))
 
@@ -655,13 +657,13 @@ def view_fullgame_run(run_id):
     """this route is the view fullgame run page, it displays
     information about a single fullgame run given the run id"""
 
-    run_checker = run_query_select(f"""SELECT Run.fullgame_category_id
-                                   FROM Run WHERE Run.run_id = '{run_id}'""")
+    run_checker = run_query_select("""SELECT Run.fullgame_category_id
+                                   FROM Run WHERE Run.run_id = ?""", (run_id,))
 
     if (len((run_checker)) == 0) or (run_checker[0][0] is None):
         abort(404)
 
-    run = run_query_select(f"""SELECT Run.run_id, Run.time,
+    run = run_query_select("""SELECT Run.run_id, Run.time,
                             Run.date_submitted, Run.fullgame_category_id,
                             Run.video_link, Run.player_id, Player.name,
                             Fullgame_category.name, Platform.name FROM Run
@@ -669,7 +671,7 @@ def view_fullgame_run(run_id):
                             JOIN Platform ON Run.platform_id = Platform.platform_id
                             JOIN Fullgame_category ON Run.fullgame_category_id =
                             Fullgame_category.fullgame_category_id
-                            WHERE Run.run_id = '{run_id}'""")[0]
+                            WHERE Run.run_id = ?""", (run_id,))[0]
 
     run[1] = converttime(run[1])
     video_url = run[4]
@@ -696,15 +698,15 @@ def view_fullgame_run(run_id):
 
     run.append(get_run_rank(run_id, True, True))
 
-    if run_query_select(f"""SELECT * FROM Run WHERE Run.verifier_id IS NOT NULL
-                        AND Run.run_id = '{run_id}'"""):
-        verifier_id = run_query_select(f"""SELECT Run.verifier_id FROM Run
-                                       WHERE Run.run_id = '{run_id}'""")
-        verifier = run_query_select(f"""SELECT Player.name FROM Verifier
+    if run_query_select("""SELECT * FROM Run WHERE Run.verifier_id IS NOT NULL
+                        AND Run.run_id = ?""", (run_id,)):
+        verifier_id = run_query_select("""SELECT Run.verifier_id FROM Run
+                                       WHERE Run.run_id = ?""", (run_id,))
+        verifier = run_query_select("""SELECT Player.name FROM Verifier
                                     JOIN Player ON Verifier.player_id =
                                     Player.player_id WHERE
-                                    Verifier.verifier_id =
-                                    '{verifier_id[0][0]}'""")
+                                    Verifier.verifier_id = ?""",
+                                    (verifier_id[0][0],))
         run.append(verifier[0][0])
     else:
         run.append(False)
@@ -718,20 +720,20 @@ def view_individual_level_run(run_id):
     """this route is the view individual level run page, it displays
     information about a single individual level run given the run id"""
 
-    run_checker = run_query_select(f"""SELECT Run.il_id FROM Run
-                                   WHERE Run.run_id = '{run_id}'""")
+    run_checker = run_query_select("""SELECT Run.il_id FROM Run
+                                   WHERE Run.run_id = ?""", (run_id,))
 
     if (len(run_checker) == 0) or (run_checker[0][0] is None):
         abort(404)
 
-    run = run_query_select(f"""SELECT Run.run_id, Run.time,
+    run = run_query_select("""SELECT Run.run_id, Run.time,
                             Run.date_submitted, Run.il_id, Run.video_link,
                             Run.player_id, Player.name, Platform.name FROM Run
                             JOIN Player ON Run.player_id = Player.player_id
                             JOIN Platform ON Run.platform_id = Platform.platform_id
-                            WHERE Run.run_id = '{run_id}'""")[0]
+                            WHERE Run.run_id = ?""", (run_id,))[0]
 
-    level_category = run_query_select(f"""SELECT Individual_level.il_id,
+    level_category = run_query_select("""SELECT Individual_level.il_id,
                                       IL_category.name,
                                       IL_category.il_category_id, Level.name,
                                       Level.level_id FROM Individual_level
@@ -740,7 +742,7 @@ def view_individual_level_run(run_id):
                                       IL_category.il_category_id
                                       JOIN Level ON Individual_level.level_id =
                                       Level.level_id WHERE
-                                      Individual_level.il_id = '{run[3]}'""")
+                                      Individual_level.il_id = ?""", (run[3],))
 
     run[1] = converttime(run[1])
     run[2] = seconds_since_1980_to_date(run[2])
@@ -768,15 +770,15 @@ def view_individual_level_run(run_id):
 
     run.append(get_run_rank(run_id, False, True))
 
-    if run_query_select(f"""SELECT * FROM Run WHERE Run.verifier_id IS NOT NULL
-                        AND Run.run_id = '{run_id}'"""):
-        verifier_id = run_query_select(f"""SELECT Run.verifier_id FROM Run
-                                       WHERE Run.run_id = '{run_id}'""")
-        verifier = run_query_select(f"""SELECT Player.name FROM Verifier
+    if run_query_select("""SELECT * FROM Run WHERE Run.verifier_id IS NOT NULL
+                        AND Run.run_id = ?""", (run_id,)):
+        verifier_id = run_query_select("""SELECT Run.verifier_id FROM Run
+                                       WHERE Run.run_id = ?""", (run_id,))
+        verifier = run_query_select("""SELECT Player.name FROM Verifier
                                     JOIN Player ON Verifier.player_id =
                                     Player.player_id
-                                    WHERE Verifier.verifier_id =
-                                    '{verifier_id[0][0]}'""")
+                                    WHERE Verifier.verifier_id = ?""",
+                                    (verifier_id[0][0],))
         run.append(verifier[0][0])
     else:
         run.append(False)
@@ -790,22 +792,23 @@ def player_account_fullgame(player_id):
     """this route is the view player fullgame page, it shows all the
     fullgame runs a player has done given their player id"""
 
-    if len(run_query_select(f"""SELECT Player.player_id FROM Player
-                            WHERE Player.player_id = '{player_id}'""")) == 0:
+    if len(run_query_select("""SELECT Player.player_id FROM Player
+                            WHERE Player.player_id = ?""", (player_id,))) == 0:
         abort(404)
 
     temp_categories = run_query_select("""SELECT fullgame_category_id,
-                                       name FROM Fullgame_category""")
+                                       name FROM Fullgame_category""", ())
     runs = {}
     for i in temp_categories:
-        temp_runs = run_query_select(f"""SELECT Run.run_id, Run.time,
+        temp_runs = run_query_select("""SELECT Run.run_id, Run.time,
                                      Run.date_submitted, Platform.name,
                                      Run.video_link FROM Run JOIN Platform
                                      ON Run.platform_id = Platform.platform_id
-                                     WHERE Run.fullgame_category_id = '{i[0]}'
-                                     AND Run.player_id = '{player_id}'
+                                     WHERE Run.fullgame_category_id = ?
+                                     AND Run.player_id = ?
                                      AND Run.verifier_id IS NOT NULL
-                                     ORDER BY Run.time ASC""")
+                                     ORDER BY Run.time ASC""",
+                                     (i[0], player_id))
         if temp_runs:
             temp_runs_three = []
             for j in temp_runs:
@@ -840,33 +843,34 @@ def player_account_individual_level(player_id):
     """this route is the view player individual level page, it shows all the
     individual level runs a player has done given their player id"""
 
-    if len(run_query_select(f"""SELECT Player.player_id FROM Player
-                            WHERE Player.player_id = '{player_id}'""")) == 0:
+    if len(run_query_select("""SELECT Player.player_id FROM Player
+                            WHERE Player.player_id = ?""",
+                            (player_id, ))) == 0:
         abort(404)
 
     temp_categories = run_query_select("""SELECT IL_category_id, name
-                                       FROM IL_category""")
-    temp_levels = run_query_select("SELECT level_id, name FROM Level")
+                                       FROM IL_category""", ())
+    temp_levels = run_query_select("SELECT level_id, name FROM Level", ())
     runs = {}
     for i in temp_levels:
         runs[i[0]] = {}
 
     for i in temp_categories:
         for c in temp_levels:
-            il_id = run_query_select(f"""SELECT il_id FROM Individual_level
-                                     WHERE level_id = '{c[0]}'
-                                     AND IL_category_id = '{i[0]}'""")
+            il_id = run_query_select("""SELECT il_id FROM Individual_level
+                                     WHERE level_id = ?
+                                     AND IL_category_id = ?""", (c[0], i[0]))
             if not il_id:
                 continue
-            temp_runs = run_query_select(f"""SELECT Run.run_id, Run.time,
+            temp_runs = run_query_select("""SELECT Run.run_id, Run.time,
                                          Run.date_submitted, Platform.name,
                                          Run.video_link FROM Run
                                          JOIN Platform ON Run.platform_id =
                                          Platform.platform_id WHERE Run.il_id =
-                                         '{il_id[0][0]}' AND Run.player_id =
-                                         '{player_id}'
+                                         ? AND Run.player_id = ?
                                          AND Run.verifier_id IS NOT NULL
-                                         ORDER BY Run.time ASC""")
+                                         ORDER BY Run.time ASC""",
+                                         (il_id[0][0], player_id))
             if temp_runs:
                 temp_runs_three = []
                 for j in temp_runs:
@@ -917,12 +921,13 @@ def submit_run_fullgame():
     it to be verified and then added to the leaderboards"""
 
     temp_categories = run_query_select("""SELECT fullgame_category_id, name
-                                       FROM Fullgame_category""")
+                                       FROM Fullgame_category""", ())
     categories = {}
     for i in temp_categories:
         categories[i[0]] = i[1]
 
-    temp_platforms = run_query_select("SELECT platform_id, name FROM Platform")
+    temp_platforms = run_query_select("""SELECT platform_id, name
+                                      FROM Platform""", ())
     platforms = {}
     for i in temp_platforms:
         platforms[i[0]] = i[1]
@@ -954,17 +959,18 @@ def submit_run_individual_level():
     it to be verified and then added to the leaderboards"""
 
     temp_categories = run_query_select("""SELECT il_category_id, name
-                                       FROM IL_category""")
+                                       FROM IL_category""", ())
     categories = {}
     for i in temp_categories:
         categories[i[0]] = i[1]
 
-    temp_platforms = run_query_select("SELECT platform_id, name FROM Platform")
+    temp_platforms = run_query_select("""SELECT platform_id, name
+                                      FROM Platform""", ())
     platforms = {}
     for i in temp_platforms:
         platforms[i[0]] = i[1]
 
-    temp_levels = run_query_select("SELECT level_id, name FROM Level")
+    temp_levels = run_query_select("SELECT level_id, name FROM Level", ())
     levels = {}
     for i in temp_levels:
         levels[i[0]] = i[1]
@@ -992,7 +998,7 @@ def submit_run_individual_level():
                            error_message_dict=error_message_dict)
 
 
-@app.route('/process_run_fullgame')
+@app.route('/process_run_fullgame', methods=['GET', 'POST'])
 def process_run_fullgame():
     """this route validates all the data that a user submited for a fullgame
     run before it gets added to the database, if the data doesn't meet the
@@ -1014,7 +1020,7 @@ def process_run_fullgame():
     category = request.form['submit_run_category_dropwdown']
     valid_category = False
     category_ids = run_query_select("""SELECT Fullgame_category.fullgame_category_id
-                                    FROM Fullgame_category""")
+                                    FROM Fullgame_category""", ())
     for i in category_ids:
         if category == i[0]:
             valid_category = True
@@ -1024,7 +1030,7 @@ def process_run_fullgame():
 
     platform = request.form['platforms']
     valid_platform = False
-    platform_ids = run_query_select("SELECT platform_id FROM Platform")
+    platform_ids = run_query_select("SELECT platform_id FROM Platform", ())
     for i in platform_ids:
         if platform == i[0]:
             valid_platform = True
@@ -1090,7 +1096,8 @@ def process_run_individual_level():
 
     category = request.form['submit_run_category_dropwdown']
     valid_category = False
-    category_ids = run_query_select("SELECT IL_category.il_category_id FROM IL_category")
+    category_ids = run_query_select("""SELECT IL_category.il_category_id
+                                    FROM IL_category""", ())
     for i in category_ids:
         if category == i[0]:
             valid_category = True
@@ -1100,7 +1107,7 @@ def process_run_individual_level():
 
     level = request.form['submit_run_level_dropwdown']
     valid_level = False
-    level_ids = run_query_select("SELECT Level.level_id FROM Level")
+    level_ids = run_query_select("SELECT Level.level_id FROM Level", ())
     for i in level_ids:
         if level == i[0]:
             valid_level = True
@@ -1108,17 +1115,19 @@ def process_run_individual_level():
         session['submit_run_level_invalid'] = True
         return redirect(url_for('submit_run_individual_level'))
 
-    level_category_pair = run_query_select(f"""SELECT il_id
+    level_category_pair = run_query_select("""SELECT il_id
                                            FROM Individual_level
-                                           WHERE level_id = '{level}'
-                                           AND il_category_id = '{category}'""")
+                                           WHERE level_id = ?
+                                           AND il_category_id = ?""",
+                                           (level, category))
     if len(level_category_pair) == 0:
         session['submit_run_level_category_pair_invalid'] = True
         return redirect(url_for('submit_run_individual_level'))
 
     platform = request.form['platforms']
     valid_platform = False
-    platform_ids = run_query_select("SELECT Platform.platform_id FROM Platform")
+    platform_ids = run_query_select("""SELECT Platform.platform_id
+                                    FROM Platform""", ())
     for i in platform_ids:
         if platform == i[0]:
             valid_platform = True
@@ -1156,8 +1165,9 @@ def process_run_individual_level():
                      verifier_id, time, date_submitted, player_id, platform_id,
                      video_link, obsolete)
                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
-                     (generate_id(), None, level_category_pair[0][0], None, time,
-                      date_submitted, session['username'][1], platform, link, None))
+                     (generate_id(), None, level_category_pair[0][0],
+                      None, time, date_submitted,
+                      session['username'][1], platform, link, None))
     return redirect(url_for('leaderboard_fullgame',
                             category_id='30831e37', page='0'))
 
@@ -1181,7 +1191,7 @@ def verify_runs():
                                      Fullgame_category.fullgame_category_id
                                      WHERE Run.verifier_id IS NULL
                                      AND Run.il_id IS NULL
-                                     ORDER BY Run.date_submitted DESC""")
+                                     ORDER BY Run.date_submitted DESC""", ())
     il_runs = run_query_select("""SELECT Run.date_submitted, Run.run_id,
                                Player.name, Run.time, Platform.platform_id,
                                Run.il_id FROM Run
@@ -1192,14 +1202,14 @@ def verify_runs():
                                Individual_level.il_id
                                WHERE Run.verifier_id IS NULL
                                AND Run.fullgame_category_id IS NULL
-                               ORDER BY Run.date_submitted DESC""")
+                               ORDER BY Run.date_submitted DESC""", ())
 
     for v, i in enumerate(fullgame_runs):
         fullgame_runs[v].append(0)
 
     for v, i in enumerate(il_runs):
         il_id = i[5]
-        category_level = run_query_select(f"""SELECT Level.name,
+        category_level = run_query_select("""SELECT Level.name,
                                           Il_category.name
                                           FROM Individual_level
                                           JOIN Level ON
@@ -1209,7 +1219,7 @@ def verify_runs():
                                           Individual_level.il_category_id =
                                           Il_category.il_category_id
                                           WHERE Individual_level.il_id =
-                                          '{il_id}'""")
+                                          ?""", (il_id,))
         il_runs[v].append(category_level[0][0])
         il_runs[v].append(category_level[0][1])
         il_runs[v].append(1)
@@ -1237,56 +1247,56 @@ def verify_run():
     verify_deny = request.form['verify_deny']
     run_id = request.form['verify_run']
     if verify_deny == 'deny':
-        run_query_update(f"DELETE FROM Run WHERE run_id = '{run_id}'")
+        run_query_update("DELETE FROM Run WHERE run_id = ?", (run_id,))
         return redirect(url_for('verify_runs'))
 
-    if run_query_select(f"""SELECT * FROM Run WHERE Run.run_id = '{run_id}'
-                        AND Run.il_id IS NOT NULL"""):
-        il_id = run_query_select(f"""SELECT Run.il_id FROM Run
-                                 WHERE Run.run_id = '{run_id}'""")[0][0]
-        player_id = run_query_select(f"""SELECT Run.player_id FROM Run
-                                     WHERE Run.run_id = '{run_id}'""")[0][0]
-        run_time = run_query_select(f"""SELECT Run.time FROM Run
-                                    WHERE Run.run_id = '{run_id}'""")[0][0]
-        pb = run_query_select(f"""SELECT Run.run_id, Run.time FROM Run
-                              WHERE Run.il_id = '{il_id}' AND Run.obsolete = 0
-                              AND Run.player_id = '{player_id}'""")
+    if run_query_select("""SELECT * FROM Run WHERE Run.run_id = ?
+                        AND Run.il_id IS NOT NULL""", (run_id,)):
+        il_id = run_query_select("""SELECT Run.il_id FROM Run
+                                 WHERE Run.run_id = ?""", (run_id,))[0][0]
+        player_id = run_query_select("""SELECT Run.player_id FROM Run
+                                     WHERE Run.run_id = ?""", (run_id,))[0][0]
+        run_time = run_query_select("""SELECT Run.time FROM Run
+                                    WHERE Run.run_id = ?""", (run_id,))[0][0]
+        pb = run_query_select("""SELECT Run.run_id, Run.time FROM Run
+                              WHERE Run.il_id = ? AND Run.obsolete = 0
+                              AND Run.player_id = ?""", (il_id, player_id))
         obsolete = 1
         if pb:
             if run_time <= pb[0][1]:
                 obsolete = 0
-                run_query_update(f"""UPDATE Run SET obsolete = 1
-                                 WHERE run_id = '{pb[0][0]}'""")
+                run_query_update("""UPDATE Run SET obsolete = 1
+                                 WHERE run_id = ?""", (pb[0][0],))
         else:
             obsolete = 0
     else:
-        category_id = run_query_select(f"""SELECT Run.fullgame_category_id
-                                       FROM Run
-                                       WHERE Run.run_id = '{run_id}'""")[0][0]
-        player_id = run_query_select(f"""SELECT Run.player_id FROM Run
-                                     WHERE Run.run_id = '{run_id}'""")[0][0]
-        run_time = run_query_select(f"""SELECT Run.time FROM Run
-                                    WHERE Run.run_id = '{run_id}'""")[0][0]
-        pb = run_query_select(f"""SELECT Run.run_id, Run.time FROM Run
-                              WHERE Run.fullgame_category_id = '{category_id}'
+        category_id = run_query_select("""SELECT Run.fullgame_category_id
+                                       FROM Run WHERE 
+                                       Run.run_id = ?""", (run_id,))[0][0]
+        player_id = run_query_select("""SELECT Run.player_id FROM Run
+                                     WHERE Run.run_id = ?""", (run_id,))[0][0]
+        run_time = run_query_select("""SELECT Run.time FROM Run
+                                    WHERE Run.run_id = ?""", (run_id,))[0][0]
+        pb = run_query_select("""SELECT Run.run_id, Run.time FROM Run
+                              WHERE Run.fullgame_category_id = ?
                               AND Run.obsolete = 0
-                              AND Run.player_id = '{player_id}'""")
+                              AND Run.player_id = ?""",
+                              (category_id, player_id))
         obsolete = 1
         if pb:
             if run_time <= pb[0][1]:
                 obsolete = 0
-                run_query_update(f"""UPDATE Run SET obsolete = 1
-                                 WHERE run_id = '{pb[0][0]}'""")
+                run_query_update("""UPDATE Run SET obsolete = 1
+                                 WHERE run_id = ?""", (pb[0][0],))
         else:
             obsolete = 0
 
-    verifier_id = run_query_select(f"""SELECT Verifier.verifier_id
-                                   FROM Verifier WHERE Verifier.player_id =
-                                   '{session['username'][1]}'""")[0][0]
+    verifier_id = run_query_select("""SELECT Verifier.verifier_id
+                                   FROM Verifier WHERE Verifier.player_id = ?
+                                   """, (session['username'][1],))[0][0]
 
-    run_query_update(f"""UPDATE Run SET verifier_id = '{verifier_id}',
-                      obsolete = '{obsolete}'
-                      WHERE run_id = '{run_id}'""")
+    run_query_update("""UPDATE Run SET verifier_id = ?, obsolete = ?
+                      WHERE run_id = ?""", (verifier_id, obsolete, run_id))
 
     return redirect(url_for('verify_runs'))
 
@@ -1302,7 +1312,7 @@ def process_player_search():
     # get player id from player name because player
     # account fullgame page needs player id
     player_id = run_query_select(f"""SELECT Player.player_id FROM Player
-                                 WHERE Player.name = '{player_name}'""")
+                                 WHERE Player.name = ?""", (player_name,))
 
     # if player id exists then go to player account fullgame for that player
     if player_id:
