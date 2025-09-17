@@ -416,6 +416,7 @@ def leaderboard_fullgame(category_id, page):
     # get all the fullgame runs with the specific category id,
     # get bascally all the information about each
     # run, dont include obsolete runs and unverifed runs
+    # join player and platform on run to get those values instead of id's
     all_runs = run_query_select("""SELECT Run.run_id, Player.name,
                             Player.player_id, Run.time,Run.video_link,
                             Run.date_submitted, Platform.name FROM Run
@@ -460,6 +461,7 @@ def leaderboard_fullgame(category_id, page):
 
     # get all the runs done recently for the
     # category id, with the same params as before
+    # join player on run to get player name instead of player id
     temp_recent_runs = run_query_select("""SELECT Player.name, Run.player_id,
                                         Run.run_id, Run.time FROM Run
                                         JOIN Player ON Player.player_id = Run.player_id
@@ -522,6 +524,7 @@ def individual_level_leaderboard(individual_level_id, page):
     # get all the fullgame runs with the specific il id,
     # get bascally all the information about each
     # run, dont include obsolete runs and unverifed runs
+    # join player and platform on run to get those values instead of id's
     all_runs = run_query_select("""SELECT Run.run_id, Player.name,
                             Player.player_id, Run.time,Run.video_link,
                             Run.date_submitted, Platform.name FROM Run
@@ -557,6 +560,7 @@ def individual_level_leaderboard(individual_level_id, page):
         runs[v].append(seconds_since_1980_to_date(i[5]))
 
     # get the level, needed for dropdown
+    # join level on individual level to get level name instead of level id
     level = run_query_select("""SELECT Level.name, Level.level_id
                              FROM Individual_level JOIN Level ON
                              Individual_level.level_id = Level.level_id
@@ -564,6 +568,8 @@ def individual_level_leaderboard(individual_level_id, page):
                              (individual_level_id,))[0]
 
     # get the category, needed for category buttons diff colour
+    # join il caetgory on indidual level to get il category
+    # name instead of il category id
     category = run_query_select("""SELECT IL_category.name,
                                 IL_category.il_category_id
                                 FROM Individual_level JOIN IL_category ON
@@ -586,6 +592,7 @@ def individual_level_leaderboard(individual_level_id, page):
             ]
 
     # create categories dict, needed for category buttons
+    # join il category on run to get il category name instead of il category id
     categories_temp = run_query_select("""SELECT IL_category.il_category_id,
                                        IL_category.name FROM Individual_level
                                        JOIN IL_category ON
@@ -604,6 +611,7 @@ def individual_level_leaderboard(individual_level_id, page):
             ]
 
     # get recent runs for the il id, same params as before
+    # join player on run to get player name instead of player id
     temp_recent_runs = run_query_select("""SELECT Player.name, Run.player_id,
                                         Run.run_id, Run.time FROM Run
                                         JOIN Player ON Player.player_id = Run.player_id
@@ -728,6 +736,9 @@ def signup():
         'signup_username_special_characters_invalid': False
     }
 
+    # iterate through all possible error
+    # messages and check if they are in session
+    # to display correct error message on page
     for error_message in error_message_dict.keys():
         if error_message in session:
             del session[error_message]
@@ -743,6 +754,7 @@ def check_valid_signup():
     whether they inputed valid credentials or not, if
     they didn't then it sends them back to the signup page"""
 
+    # dict of all allowed characters for usernames
     normal_characters = [
         'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
         'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
@@ -753,19 +765,26 @@ def check_valid_signup():
 
     username = request.form['username']
 
+    # chek that username is within length constraints,
+    # needed for validating inputs so that the
+    # usernames arent able to be 100 milion characters long
     if (len(username) < 3) or (len(username) > 20):
         session['signup_username_length_invalid'] = True
         return redirect(url_for('signup'))
 
+    # check if usernae contains spaces, if so thats not allowed
     if ' ' in username:
         session['signup_username_spaces_invalid'] = True
         return redirect(url_for('signup'))
 
+    # check if player name already exists in database, if so thats not allowed
     if len(run_query_select("""SELECT Player.name FROM Player
                             WHERE name = ?""", (username,))) != 0:
         session['signup_username_taken'] = True
         return redirect(url_for('signup'))
 
+    # check that every character in username is in allowed
+    # characters dict, if not then thats not allowed
     for i in username:
         if i not in normal_characters:
             session['signup_username_special_characters_invalid'] = True
@@ -774,19 +793,25 @@ def check_valid_signup():
     password = request.form['password']
     password_confirm = request.form['password_confirm']
 
+    # check that the password matches the password
+    # confirm, if not thats not allowed
     if not password == password_confirm:
         session['signup_password_failed'] = True
         return redirect(url_for('signup'))
 
+    # hash the password for the database
     hash = password.encode()
     hash = hashlib.sha256(hash).hexdigest()
 
     new_user_id = generate_id()
 
+    # insert new player data into the database
     run_query_insert("""INSERT INTO Player (player_id, name, pfp, hash)
                      VALUES (?, ?, ?, ?)""",
                      (new_user_id, username, None, hash))
 
+    # add new player as logged in to the session so the
+    # rest of the website knows they are logged in
     session['username'] = [username, new_user_id]
 
     return redirect(url_for('leaderboard_fullgame',
@@ -798,12 +823,17 @@ def view_fullgame_run(run_id):
     """this route is the view fullgame run page, it displays
     information about a single fullgame run given the run id"""
 
+    # check that a fullgame run exists in the database with that id,
+    # if not then run 404 page becasuse invalid run id
     run_checker = run_query_select("""SELECT Run.fullgame_category_id
                                    FROM Run WHERE Run.run_id = ?""", (run_id,))
 
     if (len((run_checker)) == 0) or (run_checker[0][0] is None):
         abort(404)
 
+    # get all the information about the individual run, using the
+    # run id, join the platform table, player table, and fullgame
+    # category table onto run table to get those values instead of id's
     run = run_query_select("""SELECT Run.run_id, Run.time,
                             Run.date_submitted, Run.fullgame_category_id,
                             Run.video_link, Run.player_id, Player.name,
@@ -814,10 +844,15 @@ def view_fullgame_run(run_id):
                             Fullgame_category.fullgame_category_id
                             WHERE Run.run_id = ?""", (run_id,))[0]
 
+    # convert the time and date
     run[1] = converttime(run[1])
-    video_url = run[4]
     run[2] = seconds_since_1980_to_date(run[2])
 
+    video_url = run[4]
+
+    # check all possible link formats to see if the link fits one of them, if
+    # it does format it into a embed link for either yt or twitch else make
+    # embed link false so the html can play error image instead of video
     if "youtu.be/" in video_url:
         video_id = video_url.split("/")[-1]
         embed_url = f"https://www.youtube.com/embed/{video_id}"
@@ -837,8 +872,12 @@ def view_fullgame_run(run_id):
 
     run[4] = embed_url
 
+    # get the placement of the ruun
     run.append(get_run_rank(run_id, True, True))
 
+    # chech whether the run have been verifier,
+    # if so then get verifier's inforation else append
+    # false so the html knows its not verifier
     if run_query_select("""SELECT * FROM Run WHERE Run.verifier_id IS NOT NULL
                         AND Run.run_id = ?""", (run_id,)):
         verifier_id = run_query_select("""SELECT Run.verifier_id FROM Run
@@ -851,6 +890,7 @@ def view_fullgame_run(run_id):
         run.append(verifier[0][0])
     else:
         run.append(False)
+
     return render_template('view_fullgame_run.html', run=run,
                            logged_in=check_logged_in(),
                            verifier=check_verifier())
@@ -861,12 +901,17 @@ def view_individual_level_run(run_id):
     """this route is the view individual level run page, it displays
     information about a single individual level run given the run id"""
 
+    # check that a il run exists in the database with that id,
+    # if not then run 404 page becasuse invalid run id
     run_checker = run_query_select("""SELECT Run.il_id FROM Run
                                    WHERE Run.run_id = ?""", (run_id,))
 
     if (len(run_checker) == 0) or (run_checker[0][0] is None):
         abort(404)
 
+    # get all the information about the individual run, using the
+    # run id, join the platform table, player table,
+    # onto run table to get those values instead of id's
     run = run_query_select("""SELECT Run.run_id, Run.time,
                             Run.date_submitted, Run.il_id, Run.video_link,
                             Run.player_id, Player.name, Platform.name FROM Run
@@ -874,6 +919,7 @@ def view_individual_level_run(run_id):
                             JOIN Platform ON Run.platform_id = Platform.platform_id
                             WHERE Run.run_id = ?""", (run_id,))[0]
 
+    # get the level and category given the il_id
     level_category = run_query_select("""SELECT Individual_level.il_id,
                                       IL_category.name,
                                       IL_category.il_category_id, Level.name,
@@ -885,11 +931,16 @@ def view_individual_level_run(run_id):
                                       Level.level_id WHERE
                                       Individual_level.il_id = ?""", (run[3],))
 
+    # conver time and date and add category and level
     run[1] = converttime(run[1])
     run[2] = seconds_since_1980_to_date(run[2])
     run[3] = level_category[0]
+
     video_url = run[4]
 
+    # check all possible link formats to see if the link fits one of them, if
+    # it does format it into a embed link for either yt or twitch else make
+    # embed link false so the html can play error image instead of video
     if "youtu.be/" in video_url:
         video_id = video_url.split("/")[-1]
         embed_url = f"https://www.youtube.com/embed/{video_id}"
@@ -909,8 +960,12 @@ def view_individual_level_run(run_id):
 
     run[4] = embed_url
 
+    # get run placement
     run.append(get_run_rank(run_id, False, True))
 
+    # chech whether the run have been verifier,
+    # if so then get verifier's inforation else append
+    # false so the html knows its not verifier
     if run_query_select("""SELECT * FROM Run WHERE Run.verifier_id IS NOT NULL
                         AND Run.run_id = ?""", (run_id,)):
         verifier_id = run_query_select("""SELECT Run.verifier_id FROM Run
@@ -933,14 +988,17 @@ def player_account_fullgame(player_id):
     """this route is the view player fullgame page, it shows all the
     fullgame runs a player has done given their player id"""
 
+    # check if player exists given player id, if not 404
     if len(run_query_select("""SELECT Player.player_id FROM Player
                             WHERE Player.player_id = ?""", (player_id,))) == 0:
         abort(404)
 
-    temp_categories = run_query_select("""SELECT fullgame_category_id,
+    # get all fullgame categories and interate throguh them
+    categories = run_query_select("""SELECT fullgame_category_id,
                                        name FROM Fullgame_category""", ())
     runs = {}
-    for i in temp_categories:
+    for i in categories:
+        # get all the information about all user runs from each category
         temp_runs = run_query_select("""SELECT Run.run_id, Run.time,
                                      Run.date_submitted, Platform.name,
                                      Run.video_link FROM Run JOIN Platform
@@ -950,31 +1008,31 @@ def player_account_fullgame(player_id):
                                      AND Run.verifier_id IS NOT NULL
                                      ORDER BY Run.time ASC""",
                                      (i[0], player_id))
-        if temp_runs:
-            temp_runs_three = []
-            for j in temp_runs:
-                temp_runs_two = list(j)
-                temp_runs_two[1] = converttime(temp_runs_two[1])
-                temp_runs_two[2] = seconds_since_1980_to_date(temp_runs_two[2])
-                temp_runs_three.append(temp_runs_two)
-            runs[i[0]] = temp_runs_three
-    categories = {}
-    for i in temp_categories:
-        categories[i[0]] = i[1]
 
-    for i in runs:
-        for j in runs[i]:
-            j.append(get_run_rank(j[0], True, False))
-            video_url = j[4]
-            if "youtu.be" in video_url:
-                video_id = video_url.split("/")[-1]
-                embed_url = f"https://www.youtube.com/embed/{video_id}"
-            else:
-                embed_url = video_url
-            j[4] = embed_url
+    # if atleast 1 run exists
+        if temp_runs:
+            category_run_set = []
+
+            # iterate through all the runs in that category and converter their
+            # time and dates, then append the run to
+            # the category run list, nd get run placement
+            for j in temp_runs:
+                run = list(j)
+                run[1] = converttime(run[1])
+                run[2] = seconds_since_1980_to_date(run[2])
+                run.append(get_run_rank(run[0], True, False))
+                category_run_set.append(run)
+
+            # add the category run set to the runs dict with categry id as key
+            runs[i[0]] = category_run_set
+
+    # make category dict
+    categories_dict = {}
+    for i in categories:
+        categories_dict[i[0]] = i[1]
 
     return render_template('player_account_fullgame.html', player_id=player_id,
-                           runs=runs, categories=categories,
+                           runs=runs, categories=categories_dict,
                            logged_in=check_logged_in(),
                            verifier=check_verifier())
 
@@ -984,25 +1042,39 @@ def player_account_individual_level(player_id):
     """this route is the view player individual level page, it shows all the
     individual level runs a player has done given their player id"""
 
+    # check if player exists given player id, if not 404
     if len(run_query_select("""SELECT Player.player_id FROM Player
                             WHERE Player.player_id = ?""",
                             (player_id, ))) == 0:
         abort(404)
 
+    # get list of categoies
     temp_categories = run_query_select("""SELECT IL_category_id, name
                                        FROM IL_category""", ())
+
+    # get list of levels
     temp_levels = run_query_select("SELECT level_id, name FROM Level", ())
     runs = {}
+
+    # make database have key for each level id
     for i in temp_levels:
         runs[i[0]] = {}
 
-    for i in temp_categories:
-        for c in temp_levels:
+    # iterate thtough all categories
+    for category in temp_categories:
+
+        # iterate through all levels
+        for level in temp_levels:
+
+            # check that the level category pair is a valid il, if not continue
             il_id = run_query_select("""SELECT il_id FROM Individual_level
                                      WHERE level_id = ?
-                                     AND IL_category_id = ?""", (c[0], i[0]))
+                                     AND IL_category_id = ?""",
+                                     (level[0], category[0]))
             if not il_id:
                 continue
+
+            # get all user runs for that level category pari
             temp_runs = run_query_select("""SELECT Run.run_id, Run.time,
                                          Run.date_submitted, Platform.name,
                                          Run.video_link FROM Run
@@ -1012,38 +1084,41 @@ def player_account_individual_level(player_id):
                                          AND Run.verifier_id IS NOT NULL
                                          ORDER BY Run.time ASC""",
                                          (il_id[0][0], player_id))
-            if temp_runs:
-                temp_runs_three = []
-                for j in temp_runs:
-                    temp_runs_two = list(j)
-                    temp_runs_two[1] = converttime(temp_runs_two[1])
-                    temp_runs_two[2] = seconds_since_1980_to_date(temp_runs_two[2])
-                    temp_runs_three.append(temp_runs_two)
-                runs[c[0]][i[0]] = temp_runs_three
 
+            # if atleast 1 run exists
+            if temp_runs:
+                run_il_set = []
+
+                # for each run convert time and date and get run placement,
+                # then append the run to the il run list
+                for j in temp_runs:
+                    run = list(j)
+                    run[1] = converttime(run[1])
+                    run[2] = seconds_since_1980_to_date(run[2])
+                    run.append(get_run_rank(run[0], False, False))
+                    run_il_set.append(run)
+
+                # add the il run set to dictionary,
+                # with key as level and then cateogry id
+                runs[level[0]][category[0]] = run_il_set
+
+    # make categories dict
     categories = {}
     for i in temp_categories:
         categories[i[0]] = i[1]
 
+    # make leveles dict
     levels = {}
     for i in temp_levels:
         levels[i[0]] = i[1]
 
+    # goes through each level in the run dictionary
+    # and if it contains no runs deletes it from dict so insed
+    # of showing emppty table on page it just doesnt exist
     to_be_deleted = []
-
     for i in runs:
         if len(runs[i]) == 0:
             to_be_deleted.append(i)
-        for j in runs[i]:
-            for c in runs[i][j]:
-                c.append(get_run_rank(c[0], False, False))
-                video_url = c[4]
-                if "youtu.be" in video_url:
-                    video_id = video_url.split("/")[-1]
-                    embed_url = f"https://www.youtube.com/embed/{video_id}"
-                else:
-                    embed_url = video_url
-                c[4] = embed_url
 
     for i in to_be_deleted:
         del runs[i]
@@ -1061,14 +1136,20 @@ def submit_run_fullgame():
     to submit a fullgame run to the database for
     it to be verified and then added to the leaderboards"""
 
+    # get categories
     temp_categories = run_query_select("""SELECT fullgame_category_id, name
                                        FROM Fullgame_category""", ())
+
+    # make category dict
     categories = {}
     for i in temp_categories:
         categories[i[0]] = i[1]
 
+    # get platforms
     temp_platforms = run_query_select("""SELECT platform_id, name
                                       FROM Platform""", ())
+
+    # make platform dict
     platforms = {}
     for i in temp_platforms:
         platforms[i[0]] = i[1]
@@ -1078,10 +1159,13 @@ def submit_run_fullgame():
                           'submit_run_platform_invalid': False,
                           'submit_run_time_invalid': False}
 
+    # if user isnt logged in they need to be redirected to log in page
     if not check_logged_in():
         session['submit_run'] = True
         return redirect(url_for('login'))
 
+    # check if any error messages have been added to session, if so that means
+    # the user tred to submit run but failed so error message needs to be shown
     for error_message in error_message_dict.keys():
         if error_message in session:
             del session[error_message]
@@ -1099,19 +1183,28 @@ def submit_run_individual_level():
     to submit a individual level run to the database for
     it to be verified and then added to the leaderboards"""
 
+    # get categories list
     temp_categories = run_query_select("""SELECT il_category_id, name
                                        FROM IL_category""", ())
+
+    # make categories dict
     categories = {}
     for i in temp_categories:
         categories[i[0]] = i[1]
 
+    # get platforms
     temp_platforms = run_query_select("""SELECT platform_id, name
                                       FROM Platform""", ())
+
+    # make platform dict
     platforms = {}
     for i in temp_platforms:
         platforms[i[0]] = i[1]
 
+    # get levels
     temp_levels = run_query_select("SELECT level_id, name FROM Level", ())
+
+    # make levels dict
     levels = {}
     for i in temp_levels:
         levels[i[0]] = i[1]
@@ -1123,10 +1216,13 @@ def submit_run_individual_level():
                           'submit_run_level_invalid': False,
                           'submit_run_level_category_pair_invalid': False}
 
+    # if user isnt logged in they need to be redirected to log in page
     if not check_logged_in():
         session['submit_run'] = True
         return redirect(url_for('login'))
 
+    # check if any error messages have been added to session, if so that means
+    # the user tred to submit run but failed so error message needs to be shown
     for error_message in error_message_dict.keys():
         if error_message in session:
             del session[error_message]
@@ -1146,10 +1242,13 @@ def process_run_fullgame():
     correct format or crieria then it doesnt get submitted and
     the user gets sent back to the submit run fullgame page"""
 
-    link = request.form['submit_run_link']
     valid_link_formats = ['youtube.com/watch?v=', 'youtube.com/embed/',
                           'twitch.tv/videos/', 'twitch.tv/channelname/video/',
                           'youtu.be/']
+
+    # check that the link submitted meets the valid link formats, if it doesnt
+    # meet any of them then go back to fullgame with error message in session
+    link = request.form['submit_run_link']
     valid_link = False
     for format in valid_link_formats:
         if format in link:
@@ -1158,6 +1257,8 @@ def process_run_fullgame():
         session['submit_run_link_invalid'] = True
         return redirect(url_for('submit_run_fullgame'))
 
+    # check that category id submitted is in the list of all category ids,
+    # if not go back to submit page and show error message
     category = request.form['submit_run_category_dropwdown']
     valid_category = False
     category_ids = run_query_select("""SELECT Fullgame_category.fullgame_category_id
@@ -1169,6 +1270,8 @@ def process_run_fullgame():
         session['submit_run_category_invalid'] = True
         return redirect(url_for('submit_run_fullgame'))
 
+    # check that platform id submitted is in the list of all platform ids,
+    # if not go back to submit page and show error message
     platform = request.form['platforms']
     valid_platform = False
     platform_ids = run_query_select("SELECT platform_id FROM Platform", ())
@@ -1179,6 +1282,8 @@ def process_run_fullgame():
         session['submit_run_platform_invalid'] = True
         return redirect(url_for('submit_run_fullgame'))
 
+    # check that each value for the time
+    # submitted meets the crietea it needs to, eg minutes less than 60
     time_hours = request.form['time-hours'] or '0'
     if not check_valid_time_hours(time_hours):
         session['submit_run_time_invalid'] = True
@@ -1199,12 +1304,16 @@ def process_run_fullgame():
         session['submit_run_time_invalid'] = True
         return redirect(url_for('submit_run_fullgame'))
 
+    # format the time string then convert it
+    # to seconds before adding it into database
     time = time_hours + ':' + time_minutes + ':' + time_seconds + '.' + time_milliseconds
     time = convert_time_to_seconds(time)
 
+    # get date submiteed and convert it to seconds
     today = datetime.date.today()
     date_submitted = int((today - start_date).total_seconds())
 
+    # insert the run into database with verified as none and obsolete as none
     run_query_insert("""INSERT INTO Run (run_id, fullgame_category_id, il_id,
                      verifier_id, time, date_submitted, player_id, platform_id,
                      video_link, obsolete)
@@ -1223,6 +1332,8 @@ def process_run_individual_level():
     the correct format or crieria then it doesnt get submitted and
     the user gets sent back to the submit run individual level page"""
 
+    # check that the link submitted meets the valid link formats, if it doesnt
+    # meet any of them then go back to fullgame with error message in session
     link = request.form['submit_run_link']
     valid_link_formats = ['youtube.com/watch?v=', 'youtube.com/embed/',
                           'twitch.tv/videos/', 'twitch.tv/channelname/video/',
@@ -1235,6 +1346,8 @@ def process_run_individual_level():
         session['submit_run_link_invalid'] = True
         return redirect(url_for('submit_run_individual_level'))
 
+    # check that category id submitted is in the list of all category ids,
+    # if not go back to submit page and show error message
     category = request.form['submit_run_category_dropwdown']
     valid_category = False
     category_ids = run_query_select("""SELECT IL_category.il_category_id
@@ -1246,6 +1359,8 @@ def process_run_individual_level():
         session['submit_run_category_invalid'] = True
         return redirect(url_for('submit_run_individual_level'))
 
+    # check that level id submitted is in the list of all level ids,
+    # if not go back to submit page and show error message
     level = request.form['submit_run_level_dropwdown']
     valid_level = False
     level_ids = run_query_select("SELECT Level.level_id FROM Level", ())
@@ -1256,6 +1371,8 @@ def process_run_individual_level():
         session['submit_run_level_invalid'] = True
         return redirect(url_for('submit_run_individual_level'))
 
+    # check if the level and category pair make a valid il, if
+    # not then go back to submit run page and show error message
     level_category_pair = run_query_select("""SELECT il_id
                                            FROM Individual_level
                                            WHERE level_id = ?
@@ -1265,6 +1382,8 @@ def process_run_individual_level():
         session['submit_run_level_category_pair_invalid'] = True
         return redirect(url_for('submit_run_individual_level'))
 
+    # check that platform id submitted is in the list of all platform ids,
+    # if not go back to submit page and show error message
     platform = request.form['platforms']
     valid_platform = False
     platform_ids = run_query_select("""SELECT Platform.platform_id
@@ -1276,6 +1395,8 @@ def process_run_individual_level():
         session['submit_run_platform_invalid'] = True
         return redirect(url_for('submit_run_individual_level'))
 
+    # check that each value for the time
+    # submitted meets the crietea it needs to, eg minutes less than 60
     time_hours = request.form['time-hours'] or '0'
     if not check_valid_time_hours(time_hours):
         session['submit_run_time_invalid'] = True
@@ -1296,12 +1417,16 @@ def process_run_individual_level():
         session['submit_run_time_invalid'] = True
         return redirect(url_for('submit_run_individual_level'))
 
+    # format the time string then convert it
+    # to seconds before adding it into database
     time = time_hours + ':' + time_minutes + ':' + time_seconds + '.' + time_milliseconds
     time = convert_time_to_seconds(time)
 
+    # get date submiteed and convert it to seconds
     today = datetime.date.today()
     date_submitted = int((today - start_date).total_seconds())
 
+    # insert the run into database with verified as none and obsolete as none
     run_query_insert("""INSERT INTO Run (run_id, fullgame_category_id, il_id,
                      verifier_id, time, date_submitted, player_id, platform_id,
                      video_link, obsolete)
@@ -1319,6 +1444,8 @@ def verify_runs():
     to see all the runs that need to be verified, they can
     then click on any of them and check over them to verify them"""
 
+    # get all the information about all the fullgame runs where
+    # verifier id is None, aka not verified and sort by date submitted
     fullgame_runs = run_query_select("""SELECT Run.date_submitted, Run.run_id,
                                      Player.name, Run.time,
                                      Platform.platform_id,
@@ -1333,6 +1460,9 @@ def verify_runs():
                                      WHERE Run.verifier_id IS NULL
                                      AND Run.il_id IS NULL
                                      ORDER BY Run.date_submitted DESC""", ())
+
+    # get all the information about all the individual level runs where
+    # verifier id is None, aka not verified, and sort by date submitted
     il_runs = run_query_select("""SELECT Run.date_submitted, Run.run_id,
                                Player.name, Run.time, Platform.platform_id,
                                Run.il_id FROM Run
@@ -1345,11 +1475,16 @@ def verify_runs():
                                AND Run.fullgame_category_id IS NULL
                                ORDER BY Run.date_submitted DESC""", ())
 
+    # append 0 to all fullgame runs to show that they are fullgame
     for v, i in enumerate(fullgame_runs):
         fullgame_runs[v].append(0)
 
+    # append the category and level to all il
+    # runs and then apend 1 to show they are il runs
     for v, i in enumerate(il_runs):
         il_id = i[5]
+
+        # get the category and level from the il id
         category_level = run_query_select("""SELECT Level.name,
                                           Il_category.name
                                           FROM Individual_level
@@ -1365,10 +1500,14 @@ def verify_runs():
         il_runs[v].append(category_level[0][1])
         il_runs[v].append(1)
 
+    # combine both lists
     runs = fullgame_runs + il_runs
 
+    # sort the runs by oldest first so the oldest
+    # runs get verified first, first in first out
     runs = sorted(runs, key=lambda x: x[0])
 
+    # for each run convert time and date
     for v, i in enumerate(runs):
         runs[v][0] = seconds_since_1980_to_date(i[0])
         runs[v][3] = converttime(i[3])
@@ -1385,14 +1524,20 @@ def verify_run():
     and it checks to see it this beats a previous pb, if
     so it changes the pb from obsolete = 0 to obsoltet = 1"""
 
+    # get button information from verifying the run
     verify_deny = request.form['verify_deny']
     run_id = request.form['verify_run']
+
+    # if the run was denied delete it from the database
     if verify_deny == 'deny':
         run_query_update("DELETE FROM Run WHERE run_id = ?", (run_id,))
         return redirect(url_for('verify_runs'))
 
+    # if the run is an il run
     if run_query_select("""SELECT * FROM Run WHERE Run.run_id = ?
                         AND Run.il_id IS NOT NULL""", (run_id,)):
+
+        # get run informaion
         il_id = run_query_select("""SELECT Run.il_id FROM Run
                                  WHERE Run.run_id = ?""", (run_id,))[0][0]
         player_id = run_query_select("""SELECT Run.player_id FROM Run
@@ -1402,6 +1547,10 @@ def verify_run():
         pb = run_query_select("""SELECT Run.run_id, Run.time FROM Run
                               WHERE Run.il_id = ? AND Run.obsolete = 0
                               AND Run.player_id = ?""", (il_id, player_id))
+
+        # if there was a previous pb and the new run is now faster than
+        # it then change the pv to being obsolete and this
+        # run wiil not be obsolete, if not the this run is obsolete
         obsolete = 1
         if pb:
             if run_time <= pb[0][1]:
@@ -1411,6 +1560,8 @@ def verify_run():
         else:
             obsolete = 0
     else:
+
+        # if run was fullgame then get run information
         category_id = run_query_select("""SELECT Run.fullgame_category_id
                                        FROM Run WHERE
                                        Run.run_id = ?""", (run_id,))[0][0]
@@ -1423,6 +1574,10 @@ def verify_run():
                               AND Run.obsolete = 0
                               AND Run.player_id = ?""",
                               (category_id, player_id))
+
+        # if there was a previous pb and the new run is now faster than
+        # it then change the pv to being obsolete and this
+        # run wiil not be obsolete, if not the this run is obsolete
         obsolete = 1
         if pb:
             if run_time <= pb[0][1]:
@@ -1432,10 +1587,13 @@ def verify_run():
         else:
             obsolete = 0
 
+    # get verifier id
     verifier_id = run_query_select("""SELECT Verifier.verifier_id
                                    FROM Verifier WHERE Verifier.player_id = ?
                                    """, (session['username'][1],))[0][0]
 
+    # update the run to being verified with the verifier
+    # id and set it te either obsolete or not
     run_query_update("""UPDATE Run SET verifier_id = ?, obsolete = ?
                       WHERE run_id = ?""", (verifier_id, obsolete, run_id))
 
