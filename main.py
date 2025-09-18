@@ -167,7 +167,7 @@ def converttime(run_time):
         # depending on how many digits in the milliseconds,
         # add the right amount of trailing zero's
         for i in range(3-len(ms)):
-            ms = ms + '0'
+            ms = '0' + ms
         output = f'{int(h)}h {m}m {s}s {ms}ms'
         return output
 
@@ -189,7 +189,7 @@ def converttime(run_time):
         # depending on how many digits in the milliseconds,
         # add the right amount of trailing zero's
         for i in range(3-len(ms)):
-            ms = ms + '0'
+            ms = '0' + ms
         output = f'{m}m {s}s {ms}ms'
         return output
 
@@ -206,7 +206,7 @@ def converttime(run_time):
         # depending on how many digits in the milliseconds,
         # add the right amount of trailing zero's
         for i in range(3-len(ms)):
-            ms = ms + '0'
+            ms = '0' + ms
         output = f'{s}s {ms}ms'
         return output
 
@@ -1661,6 +1661,7 @@ def delete_run():
     if not request.method == 'POST':
         abort(404)
 
+    #check if run id is a valid id
     run_id = request.form['delete_run']
     check_run_id = run_query_select("""SELECT Run.run_id FROM Run WHERE
                                     Run.run_id =?""", (run_id,))
@@ -1673,6 +1674,7 @@ def delete_run():
 
     run_query_update("DELETE FROM Run WHERE run_id = ?", (run_id,))
 
+    # redirect to either fullgame or il based on where you came from
     page = request.form['page']
 
     if page == 'fullgame':
@@ -1694,4 +1696,4 @@ def page_not_found(i):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

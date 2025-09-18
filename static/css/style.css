@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&display=swap');
+
 /* general tags */
 
 body {
+    font-family: 'Alfa Slab One', serif;
     width: 100vw;
     padding: 0;
     margin: 0;
@@ -23,6 +26,8 @@ h1, h2, h3, h4, h5, h6 P{
 }
 
 h1 {
+    font-weight: normal;
+    font-family: 'Alfa Slab One';
     font-size: 3em;
 }
 
@@ -50,6 +55,7 @@ button {
 /* Header */
 
 .header {
+    font-family: 'Alfa Slab One';
     width: 100vw;
     display: flex;
     height: 7em;
@@ -61,7 +67,6 @@ button {
 
 .header-item {
     font-size: 3em;
-    font-weight: bold;
     align-self: center;
     padding-left: 0.5em;
 }
@@ -354,7 +359,6 @@ button {
 
 .player-account-header {
     justify-self: center;
-    font-weight: bold;
     font-size: 3em;
     margin-bottom: 1vw;
 }
@@ -369,7 +373,8 @@ button {
 }
 
 .player-account-category-header {
-    font-weight: bold;
+    margin-bottom: 2vw;
+    font-family: 'Alfa Slab One';
     font-size: 2em;
     justify-self: center;
     width: fit-content;
@@ -422,10 +427,10 @@ button {
 }
 
 .player-account-level-header {
+    font-family: 'Alfa Slab One';
     justify-self: center;
-    font-weight: bold;
-    font-size: 3em;
-    margin-bottom: 1vw;
+    font-size: 2em;
+    margin-bottom: 2vw;
 }
 
 .player-account-level-gap {
@@ -491,6 +496,7 @@ button {
 }
 
 .individual-run-title {
+    margin-bottom: 1vw;
     font-size: 2em;
 }
 
@@ -663,6 +669,7 @@ button {
 }
 
 .submit-run-time-unit {
+    margin-left: 0.2vw;
     font-size: 1.5em;
     display: flex;
     flex-direction: column;
