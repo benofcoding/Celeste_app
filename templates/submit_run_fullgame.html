@@ -2,6 +2,7 @@
 
 <div class="submit-run-container">
   <h1 class="submit-run-title">Submit Run</h1>
+  <!-- display error messages if required-->
   {% if error_message_dict['submit_run_link_invalid'] %}
   <p class="signup-login-fail-message">* that video link is invalid</p>
   {% endif %} {% if error_message_dict['submit_run_category_invalid'] %}
@@ -11,7 +12,10 @@
   {% endif %} {% if error_message_dict['submit_run_time_invalid'] %}
   <p class="signup-login-fail-message">* that time is invalid</p>
   {% endif %}
+
+  <!-- submit run form-->
   <form class="submit-run-form" action="/process_run_fullgame" method="POST">
+    <!-- link input-->
     <div class="submit-run-input-header-container">
       <label>Link:</label>
       <input
@@ -22,6 +26,7 @@
       />
     </div>
 
+    <!-- category dropdown-->
     <div class="submit-run-input-header-container">
       <label>Category:</label>
       <select
@@ -38,10 +43,13 @@
       </select>
     </div>
 
+    <!-- h, m, s, ms inputs-->
     <div class="submit-run-input-header-container">
       <label>Time:</label>
       <div class="submit-run-time-input">
         <div class="submit-run-time-input-unit-group">
+          <!-- regular expressions used to stop 
+           users from typing non integers-->
           <input
             class="submit-run-input"
             type="text"
@@ -88,6 +96,7 @@
       </div>
     </div>
 
+    <!-- platform dropdown-->
     <div class="submit-run-input-header-container">
       <label>Platform:</label>
       <select class="submit-run-dropdown" name="platforms" required>
@@ -100,6 +109,7 @@
       </select>
     </div>
 
+    <!-- submit run button-->
     <button class="submit-run-submit-button" type="submit">submit</button>
   </form>
 </div>

@@ -3,7 +3,9 @@
 <div class="player-account">
   <h1 class="player-account-header">{{ player_name }}'s Runs</h1>
   <hr class="player-account-hr">
+  <!-- il fullgame toggle and level scroll buttons-->
   <div class="player-account-toggle-buttons">
+    <!-- il fullgame toggle-->
     <div class="IL-toggle-container">
       <div class="IL-toggle">
         <div id="IL-toggle-fullgame" class="IL-toggle-fullgame">
@@ -12,7 +14,9 @@
         <div id="IL-toggle-IL" class="IL-toggle-IL">Individual Level</div>
       </div>
     </div>
+    <!-- level scroll buttons-->
     <div class="player-account-level-buttons">
+      <!-- iterate through all levels the player has submited runs for-->
       {% for i in levels %}
       <button
         class="player-account-level-button"
@@ -24,25 +28,34 @@
     </div>
   </div>
   <hr class="player-account-hr">
+
+  <!-- iterate through all levels in the run dictionary-->
   {% for level in runs %}
   <div class="player-account-level-group" id="{{ level }}">
     <div class="player-account-level-header">{{ levels[level] }}</div>
     <div class="player-account-3-column-grid">
+
+      <!-- iterate through all the categories for each level-->
       {% for i in runs[level] %}
       <div class="player-account-category-group">
         <div class="player-account-category-header">{{ categories[i] }}</div>
+
+        <!-- iterate through all the runs for each category-->
         {% for j in runs[level][i] %}
         <div class="player-account-run">
           <div class="player-account-run-time-place">
+          <!-- run placement and time-->
             <p>{{ j[5] }}</p>
-            <a class="run-link" href="/view_individual_level_run/{{ j[0] }}"
-              >{{ j[1] }}</a
-            >
+            <p>{{ j[1] }}</p>
           </div>
           <div class="player-account-run-date-platform">
+          <!-- run date submitted and platform-->
             <p>{{ j[2] }}</p>
             <p>{{ j[3] }}</p>
           </div>
+
+        <!-- if looking at your own account then show delete run 
+        button, if not then show watch run button-->
         {% if own_account %}
         <form class="player-account-delete-run-button-container" 
         action="/delete_run" method="POST">
@@ -65,10 +78,13 @@
       {% endfor %}
     </div>
   </div>
+  <!-- horizontal line after every level region-->
   <hr class="player-account-level-gap" />
   {% endfor %}
 </div>
 <script>
+
+  // toggle fullgame il styles
   const IL_toggle_IL = document.getElementById("IL-toggle-IL");
   IL_toggle_IL.style.border = "solid 0.25em #9CC9F5";
   IL_toggle_IL.style.borderRadius = "0.25em";

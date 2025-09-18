@@ -2,15 +2,19 @@
 
 <div class="verify-runs-container">
   <h1 class="verify-run-header">Verify Runs</h1>
+  <!-- iterate through all runs-->
   {% for i in runs %}
   <div class="verify-runs-run">
+    <!-- player name-->
     <div class="verify-run-text">{{i[2]}}</div>
     {% if i[-1] %}
+    <!-- if individual level then il run link and level and il cateogry-->
     <a class="verify-run-text" href="/view_individual_level_run/{{ i[1] }}"
       >{{i[3]}}</a
     >
     <div class="verify-run-text">{{ i[6] }} | {{ i[7] }}</div>
     {% else %}
+    <!-- else fullgame run link and fullgame category-->
     <a class="verify-run-text" href="/view_fullgame_run/{{ i[1] }}">{{i[3]}}</a>
     <div class="verify-run-text">{{ i[5] }}</div>
     {% endif %}

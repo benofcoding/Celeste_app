@@ -141,6 +141,29 @@ button {
 
 
 
+/* footer start */
+
+.footer {
+    font-size: 1.5em;
+    padding: 2vw;
+    height: 9vw;
+    background-color: #ab91d0;
+    margin-top: 10vw;
+}
+
+.footer-item {
+    margin-bottom: 2vw;
+    display: flex;
+}
+
+.footer-item p, .footer-item a{
+    margin-right: 1vw;
+}
+
+.footer-item a{
+    text-decoration: underline;
+    color: #800080;
+}
 
 
 /* Leaderboard Fullgame start */

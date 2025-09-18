@@ -2,6 +2,8 @@
 
 <div class="player-account">
   <h1 class="player-account-header">{{ player_name }}'s Runs</h1>
+
+  <!-- il fullgame toggle-->
   <div class="IL-toggle-container">
     <div class="IL-toggle">
       <div id="IL-toggle-fullgame" class="IL-toggle-fullgame">Fullgame</div>
@@ -12,22 +14,32 @@
       </div>
     </div>
   </div>
+
+  <!-- players runs-->
   <div class="player-account-3-column-grid">
+
+    <!-- iterate through all the categories in the un dictionary-->
     {% for i in runs %}
     <div class="player-account-category-group">
+
+      <!-- for each category show category name and iterate through 
+      all runs inthat category and show their information-->
       <div class="player-account-level-header">{{ categories[i] }}</div>
       {% for j in runs[i] %}
       <div class="player-account-run">
         <div class="player-account-run-time-place">
+          <!-- run placement and time-->
           <p>{{ j[5] }}</p>
-          <a class="run-link" href="/view_fullgame_run/{{ j[0] }}"
-            >{{ j[1] }}</a
-          >
+          <p>{{ j[1] }}</p>
         </div>
         <div class="player-account-run-date-platform">
+          <!-- run date submitted and platform-->
           <p>{{ j[2] }}</p>
           <p>{{ j[3] }}</p>
         </div>
+
+        <!-- if looking at your own account then show delete run 
+        button, if not then show watch run button-->
         {% if own_account %}
         <form class="player-account-delete-run-button-container" 
         action="/delete_run" method="POST">
@@ -47,12 +59,15 @@
       </div>
       {% endfor %}
     </div>
+    <!-- horizontal line after every three category boxes-->
     {% if loop.index % 3 == 0%}
     <hr class="player-account-row-gap" />
     {% endif %} {% endfor %}
   </div>
 </div>
 <script>
+
+  // toggle fullgame il styles
   const IL_toggle_fullgame = document.getElementById("IL-toggle-fullgame");
   IL_toggle_fullgame.style.border = "solid 0.25em #9CC9F5";
   IL_toggle_fullgame.style.borderRadius = "0.25em";

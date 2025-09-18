@@ -1,6 +1,8 @@
 {% extends "layout.html" %} {% block content %}
 <div class="signup-login-container">
   <h1 class="signup-login-title">login</h1>
+
+  <!-- displays error message if needed-->
   {% if submit_run %}
   <p class="signup-login-fail-message">
     * You must be logged in to submit a run
@@ -12,16 +14,22 @@
   {% endif %}
   <hr class="signup-login-line" />
 
+  <!-- login form-->
   <form class="signup-login-form" method="post" action="/check_valid_login">
+    <!-- checks whether user tried to submit run but got redirected here-->
     {% if submit_run %}
     <input type="hidden" name="submit_run" value="True" />
     {% else %}
     <input type="hidden" name="submit_run" value="False" />
     {% endif %}
+
+    <!-- username input-->
     <div class="signup-login-input-header-container">
       <label class="signup-login-header">Username:</label>
       <input class="signup-login-input" id="username" name="username" />
     </div>
+
+    <!-- password input with visability toggle-->
     <div class="signup-login-input-header-container">
       <label class="signup-login-header">Password:</label>
       <div class="signup-login-password-group">
@@ -41,6 +49,8 @@
         </button>
       </div>
     </div>
+
+    <!-- login button-->
     <input
       class="signup-login-button"
       id="login-button"
@@ -48,9 +58,13 @@
       value="log in"
     />
   </form>
+
   <a class="signup-login-signup-button" href="/signup">signup</a>
 </div>
+
 <script>
+
+  //this function toggles between show and hide the password
   function toggle_password() {
     const password_input = document.getElementById("password");
     const show_hide_button = document.getElementById("show-hide-button");

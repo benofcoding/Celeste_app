@@ -1,6 +1,8 @@
 {% extends "layout.html" %} {% block content %}
 <div class="signup-login-container">
   <h1 class="signup-login-title">Signup</h1>
+
+  <!-- show error message if required-->
   {% if error_message_dict['signup_username_taken'] %}
   <p class="signup-login-fail-message">
     * that username is currently being used
@@ -21,7 +23,9 @@
   {% endif %}
   <hr class="signup-login-line" />
 
+  <!--signup form-->
   <form class="signup-login-form" method="post" action="/check_valid_signup">
+    <!-- username imput-->
     <div class="signup-login-input-header-container">
       <label class="signup-login-header">Username (3-20):</label>
       <input
@@ -31,6 +35,7 @@
         maxlength="20"
       />
     </div>
+    <!-- password input and toggle show hide-->
     <div class="signup-login-input-header-container">
       <label class="signup-login-header">Password:</label>
       <div class="signup-login-password-group">
@@ -50,6 +55,7 @@
         </button>
       </div>
     </div>
+    <!-- password confirm input and toggle show hide-->
     <div class="signup-login-input-header-container">
       <label class="signup-login-header">Password Confirm:</label>
       <div class="signup-login-password-group">
@@ -69,6 +75,7 @@
         </button>
       </div>
     </div>
+    <!-- signup button-->
     <input
       class="signup-login-button"
       id="login-button"
@@ -79,6 +86,7 @@
   <a class="signup-login-signup-button" href="/login">login</a>
 </div>
 <script>
+  //this function toggles between show and hide the password
   function toggle_password() {
     const password_input = document.getElementById("password");
     const show_hide_button = document.getElementById("show-hide-button");
@@ -90,6 +98,8 @@
       show_hide_button.textContent = "Show";
     }
   }
+
+  //this function toggles between show and hide the password confirm
   function toggle_password_confirm() {
     const password_input = document.getElementById("password-confirm");
     const show_hide_button = document.getElementById(

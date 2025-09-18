@@ -5,11 +5,16 @@
   <div class="individual-run-path">
     <a class="individual-run-path-item run-link" href="/leaderboard_fullgame/30831e37/0">Leaderboard</a>
     <p class="individual-run-path-item">/</p>
+    <!-- fullgame category link-->
     <a class="individual-run-path-item run-link" href="/leaderboard_fullgame/{{ run[3] }}/0">{{ run[7] }}</a>
   </div>
+
+  <!-- (fullgame cateogyr) in (run time)-->
   <div class="individual-run-title">
     <p>{{ run[7] }} in {{ run[1] }}</p>
   </div>
+
+  <!-- if valid run video link show the video else how error image-->
   {% if run[4] %}
   <iframe
     class="individual-run-iframe"
@@ -21,7 +26,10 @@
   {% else %}
   <img class="video-error-image" src="../static/images/video_error_image.png" alt="video_error_image">
   {% endif %}
+
+  <!-- run information grid-->
   <div class="individual-run-information-container">
+    <!-- column 1-->
     <div class="individual-run-information-column">
       <div class="individual-run-information">
         <p class="individual-run-information-title">Category</p>
@@ -34,6 +42,7 @@
         <p class="individual-run-information-info">{{ run[8] }}</p>
       </div>
     </div>
+    <!-- column 2-->
     <div class="individual-run-information-column">
       <div class="individual-run-information">
         <p class="individual-run-information-title">Player</p>
@@ -48,6 +57,7 @@
       </div>
       {% endif %}
     </div>
+    <!-- column 3-->
     <div class="individual-run-information-column">
       {% if run[9] %}
       <div class="individual-run-information">
@@ -68,6 +78,8 @@
       </div>
     </div>
   </div>
+  <!-- if run isnt verified and you are logged into a verifier account
+   then show verify deny buttons-->
   {% if verifier and not run[-1]%}
   <div class="verify-buttons">
     <form action="/verify_run" method="POST">

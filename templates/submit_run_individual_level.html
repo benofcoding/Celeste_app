@@ -1,80 +1,138 @@
-{% extends "layout.html" %}
-{% block content %}
+{% extends "layout.html" %} {% block content %}
 
 <div class="submit-run-container">
-    <h1 class="submit-run-title">Submit Run</h1>
-    {% if error_message_dict['submit_run_link_invalid'] %}
-    <p class="signup-login-fail-message"> * that video link is invalid </p>
-    {% endif %}
-    {% if error_message_dict['submit_run_category_invalid'] %}
-    <p class="signup-login-fail-message"> * that category is invalid </p>
-    {% endif %}
-    {% if error_message_dict['submit_run_platform_invalid'] %}
-    <p class="signup-login-fail-message"> * that platform is invalid </p>
-    {% endif %}
-    {% if error_message_dict['submit_run_time_invalid'] %}
-    <p class="signup-login-fail-message"> * that time is invalid </p>
-    {% endif %}
-    <form class="submit-run-form" action="/process_run_individual_level" method="POST">
-        <div class="submit-run-input-header-container">
-            <label>Link:</label>
-            <input class="submit-run-input" type="text" name="submit_run_link" required>
-        </div>
+  <h1 class="submit-run-title">Submit Run</h1>
+  <!-- display error messages if required-->
+  {% if error_message_dict['submit_run_link_invalid'] %}
+  <p class="signup-login-fail-message">* that video link is invalid</p>
+  {% endif %} {% if error_message_dict['submit_run_category_invalid'] %}
+  <p class="signup-login-fail-message">* that category is invalid</p>
+  {% endif %} {% if error_message_dict['submit_run_platform_invalid'] %}
+  <p class="signup-login-fail-message">* that platform is invalid</p>
+  {% endif %} {% if error_message_dict['submit_run_time_invalid'] %}
+  <p class="signup-login-fail-message">* that time is invalid</p>
+  {% endif %}
 
-        <div class="submit-run-input-header-container">
-            <label>Level:</label>
-            <select class="submit-run-dropdown" name="submit_run_level_dropwdown" required>
-                <option class="submit-run-dropdown-option" value="">--Select--</option>
-                {% for i in levels %}
-                <option class="submit-run-dropdown-option" value="{{ i }}">{{ levels[i] }}</option>
-                {% endfor %}
-            </select>
-        </div>
+  <!-- submit run form-->
+  <form
+    class="submit-run-form"
+    action="/process_run_individual_level"
+    method="POST"
+  >
+  <!-- link input-->
+    <div class="submit-run-input-header-container">
+      <label>Link:</label>
+      <input
+        class="submit-run-input"
+        type="text"
+        name="submit_run_link"
+        required
+      />
+    </div>
 
-        <div class="submit-run-input-header-container">
-            <label>Category:</label>
-            <select class="submit-run-dropdown" name="submit_run_category_dropwdown" required>
-                <option class="submit-run-dropdown-option" value="">--Select--</option>
-                {% for i in categories %}
-                <option class="submit-run-dropdown-option" value="{{ i }}">{{ categories[i] }}</option>
-                {% endfor %}
-            </select>
-        </div>
+    <!-- level dropdown-->
+    <div class="submit-run-input-header-container">
+      <label>Level:</label>
+      <select
+        class="submit-run-dropdown"
+        name="submit_run_level_dropwdown"
+        required
+      >
+        <option class="submit-run-dropdown-option" value="">--Select--</option>
+        {% for i in levels %}
+        <option class="submit-run-dropdown-option" value="{{ i }}">
+          {{ levels[i] }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
 
-        <div class="submit-run-input-header-container">
-            <label>Time:</label>
-            <div class="submit-run-time-input">
-                <div class="submit-run-time-input-unit-group">
-                    <input class="submit-run-input" type="text" name="time-hours" oninput="this.value = this.value.replace(/[^0-9]/g, '')"  placeholder="00" maxlength="2">
-                    <p class="submit-run-time-unit">h</p>
-                </div>
-                <div class="submit-run-time-input-unit-group">
-                    <input class="submit-run-input" type="text" name="time-minutes" oninput="this.value = this.value.replace(/[^0-9]/g, '')"  placeholder="00" maxlength="2">
-                    <p class="submit-run-time-unit">m</p>
-                </div>
-                <div class="submit-run-time-input-unit-group">
-                    <input class="submit-run-input" type="text" name="time-seconds" oninput="this.value = this.value.replace(/[^0-9]/g, '')"  placeholder="00" maxlength="2">
-                    <p class="submit-run-time-unit">s</p>
-                </div>
-                <div class="submit-run-time-input-unit-group">
-                    <input class="submit-run-input-long submit-run-input" type="text" oninput="this.value = this.value.replace(/[^0-9]/g, '')" name="time-milliseconds"  placeholder="000" maxlength="3">
-                    <p class="submit-run-time-unit">ms</p>
-                </div>
-            </div>
-        </div>
+    <!-- category dropdown-->
+    <div class="submit-run-input-header-container">
+      <label>Category:</label>
+      <select
+        class="submit-run-dropdown"
+        name="submit_run_category_dropwdown"
+        required
+      >
+        <option class="submit-run-dropdown-option" value="">--Select--</option>
+        {% for i in categories %}
+        <option class="submit-run-dropdown-option" value="{{ i }}">
+          {{ categories[i] }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
 
-        <div class="submit-run-input-header-container">
-            <label>Platform:</label>
-            <select class="submit-run-dropdown" name="platforms" required>
-                <option class="submit-run-dropdown-option" value="">--Select--</option>
-                {% for i in platforms %}
-                <option class="submit-run-dropdown-option" value="{{ i }}">{{ platforms[i] }}</option>
-                {% endfor %}
-            </select>
+    <!--h, m, s, ms inputs-->
+    <div class="submit-run-input-header-container">
+      <label>Time:</label>
+      <div class="submit-run-time-input">
+        <!-- regular expressions used to stop 
+        users from typing non integers-->
+        <div class="submit-run-time-input-unit-group">
+          <input
+            class="submit-run-input"
+            type="text"
+            name="time-hours"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            placeholder="00"
+            maxlength="2"
+          />
+          <p class="submit-run-time-unit">h</p>
         </div>
+        <div class="submit-run-time-input-unit-group">
+          <input
+            class="submit-run-input"
+            type="text"
+            name="time-minutes"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            placeholder="00"
+            maxlength="2"
+          />
+          <p class="submit-run-time-unit">m</p>
+        </div>
+        <div class="submit-run-time-input-unit-group">
+          <input
+            class="submit-run-input"
+            type="text"
+            name="time-seconds"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            placeholder="00"
+            maxlength="2"
+          />
+          <p class="submit-run-time-unit">s</p>
+        </div>
+        <div class="submit-run-time-input-unit-group">
+          <input
+            class="submit-run-input-long submit-run-input"
+            type="text"
+            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            name="time-milliseconds"
+            placeholder="000"
+            maxlength="3"
+          />
+          <p class="submit-run-time-unit">ms</p>
+        </div>
+      </div>
+    </div>
 
-        <button class="submit-run-submit-button" type="submit">Submit</button>
-    </form>
+    <!-- platform dropdown-->
+    <div class="submit-run-input-header-container">
+      <label>Platform:</label>
+      <select class="submit-run-dropdown" name="platforms" required>
+        <option class="submit-run-dropdown-option" value="">--Select--</option>
+        {% for i in platforms %}
+        <option class="submit-run-dropdown-option" value="{{ i }}">
+          {{ platforms[i] }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <!-- submit run button-->
+    <button class="submit-run-submit-button" type="submit">Submit</button>
+  </form>
 </div>
 
 {% endblock %}

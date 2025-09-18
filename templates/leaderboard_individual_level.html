@@ -1,10 +1,15 @@
 {% extends "layout.html" %} {% block content %}
 <div class="leaderboard">
+  <!--each leaderboard item is the three main sections-->
   <div class="rules leaderboard-item">
     <h1 class="leaderboard-item-header">Rules</h1>
     <h2>Category Objective:</h2>
     <li>{{ rules }}</li>
     <h2>General Rules:</h2>
+    <li>
+      Category objectives overide the generals rules 
+      in the event of a contridiction
+    </li>
     <li>
       Timing is done using the in-game timer, please refrain from taking long
       breaks mid-run.
@@ -28,9 +33,12 @@
       autosplitters.
     </li>
   </div>
+  <!--main leaderboard section-->
   <div class="leaderboard-container leaderboard-item">
     <h1 class="leaderboard-item-header">Leaderboard</h1>
+    <!--toggle switch, submit button, category dropdown row -->
     <div class="leaderboard-dropdown-ILtoggle">
+      <!--il fullgame toggle-->
       <div class="IL-toggle-container">
         <div class="IL-toggle">
           <div id="IL-toggle-fullgame" class="IL-toggle-fullgame">
@@ -39,11 +47,13 @@
           <div id="IL-toggle-IL" class="IL-toggle-IL">Individual Level</div>
         </div>
       </div>
+      <!--submit run button-->
       <div class="submit-run-button-container">
         <a class="submit-run-button" href="/submit_run_individual_level"
           >submit run</a
         >
       </div>
+      <!-- level dropdown-->
       <div class="leaderboard-dropdown">
         <div
           id="dropdown-open"
@@ -52,6 +62,7 @@
           <div>{{ levels[level[1]][0] }}</div>
           <div class="dropdown-arrow">⌄</div>
         </div>
+        <!--iterate through all levels to create the dropdown-->
         {% for i in levels: %} {% if i != level[1] %}
         <a
           id="dropdown-content"
@@ -62,7 +73,9 @@
         {% endif %} {% endfor %}
       </div>
     </div>
+    <!-- category buttons-->
     <div class="IL-category-buttons">
+      <!-- iterate through all categories-->
       {% for i in categories %}
       <a
         class="{% if i != category[1] %} IL-category-button {% else %} IL-category-button-match {% endif %}"
@@ -71,6 +84,7 @@
       >
       {% endfor %}
     </div>
+    <!-- leaderboard-->
     <div class="leaderboard-runs">
       <div class="column-names leaderboard-columns-runs">
         <div>#</div>
@@ -79,6 +93,7 @@
         <div>Date</div>
         <div>Platform</div>
       </div>
+      <!-- iterate through all runs and display their information-->
       {% for i in runs %}
       <hr class="leaderboard-row-gap" />
       <div class="leaderboard-run leaderboard-columns-runs">
@@ -108,6 +123,7 @@
       >
         <<
       </a>
+      <!-- cant to to previous page if on the first page(0)-->
       {% if page != 0 %}
       <a
         class="nextpage"
@@ -122,7 +138,9 @@
       >
         <
       </a>
-      {% endif %} {% if page != max_page %}
+      {% endif %} 
+      <!-- cant go to next page if on last page-->
+      {% if page != max_page %}
       <a
         class="nextpage"
         href="/leaderboard_individual_level/{{ individual_level_id }}/{{ page+1 }}"
@@ -145,6 +163,7 @@
       </a>
     </div>
   </div>
+  <!-- recent runs-->
   <div class="leaderboard-recent-runs-container leaderboard-item">
     <h1 class="leaderboard-item-header">Recent Runs</h1>
     <div class="leaderboard-recent-runs">
@@ -154,6 +173,7 @@
         <div>Player</div>
         <div>Time</div>
       </div>
+      <!-- iterate through all the recent runs and displat their information-->
       {% for i in recent_runs %}
       <hr class="leaderboard-row-gap" />
       <div class="recent_run leaderboard-recent-runs-columns-runs">
@@ -172,23 +192,32 @@
   const dropdown_content = document.querySelectorAll(
     ".leaderboard-dropdown-button",
   );
+  // this function opens and closes the dropdown
+  // from open to close and vice versa when run
+
   const dropdown_content_style = window.getComputedStyle(dropdown_content[0]);
   const dropdown_open = document.getElementById("dropdown-open");
 
   function toggle_dropdown() {
+    // checks if the dropdown is open or not
     if (dropdown_content_style.display === "none") {
       dropdown_content.forEach((button) => {
         button.style.display = "flex";
       });
+      // when dropdown open the top item should
+      // have only the two top corners rounded
       dropdown_open.style.borderRadius = "0.25em 0.25em 0 0";
     } else {
       dropdown_content.forEach((button) => {
         button.style.display = "none";
       });
+      // when dropdown closed the top item should have round corners all around
       dropdown_open.style.borderRadius = "0.25em 0.25em 0.25em 0.25em";
     }
   }
 
+  // this function closes the dropdown if the 
+  // user didnt click on the dropdown
   function close_dropdown(click_information) {
     console.log("HEHEHEH");
     if (!click_information.target.closest(".leaderboard-dropdown")) {
@@ -199,9 +228,12 @@
     }
   }
 
+  // if user clicks on the dropdown open and if they click 
+  // anywhere run the close functon with the click information
   dropdown_open.addEventListener("click", toggle_dropdown);
   document.addEventListener("click", close_dropdown);
 
+  // changes the styles of the toggle fullgame il
   const IL_toggle_IL = document.getElementById("IL-toggle-IL");
   IL_toggle_IL.style.border = "solid 0.25em #9CC9F5";
   IL_toggle_IL.style.borderRadius = "0.25em";
