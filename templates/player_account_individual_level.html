@@ -1,76 +1,91 @@
-{% extends "layout.html" %}
-{% block content %}
+{% extends "layout.html" %} {% block content %}
 
 <div class="player-account">
-    <div class="player-account-toggle-buttons">
-        <div class="IL-toggle-container">
-            <div class="IL-toggle">
-                <div id="IL-toggle-fullgame" class="IL-toggle-fullgame">
-                    <a href="/player_account_fullgame/{{ player_id }}">Fullgame</a>
-                </div>
-                <div id="IL-toggle-IL" class="IL-toggle-IL">
-                    Individual Level
-                </div>
-            </div>
+  <h1 class="player-account-header">{{ player_name }}'s Runs</h1>
+  <hr class="player-account-hr">
+  <div class="player-account-toggle-buttons">
+    <div class="IL-toggle-container">
+      <div class="IL-toggle">
+        <div id="IL-toggle-fullgame" class="IL-toggle-fullgame">
+          <a href="/player_account_fullgame/{{ player_id }}">Fullgame</a>
         </div>
-        <div class="player-account-level-buttons">
-            {% for i in levels %}
-                <button class="player-account-level-button" onclick="scrolltotarget('{{ i }}')">{{ levels[i] }}</button>
-            {% endfor %}
-        </div>
+        <div id="IL-toggle-IL" class="IL-toggle-IL">Individual Level</div>
+      </div>
     </div>
-    {% for level in runs %}
-    <div class="player-account-level-group" id="{{ level }}">
-        <div class="player-account-level-header">
-            {{ levels[level] }}
-        </div>
-        <div class="player-account-3-column-grid">
-            {% for i in runs[level] %}
-            <div class="player-account-category-group">
-                <div class="player-account-category-header">
-                    {{ categories[i] }}
-                </div>
-                {% for j in runs[level][i] %}
-                <div class="player-account-run">
-                    <div class="player-account-run-time-place">
-                        <p>{{ j[5] }}</p>
-                        <a class="run-link" href="/view_individual_level_run/{{ j[0] }}">{{ j[1] }}</a>
-                    </div>
-                    <div class="player-account-run-date-platform">
-                        <p>{{ j[2] }}</p>
-                        <p>{{ j[3] }}</p>
-                    </div>
-                    <div class="player-account-run-video-thumbnail">
-                        HEHHEHE
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-            {% endfor %}
-        </div>
+    <div class="player-account-level-buttons">
+      {% for i in levels %}
+      <button
+        class="player-account-level-button"
+        onclick="scrolltotarget('{{ i }}')"
+      >
+        {{ levels[i] }}
+      </button>
+      {% endfor %}
     </div>
-    <hr class="player-account-level-gap">
-    {% endfor %}
+  </div>
+  <hr class="player-account-hr">
+  {% for level in runs %}
+  <div class="player-account-level-group" id="{{ level }}">
+    <div class="player-account-level-header">{{ levels[level] }}</div>
+    <div class="player-account-3-column-grid">
+      {% for i in runs[level] %}
+      <div class="player-account-category-group">
+        <div class="player-account-category-header">{{ categories[i] }}</div>
+        {% for j in runs[level][i] %}
+        <div class="player-account-run">
+          <div class="player-account-run-time-place">
+            <p>{{ j[5] }}</p>
+            <a class="run-link" href="/view_individual_level_run/{{ j[0] }}"
+              >{{ j[1] }}</a
+            >
+          </div>
+          <div class="player-account-run-date-platform">
+            <p>{{ j[2] }}</p>
+            <p>{{ j[3] }}</p>
+          </div>
+        {% if own_account %}
+        <form class="player-account-delete-run-button-container" 
+        action="/delete_run" method="POST">
+          <input type="hidden" name="page" value="individual_level">
+          <button value="{{ j[0] }}" name="delete_run" class="player-account-delete-run-button"
+            >delete run</button
+          >
+        </form>
+        {% else %}
+        <form class="player-account-delete-run-button-container" 
+        action="/view_individual_level_run/{{ j[0] }}">
+          <button class="player-account-delete-run-button"
+            >Watch run</button
+          >
+        </form>
+        {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <hr class="player-account-level-gap" />
+  {% endfor %}
 </div>
 <script>
-    const IL_toggle_IL = document.getElementById('IL-toggle-IL')
-    IL_toggle_IL.style.border = 'solid 0.25em #9CC9F5';
-    IL_toggle_IL.style.borderRadius = '0.25em';
-    IL_toggle_IL.style.backgroundColor = '#9CC9F5';
+  const IL_toggle_IL = document.getElementById("IL-toggle-IL");
+  IL_toggle_IL.style.border = "solid 0.25em #9CC9F5";
+  IL_toggle_IL.style.borderRadius = "0.25em";
+  IL_toggle_IL.style.backgroundColor = "#9CC9F5";
 
-    const fullgame_toggle_IL = document.getElementById('IL-toggle-fullgame')
-    fullgame_toggle_IL.style.border = 'solid 0.2em #9CC9F5';
-    fullgame_toggle_IL.style.borderRadius = '0.25em';
-    fullgame_toggle_IL.style.padding = '0em 0.25em 0em 0.25em';
+  const fullgame_toggle_IL = document.getElementById("IL-toggle-fullgame");
+  fullgame_toggle_IL.style.border = "solid 0.2em #9CC9F5";
+  fullgame_toggle_IL.style.borderRadius = "0.25em";
+  fullgame_toggle_IL.style.padding = "0em 0.25em 0em 0.25em";
 
-    function scrolltotarget(target_id) {
-        const target = document.getElementById(target_id);
-        target.scrollIntoView({ 
-            behavior: 'smooth',
-            block: 'start' 
-        });
-    }
+  function scrolltotarget(target_id) {
+    const target = document.getElementById(target_id);
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
 </script>
-
 
 {% endblock %}

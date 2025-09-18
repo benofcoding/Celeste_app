@@ -1,70 +1,107 @@
-{% extends "layout.html" %}
-{% block content %}
+{% extends "layout.html" %} {% block content %}
 <div class="signup-login-container">
-    <h1 class="signup-login-title">Signup</h1>
-    {% if error_message_dict['signup_username_taken'] %}
-    <p class="signup-login-fail-message"> * that username is currently being used </p>
-    {% endif %}
-    {% if error_message_dict['signup_username_length_invalid'] %}
-    <p class="signup-login-fail-message"> * that username does not meet the length criteria </p>
-    {% endif %}
-    {% if error_message_dict['signup_username_spaces_invalid'] %}
-    <p class="signup-login-fail-message"> * usernames can't have spaces </p>
-    {% endif %}
-    {% if error_message_dict['signup_username_special_characters_invalid'] %}
-    <p class="signup-login-fail-message"> * usernames can't have any special characters </p>
-    {% endif %}
-    {% if error_message_dict['signup_password_failed'] %}
-    <p class="signup-login-fail-message"> * the passwords provided do not match </p>
-    {% endif %}
-    <hr class="signup-login-line">
+  <h1 class="signup-login-title">Signup</h1>
+  {% if error_message_dict['signup_username_taken'] %}
+  <p class="signup-login-fail-message">
+    * that username is currently being used
+  </p>
+  {% endif %} {% if error_message_dict['signup_username_length_invalid'] %}
+  <p class="signup-login-fail-message">
+    * that username does not meet the length criteria
+  </p>
+  {% endif %} {% if error_message_dict['signup_username_spaces_invalid'] %}
+  <p class="signup-login-fail-message">* usernames can't have spaces</p>
+  {% endif %} {% if
+  error_message_dict['signup_username_special_characters_invalid'] %}
+  <p class="signup-login-fail-message">
+    * usernames can't have any special characters
+  </p>
+  {% endif %} {% if error_message_dict['signup_password_failed'] %}
+  <p class="signup-login-fail-message">* the passwords provided do not match</p>
+  {% endif %}
+  <hr class="signup-login-line" />
 
-    <form class="signup-login-form" method="post" action="/check_valid_signup">
-        <div class="signup-login-input-header-container">
-            <label class="signup-login-header">Username (3-20):</label>
-            <input class="signup-login-input" id="username" name="username" maxlength="20">
-        </div>
-        <div class="signup-login-input-header-container">
-            <label class="signup-login-header ">Password:</label>
-            <div class="signup-login-password-group">
-                <input class="signup-login-input" id="password" name="password" type="password">
-                <button class="signup-login-password-show-button" id="show-hide-button" type="button" onclick="toggle_password()">Show</button>
-            </div>
-        </div>
-        <div class="signup-login-input-header-container">
-            <label class="signup-login-header ">Password Confirm:</label>
-            <div class="signup-login-password-group">
-                <input class="signup-login-input" id="password-confirm" name="password_confirm" type="password">
-                <button class="signup-login-password-show-button" id="show-hide-button-confirm" type="button" onclick="toggle_password_confirm()">Show</button>
-            </div>
-        </div>
-        <input class="signup-login-button" id="login-button" type="submit" value="sign up">
-    </form>
-    <a class="signup-login-signup-button" href="/login">login</a>
+  <form class="signup-login-form" method="post" action="/check_valid_signup">
+    <div class="signup-login-input-header-container">
+      <label class="signup-login-header">Username (3-20):</label>
+      <input
+        class="signup-login-input"
+        id="username"
+        name="username"
+        maxlength="20"
+      />
+    </div>
+    <div class="signup-login-input-header-container">
+      <label class="signup-login-header">Password:</label>
+      <div class="signup-login-password-group">
+        <input
+          class="signup-login-input"
+          id="password"
+          name="password"
+          type="password"
+        />
+        <button
+          class="signup-login-password-show-button"
+          id="show-hide-button"
+          type="button"
+          onclick="toggle_password()"
+        >
+          Show
+        </button>
+      </div>
+    </div>
+    <div class="signup-login-input-header-container">
+      <label class="signup-login-header">Password Confirm:</label>
+      <div class="signup-login-password-group">
+        <input
+          class="signup-login-input"
+          id="password-confirm"
+          name="password_confirm"
+          type="password"
+        />
+        <button
+          class="signup-login-password-show-button"
+          id="show-hide-button-confirm"
+          type="button"
+          onclick="toggle_password_confirm()"
+        >
+          Show
+        </button>
+      </div>
+    </div>
+    <input
+      class="signup-login-button"
+      id="login-button"
+      type="submit"
+      value="sign up"
+    />
+  </form>
+  <a class="signup-login-signup-button" href="/login">login</a>
 </div>
 <script>
-    function toggle_password() {
-        const password_input = document.getElementById('password')
-        const show_hide_button = document.getElementById('show-hide-button')
-        if (password_input.type === "password") {
-            password_input.type = "text";
-            show_hide_button.textContent = "Hide";
-        } else {
-            password_input.type = "password";
-            show_hide_button.textContent = "Show";
-        }
+  function toggle_password() {
+    const password_input = document.getElementById("password");
+    const show_hide_button = document.getElementById("show-hide-button");
+    if (password_input.type === "password") {
+      password_input.type = "text";
+      show_hide_button.textContent = "Hide";
+    } else {
+      password_input.type = "password";
+      show_hide_button.textContent = "Show";
     }
-    function toggle_password_confirm() {
-        const password_input = document.getElementById('password-confirm')
-        const show_hide_button = document.getElementById('show-hide-button-confirm')
-        if (password_input.type === "password") {
-            password_input.type = "text";
-            show_hide_button.textContent = "Hide";
-        } else {
-            password_input.type = "password";
-            show_hide_button.textContent = "Show";
-        }
-
+  }
+  function toggle_password_confirm() {
+    const password_input = document.getElementById("password-confirm");
+    const show_hide_button = document.getElementById(
+      "show-hide-button-confirm",
+    );
+    if (password_input.type === "password") {
+      password_input.type = "text";
+      show_hide_button.textContent = "Hide";
+    } else {
+      password_input.type = "password";
+      show_hide_button.textContent = "Show";
     }
+  }
 </script>
 {% endblock %}

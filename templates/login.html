@@ -1,50 +1,67 @@
-{% extends "layout.html" %}
-{% block content %}
+{% extends "layout.html" %} {% block content %}
 <div class="signup-login-container">
-    <h1 class="signup-login-title">login</h1>
-    {% if submit_run %}
-    <p class="signup-login-fail-message"> * You must be logged in to submit a run </p>
-    {% endif %}
-    {% if failed %}
-    <p class="signup-login-fail-message"> * Your username or password was invalid</p>
-    {% endif %}
-    <hr class="signup-login-line">
+  <h1 class="signup-login-title">login</h1>
+  {% if submit_run %}
+  <p class="signup-login-fail-message">
+    * You must be logged in to submit a run
+  </p>
+  {% endif %} {% if failed %}
+  <p class="signup-login-fail-message">
+    * Your username or password was invalid
+  </p>
+  {% endif %}
+  <hr class="signup-login-line" />
 
-    <form class="signup-login-form" method="post" action="/check_valid_login">
-        {% if submit_run %}
-        <input type="hidden" name="submit_run" value="True">
-        {% else %}
-        <input type="hidden" name="submit_run" value="False">
-        {% endif %}
-        <div class="signup-login-input-header-container">
-            <label class="signup-login-header">Username:</label>
-            <input class="signup-login-input" id="username" name="username">
-        </div>
-        <div class="signup-login-input-header-container">
-            <label class="signup-login-header ">Password:</label>
-            <div class="signup-login-password-group">
-                <input class="signup-login-input" id="password" name="password" type="password">
-                <button class="signup-login-password-show-button" id="show-hide-button" type="button" onclick="toggle_password()">Show</button>
-            </div>
-        </div>
-        <input class="signup-login-button" id="login-button" type="submit" value="log in">
-    </form>
-    <a class="signup-login-signup-button" href="/signup">signup</a>
+  <form class="signup-login-form" method="post" action="/check_valid_login">
+    {% if submit_run %}
+    <input type="hidden" name="submit_run" value="True" />
+    {% else %}
+    <input type="hidden" name="submit_run" value="False" />
+    {% endif %}
+    <div class="signup-login-input-header-container">
+      <label class="signup-login-header">Username:</label>
+      <input class="signup-login-input" id="username" name="username" />
+    </div>
+    <div class="signup-login-input-header-container">
+      <label class="signup-login-header">Password:</label>
+      <div class="signup-login-password-group">
+        <input
+          class="signup-login-input"
+          id="password"
+          name="password"
+          type="password"
+        />
+        <button
+          class="signup-login-password-show-button"
+          id="show-hide-button"
+          type="button"
+          onclick="toggle_password()"
+        >
+          Show
+        </button>
+      </div>
+    </div>
+    <input
+      class="signup-login-button"
+      id="login-button"
+      type="submit"
+      value="log in"
+    />
+  </form>
+  <a class="signup-login-signup-button" href="/signup">signup</a>
 </div>
 <script>
-    function toggle_password() {
-        const password_input = document.getElementById('password')
-        const show_hide_button = document.getElementById('show-hide-button')
-        if (password_input.type === "password") {
-            password_input.type = "text";
-            show_hide_button.textContent = "Hide";
-        } else {
-            password_input.type = "password";
-            show_hide_button.textContent = "Show";
-        }
-
+  function toggle_password() {
+    const password_input = document.getElementById("password");
+    const show_hide_button = document.getElementById("show-hide-button");
+    if (password_input.type === "password") {
+      password_input.type = "text";
+      show_hide_button.textContent = "Hide";
+    } else {
+      password_input.type = "password";
+      show_hide_button.textContent = "Show";
     }
-
+  }
 </script>
 
 {% endblock %}

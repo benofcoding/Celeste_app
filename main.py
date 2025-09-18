@@ -464,7 +464,8 @@ def leaderboard_fullgame(category_id, page):
     # join player on run to get player name instead of player id
     temp_recent_runs = run_query_select("""SELECT Player.name, Run.player_id,
                                         Run.run_id, Run.time FROM Run
-                                        JOIN Player ON Player.player_id = Run.player_id
+                                        JOIN Player ON 
+                                        Player.player_id = Run.player_id
                                         WHERE Run.fullgame_category_id = ?
                                         AND Run.verifier_id IS NOT NULL
                                         ORDER BY Run.date_submitted
@@ -1031,10 +1032,23 @@ def player_account_fullgame(player_id):
     for i in categories:
         categories_dict[i[0]] = i[1]
 
+    player_name = run_query_select("""SELECT Player.name FROM Player WHERE
+                                   Player.player_id = ?""", (player_id,))[0][0]
+
+    own_account = False
+
+    if check_logged_in():
+        user_name = check_logged_in()[0]
+        if player_name == user_name:
+            own_account = True
+
+    print(own_account)
+
     return render_template('player_account_fullgame.html', player_id=player_id,
                            runs=runs, categories=categories_dict,
                            logged_in=check_logged_in(),
-                           verifier=check_verifier())
+                           verifier=check_verifier(), player_name=player_name,
+                           own_account=own_account)
 
 
 @app.route('/player_account_individual_level/<player_id>')
@@ -1113,8 +1127,12 @@ def player_account_individual_level(player_id):
         levels[i[0]] = i[1]
 
     # goes through each level in the run dictionary
-    # and if it contains no runs deletes it from dict so insed
-    # of showing emppty table on page it just doesnt exist
+    # and if it contains no runs deletes it from dict so instead
+    # of showing header on page it just doesnt exist, also deletes the
+    # level from levels so that the level button doesnt show up on the page
+
+    print(levels)
+
     to_be_deleted = []
     for i in runs:
         if len(runs[i]) == 0:
@@ -1122,12 +1140,24 @@ def player_account_individual_level(player_id):
 
     for i in to_be_deleted:
         del runs[i]
+        del levels[i]
+
+    player_name = run_query_select("""SELECT Player.name FROM Player WHERE
+                                   Player.player_id = ?""", (player_id,))[0][0]
+
+    own_account = False
+
+    if check_logged_in():
+        user_name = check_logged_in()[0]
+        if player_name == user_name:
+            own_account = True
 
     return render_template('player_account_individual_level.html',
-                           player_id=player_id, runs=runs,
+                           player_id=player_id, runs=runs, 
                            categories=categories, levels=levels,
                            logged_in=check_logged_in(),
-                           verifier=check_verifier())
+                           verifier=check_verifier(), player_name=player_name,
+                           own_account=own_account)
 
 
 @app.route('/submit_run_fullgame')
@@ -1619,6 +1649,39 @@ def process_player_search():
                                 player_id=player_id[0][0]))
 
     # else go to home page because player isn't real
+    return redirect(url_for('leaderboard_fullgame',
+                            category_id='30831e37', page='0'))
+
+
+@app.route('/delete_run', methods=['GET', 'POST'])
+def delete_run():
+    """this route deletes a run when sent here from the player account page"""
+
+    # check was sent here properly
+    if not request.method == 'POST':
+        abort(404)
+
+    run_id = request.form['delete_run']
+    check_run_id = run_query_select("""SELECT Run.run_id FROM Run WHERE
+                                    Run.run_id =?""", (run_id,))
+
+    if not check_run_id:
+        abort(404)
+
+    player_id = run_query_select("""SELECT Run.player_id FROM Run
+                                 WHERE Run.run_id = ?""", (run_id,))[0][0]
+
+    run_query_update("DELETE FROM Run WHERE run_id = ?", (run_id,))
+
+    page = request.form['page']
+
+    if page == 'fullgame':
+        return redirect(url_for('player_account_fullgame',
+                        player_id=player_id))
+    elif page == 'individual_level':
+        return redirect(url_for('player_account_individual_level',
+                        player_id=player_id))
+
     return redirect(url_for('leaderboard_fullgame',
                             category_id='30831e37', page='0'))
 

@@ -1,164 +1,216 @@
-{% extends "layout.html" %}
-{% block content %}
+{% extends "layout.html" %} {% block content %}
 <div class="leaderboard">
-    <div class="rules leaderboard-item">
-        <h1 class="leaderboard-item-header">Rules</h1>
-        <h2>Category Objective:</h2>
-        <li>{{ rules }}</li>
-        <h2>General Rules:</h2>
-        <li>Timing is done using the in-game timer, please refrain from taking long breaks mid-run.</li> 
-        <li>Closing the game during the run is banned. This includes crashes.</li>
-        <li>Entering a level in another save file during the run is banned.</li>
-        <li>Using cheat mode, having assist or variant mode enabled, or using debug mode features during the run are banned.</li>
-        <li>Altering any game files except for settings.celeste is banned. In particular, runs done on Everest are not allowed.</li>
-        <li>You can restart into vanilla Celeste by holding right on the title screen.</li>
-        <li>The use of any third-party programs that directly affect the game are banned, with the exception of keyboard rebinders, controller mappers, and autosplitters.</li>
+  <div class="rules leaderboard-item">
+    <h1 class="leaderboard-item-header">Rules</h1>
+    <h2>Category Objective:</h2>
+    <li>{{ rules }}</li>
+    <h2>General Rules:</h2>
+    <li>
+      Timing is done using the in-game timer, please refrain from taking long
+      breaks mid-run.
+    </li>
+    <li>Closing the game during the run is banned. This includes crashes.</li>
+    <li>Entering a level in another save file during the run is banned.</li>
+    <li>
+      Using cheat mode, having assist or variant mode enabled, or using debug
+      mode features during the run are banned.
+    </li>
+    <li>
+      Altering any game files except for settings.celeste is banned. In
+      particular, runs done on Everest are not allowed.
+    </li>
+    <li>
+      You can restart into vanilla Celeste by holding right on the title screen.
+    </li>
+    <li>
+      The use of any third-party programs that directly affect the game are
+      banned, with the exception of keyboard rebinders, controller mappers, and
+      autosplitters.
+    </li>
+  </div>
+  <div class="leaderboard-container leaderboard-item">
+    <h1 class="leaderboard-item-header">Leaderboard</h1>
+    <div class="leaderboard-dropdown-ILtoggle">
+      <div class="IL-toggle-container">
+        <div class="IL-toggle">
+          <div id="IL-toggle-fullgame" class="IL-toggle-fullgame">
+            <a href="/leaderboard_fullgame/30831e37/0">Fullgame</a>
+          </div>
+          <div id="IL-toggle-IL" class="IL-toggle-IL">Individual Level</div>
         </div>
-    <div class="leaderboard-container leaderboard-item">
-        <h1 class="leaderboard-item-header">Leaderboard</h1>
-        <div class="leaderboard-dropdown-ILtoggle">
-            <div class="IL-toggle-container">
-                <div class="IL-toggle">
-                    <div id="IL-toggle-fullgame" class="IL-toggle-fullgame">
-                        <a href="/leaderboard_fullgame/30831e37/0">Fullgame</a>
-                    </div>
-                    <div id="IL-toggle-IL" class="IL-toggle-IL">
-                        Individual Level
-                    </div>
-                </div>
-            </div>
-            <div class="submit-run-button-container">
-                <a class="submit-run-button" href="/submit_run_individual_level">submit run</a>
-            </div>
-            <div class="leaderboard-dropdown">
-                <div id="dropdown-open" class="leaderboard-dropdown-open leaderboard-dropdown-buttons">
-                    <div>
-                        {{ levels[level[1]][0] }}
-                    </div>
-                    <div class="dropdown-arrow">
-                        v
-                    </div>
-                </div>
-                {% for i in levels: %}
-                    {% if i != level[1] %}
-                    <a id="dropdown-content" class="leaderboard-dropdown-button leaderboard-dropdown-buttons" href="/leaderboard_individual_level/{{ levels[i][1] }}/0">{{ levels[i][0] }}</a>
-                    {% endif %}
-                {% endfor %}
-            </div>
+      </div>
+      <div class="submit-run-button-container">
+        <a class="submit-run-button" href="/submit_run_individual_level"
+          >submit run</a
+        >
+      </div>
+      <div class="leaderboard-dropdown">
+        <div
+          id="dropdown-open"
+          class="leaderboard-dropdown-open leaderboard-dropdown-buttons"
+        >
+          <div>{{ levels[level[1]][0] }}</div>
+          <div class="dropdown-arrow">v</div>
         </div>
-        <div class="IL-category-buttons">
-            {% for i in categories %}
-                <a class="{% if i != category[1] %} IL-category-button {% else %} IL-category-button-match {% endif %}" href="/leaderboard_individual_level/{{ categories[i][1] }}/0">{{ categories[i][0] }}</a>
-            {% endfor %}
+        {% for i in levels: %} {% if i != level[1] %}
+        <a
+          id="dropdown-content"
+          class="leaderboard-dropdown-button leaderboard-dropdown-buttons"
+          href="/leaderboard_individual_level/{{ levels[i][1] }}/0"
+          >{{ levels[i][0] }}</a
+        >
+        {% endif %} {% endfor %}
+      </div>
+    </div>
+    <div class="IL-category-buttons">
+      {% for i in categories %}
+      <a
+        class="{% if i != category[1] %} IL-category-button {% else %} IL-category-button-match {% endif %}"
+        href="/leaderboard_individual_level/{{ categories[i][1] }}/0"
+        >{{ categories[i][0] }}</a
+      >
+      {% endfor %}
+    </div>
+    <div class="leaderboard-runs">
+      <div class="column-names leaderboard-columns-runs">
+        <div>#</div>
+        <div>Player</div>
+        <div>IGT</div>
+        <div>Date</div>
+        <div>Platform</div>
+      </div>
+      {% for i in runs %}
+      <hr class="leaderboard-row-gap" />
+      <div class="leaderboard-run leaderboard-columns-runs">
+        <div class="leaderboard-run-column-container">
+          {{ loop.index + page*100 }}
         </div>
-        <div class="leaderboard-runs">
-            <div class="column-names leaderboard-columns-runs">
-                <div>#</div>
-                <div>Player</div>
-                <div>IGT</div>
-                <div>Date</div>
-                <div>Platform</div>
-            </div>
-            {% for i in runs %}
-            <hr class="leaderboard-row-gap">
-            <div class="leaderboard-run leaderboard-columns-runs">
-                <div class="leaderboard-run-column-container">{{ loop.index + page*100 }}</div>
-                <div class="leaderboard-run-column-container"><a class="run-link" href="/player_account_individual_level/{{ i[2] }}">{{ i[1] }}</a></div>
-                <div class="leaderboard-run-column-container"><a class="run-link" href="/view_individual_level_run/{{ i[0] }}">{{ i[3] }}</a></div>
-                <div class="leaderboard-run-column-container">{{ i[7] }}</div>
-                <div class="leaderboard-run-column-container">{{ i[6] }}</div>
-            </div>
-            {% endfor %}
+        <div class="leaderboard-run-column-container">
+          <a class="run-link" href="/player_account_individual_level/{{ i[2] }}"
+            >{{ i[1] }}</a
+          >
         </div>
+        <div class="leaderboard-run-column-container">
+          <a class="run-link" href="/view_individual_level_run/{{ i[0] }}"
+            >{{ i[3] }}</a
+          >
+        </div>
+        <div class="leaderboard-run-column-container">{{ i[7] }}</div>
+        <div class="leaderboard-run-column-container">{{ i[6] }}</div>
+      </div>
+      {% endfor %}
+    </div>
 
-        <div class="nextpage-buttons">
-            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/0">
-                <<
-            </a>
-            {% if page != 0 %}
-            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/{{ page-1 }}">
-                <
-            </a>
-            {% else %}
-            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/0">
-                <
-            </a>
-            {% endif %}
-            {% if page != max_page %}
-            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/{{ page+1 }}">
-                >
-            </a>
-            {% else %}
-            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/{{ page }}">
-                >
-            </a>
-            {% endif %}
-            <a class="nextpage" href="/leaderboard_individual_level/{{ individual_level_id }}/{{ max_page }}">
-                >>
-            </a>
-        </div>
+    <div class="nextpage-buttons">
+      <a
+        class="nextpage"
+        href="/leaderboard_individual_level/{{ individual_level_id }}/0"
+      >
+        <<
+      </a>
+      {% if page != 0 %}
+      <a
+        class="nextpage"
+        href="/leaderboard_individual_level/{{ individual_level_id }}/{{ page-1 }}"
+      >
+        <
+      </a>
+      {% else %}
+      <a
+        class="nextpage"
+        href="/leaderboard_individual_level/{{ individual_level_id }}/0"
+      >
+        <
+      </a>
+      {% endif %} {% if page != max_page %}
+      <a
+        class="nextpage"
+        href="/leaderboard_individual_level/{{ individual_level_id }}/{{ page+1 }}"
+      >
+        >
+      </a>
+      {% else %}
+      <a
+        class="nextpage"
+        href="/leaderboard_individual_level/{{ individual_level_id }}/{{ page }}"
+      >
+        >
+      </a>
+      {% endif %}
+      <a
+        class="nextpage"
+        href="/leaderboard_individual_level/{{ individual_level_id }}/{{ max_page }}"
+      >
+        >>
+      </a>
     </div>
-    <div class="leaderboard-recent-runs-container leaderboard-item">
-        <h1 class="leaderboard-item-header">Recent Runs</h1>
-        <div class="leaderboard-recent-runs">
-            <div class="column-names leaderboard-recent-runs-columns leaderboard-recent-runs-columns-runs">
-                <div>Player</div>
-                <div>Time</div>
-            </div>
-            {% for i in recent_runs %}
-            <hr class="leaderboard-row-gap">
-            <div class="recent_run leaderboard-recent-runs-columns-runs">
-                <div class="leaderboard-run-column-container">{{ i[0] }}</div>
-                <div class="leaderboard-run-column-container"><a class="run-link" href="/view_individual_level_run/{{ i[2] }}">{{ i[3] }}</a></div>
-            </div>
-            {% endfor %}
+  </div>
+  <div class="leaderboard-recent-runs-container leaderboard-item">
+    <h1 class="leaderboard-item-header">Recent Runs</h1>
+    <div class="leaderboard-recent-runs">
+      <div
+        class="column-names leaderboard-recent-runs-columns leaderboard-recent-runs-columns-runs"
+      >
+        <div>Player</div>
+        <div>Time</div>
+      </div>
+      {% for i in recent_runs %}
+      <hr class="leaderboard-row-gap" />
+      <div class="recent_run leaderboard-recent-runs-columns-runs">
+        <div class="leaderboard-run-column-container">{{ i[0] }}</div>
+        <div class="leaderboard-run-column-container">
+          <a class="run-link" href="/view_individual_level_run/{{ i[2] }}"
+            >{{ i[3] }}</a
+          >
         </div>
+      </div>
+      {% endfor %}
     </div>
+  </div>
 </div>
 <script>
-    const dropdown_content = document.querySelectorAll('.leaderboard-dropdown-button')
-    const dropdown_content_style = window.getComputedStyle(dropdown_content[0])
-    const dropdown_open = document.getElementById('dropdown-open')
+  const dropdown_content = document.querySelectorAll(
+    ".leaderboard-dropdown-button",
+  );
+  const dropdown_content_style = window.getComputedStyle(dropdown_content[0]);
+  const dropdown_open = document.getElementById("dropdown-open");
 
-    function toggle_dropdown() {
-        if (dropdown_content_style.display === 'none') {
-            dropdown_content.forEach(button => {
-                button.style.display = 'flex';
-                });
-            dropdown_open.style.borderRadius = '0.25em 0.25em 0 0';
-        } else {
-            dropdown_content.forEach(button => {
-                button.style.display = 'none';
-                });
-            dropdown_open.style.borderRadius = '0.25em 0.25em 0.25em 0.25em';
-        }
+  function toggle_dropdown() {
+    if (dropdown_content_style.display === "none") {
+      dropdown_content.forEach((button) => {
+        button.style.display = "flex";
+      });
+      dropdown_open.style.borderRadius = "0.25em 0.25em 0 0";
+    } else {
+      dropdown_content.forEach((button) => {
+        button.style.display = "none";
+      });
+      dropdown_open.style.borderRadius = "0.25em 0.25em 0.25em 0.25em";
     }
+  }
 
-    function close_dropdown(click_information) {
-        console.log('HEHEHEH')
-        if (!click_information.target.closest('.leaderboard-dropdown')) {
-            dropdown_content.forEach(button => {
-                button.style.display = 'none';
-                });
-            dropdown_open.style.borderRadius = '0.25em 0.25em 0.25em 0.25em';
-
-        }
+  function close_dropdown(click_information) {
+    console.log("HEHEHEH");
+    if (!click_information.target.closest(".leaderboard-dropdown")) {
+      dropdown_content.forEach((button) => {
+        button.style.display = "none";
+      });
+      dropdown_open.style.borderRadius = "0.25em 0.25em 0.25em 0.25em";
     }
+  }
 
-    dropdown_open.addEventListener('click', toggle_dropdown)
-    document.addEventListener('click', close_dropdown)
+  dropdown_open.addEventListener("click", toggle_dropdown);
+  document.addEventListener("click", close_dropdown);
 
-    const IL_toggle_IL = document.getElementById('IL-toggle-IL')
-    IL_toggle_IL.style.border = 'solid 0.25em #9CC9F5';
-    IL_toggle_IL.style.borderRadius = '0.25em';
-    IL_toggle_IL.style.backgroundColor = '#9CC9F5';
+  const IL_toggle_IL = document.getElementById("IL-toggle-IL");
+  IL_toggle_IL.style.border = "solid 0.25em #9CC9F5";
+  IL_toggle_IL.style.borderRadius = "0.25em";
+  IL_toggle_IL.style.backgroundColor = "#9CC9F5";
 
-    const fullgame_toggle_IL = document.getElementById('IL-toggle-fullgame')
-    fullgame_toggle_IL.style.border = 'solid 0.2em #9CC9F5';
-    fullgame_toggle_IL.style.borderRadius = '0.25em';
-    fullgame_toggle_IL.style.padding = '0em 0.25em 0em 0.25em';
-
-
+  const fullgame_toggle_IL = document.getElementById("IL-toggle-fullgame");
+  fullgame_toggle_IL.style.border = "solid 0.2em #9CC9F5";
+  fullgame_toggle_IL.style.borderRadius = "0.25em";
+  fullgame_toggle_IL.style.padding = "0em 0.25em 0em 0.25em";
 </script>
 
 {% endblock %}

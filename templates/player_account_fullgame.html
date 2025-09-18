@@ -1,58 +1,67 @@
-{% extends "layout.html" %}
-{% block content %}
-
+{% extends "layout.html" %} {% block content %}
 
 <div class="player-account">
-    <div class="IL-toggle-container">
-        <div class="IL-toggle">
-            <div id="IL-toggle-fullgame" class="IL-toggle-fullgame">
-                Fullgame
-            </div>
-            <div id="IL-toggle-IL" class="IL-toggle-IL">
-                <a href="/player_account_individual_level/{{ player_id }}">Individual Level</a>
-            </div>
-        </div>
+  <h1 class="player-account-header">{{ player_name }}'s Runs</h1>
+  <div class="IL-toggle-container">
+    <div class="IL-toggle">
+      <div id="IL-toggle-fullgame" class="IL-toggle-fullgame">Fullgame</div>
+      <div id="IL-toggle-IL" class="IL-toggle-IL">
+        <a href="/player_account_individual_level/{{ player_id }}"
+          >Individual Level</a
+        >
+      </div>
     </div>
-    <div class="player-account-3-column-grid">
-        {% for i in runs %}
-        <div class="player-account-category-group">
-            <div class="player-account-level-header">
-                {{ categories[i] }}
-            </div>
-            {% for j in runs[i] %}
-            <div class="player-account-run">
-                <div class="player-account-run-time-place">
-                    <p>{{ j[5] }}</p>
-                    <a class="run-link" href="/view_fullgame_run/{{ j[0] }}">{{ j[1] }}</a>
-                </div>
-                <div class="player-account-run-date-platform">
-                    <p>{{ j[2] }}</p>
-                    <p>{{ j[3] }}</p>
-                </div>
-                <div class="player-account-run-video-thumbnail">
-                    HEHHEHE
-                </div>
-            </div>
-            {% endfor %}
+  </div>
+  <div class="player-account-3-column-grid">
+    {% for i in runs %}
+    <div class="player-account-category-group">
+      <div class="player-account-level-header">{{ categories[i] }}</div>
+      {% for j in runs[i] %}
+      <div class="player-account-run">
+        <div class="player-account-run-time-place">
+          <p>{{ j[5] }}</p>
+          <a class="run-link" href="/view_fullgame_run/{{ j[0] }}"
+            >{{ j[1] }}</a
+          >
         </div>
-        {% if loop.index % 3 == 0%}
-        <hr class="player-account-row-gap">
+        <div class="player-account-run-date-platform">
+          <p>{{ j[2] }}</p>
+          <p>{{ j[3] }}</p>
+        </div>
+        {% if own_account %}
+        <form class="player-account-delete-run-button-container" 
+        action="/delete_run" method="POST">
+          <input type="hidden" name="page" value="fullgame">
+          <button value="{{ j[0] }}" name="delete_run" class="player-account-delete-run-button"
+            >delete run</button
+          >
+        </form>
+        {% else %}
+        <form class="player-account-delete-run-button-container" 
+        action="/view_fullgame_run/{{ j[0] }}">
+          <button class="player-account-delete-run-button"
+            >Watch run</button
+          >
+        </form>
         {% endif %}
-        {% endfor %}
+      </div>
+      {% endfor %}
     </div>
+    {% if loop.index % 3 == 0%}
+    <hr class="player-account-row-gap" />
+    {% endif %} {% endfor %}
+  </div>
 </div>
 <script>
-    const IL_toggle_fullgame = document.getElementById('IL-toggle-fullgame')
-    IL_toggle_fullgame.style.border = 'solid 0.25em #9CC9F5';
-    IL_toggle_fullgame.style.borderRadius = '0.25em';
-    IL_toggle_fullgame.style.backgroundColor = '#9CC9F5';
+  const IL_toggle_fullgame = document.getElementById("IL-toggle-fullgame");
+  IL_toggle_fullgame.style.border = "solid 0.25em #9CC9F5";
+  IL_toggle_fullgame.style.borderRadius = "0.25em";
+  IL_toggle_fullgame.style.backgroundColor = "#9CC9F5";
 
-    const IL_toggle_IL = document.getElementById('IL-toggle-IL')
-    IL_toggle_IL.style.border = 'solid 0.2em #9CC9F5';
-    IL_toggle_IL.style.borderRadius = '0.25em';
-    IL_toggle_IL.style.padding = '0em 0.25em 0em 0.25em';
+  const IL_toggle_IL = document.getElementById("IL-toggle-IL");
+  IL_toggle_IL.style.border = "solid 0.2em #9CC9F5";
+  IL_toggle_IL.style.borderRadius = "0.25em";
+  IL_toggle_IL.style.padding = "0em 0.25em 0em 0.25em";
 </script>
-
-
 
 {% endblock %}
