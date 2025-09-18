@@ -3,6 +3,9 @@
 /* general tags */
 
 body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     font-family: 'Alfa Slab One', serif;
     width: 100vw;
     padding: 0;
@@ -46,9 +49,12 @@ button {
     font-size: 1em;
 }
 
+/* main expands to take up all the space until 
+the footer reachs the bottom of the page */
+main {
+    flex: 1;
+}
 /* general tags end */
-
-
 
 
 
@@ -59,7 +65,6 @@ button {
     width: 100vw;
     display: flex;
     height: 7em;
-    background-color: #9A7CC3;
     background-color: #9A7CC3;
     border-bottom: solid black 0.2vh;
     align-items: center;
@@ -83,14 +88,15 @@ button {
 
 
 
-
-
 /* Navbar */
 
 .navbar{
+    /* box shadow below navbar */
     box-shadow: 0em 1em 0.75em rgba(0, 0, 0, 0.2);
     width: 100vw;
     display: flex;
+    /* pushes first half of nav bar to left 
+    and sench have of navbar to right */
     justify-content: space-between;
     align-items: center;
     background-color: #ab91d0;
@@ -98,6 +104,7 @@ button {
     height: 3em;
 }
 
+/* left and right section of navbar */
 .navbar-section{
     height: 100%;
     display: grid;
@@ -165,9 +172,13 @@ button {
     color: #800080;
 }
 
+/* footer end
+
+
 
 /* Leaderboard Fullgame start */
 
+/* rules, leaderboard, recent runs boxes */
 .leaderboard {
     width: 95%;
     display: grid;
@@ -177,6 +188,7 @@ button {
     align-items: start;
 }
 
+/* each of the 3 main boxes */
 .leaderboard-item{
     box-shadow: 0em 0em 0.75em rgba(0, 0, 0, 0.2);
     display: grid;
@@ -192,6 +204,7 @@ button {
     text-align: center;
 }
 
+/* grid minmax so that column widths are strict */
 .leaderboard-columns-runs {
     text-align: left;
     display: grid;
@@ -203,18 +216,21 @@ button {
         minmax(0, 0.75fr);
 }
 
+/* 3rd 4th and 5th columns for the leaderboard need centered text */
 .leaderboard-columns-runs > div:nth-child(5n + 3), 
 .leaderboard-columns-runs > div:nth-child(5n + 4), 
 .leaderboard-columns-runs > div:nth-child(5n + 5) {
     text-align: center;
 }
 
+/* grid minmax so that column widths are strict */
 .leaderboard-recent-runs-columns-runs {
     text-align: left;
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 }
 
+/* second column in recent runs needs to be centered */
 .leaderboard-recent-runs-columns-runs > div:nth-child(2n+2) {
     text-align: center;
 }
@@ -222,14 +238,18 @@ button {
 .nextpage-buttons {
     text-align: center;
 }
+
 .nextpage {
     margin: 1vw;
 }
 
+/* il toggle, submit run, and dropdown row */
 .leaderboard-dropdown-ILtoggle {
     display: flex;
     gap: 1vw;
 }
+
+/* il fullgame toogle */
 
 .IL-toggle-container {
     background-color: white;
@@ -258,6 +278,7 @@ button {
     height: fit-content;
 }
 
+/* z index 2 so it goes infront of rest of page */
 .leaderboard-dropdown{
     width: 100%;
     z-index: 2;
@@ -275,7 +296,8 @@ button {
     justify-content: start;
     background: #9CC9F5;
     display: flex;
-    justify-content: space-between; /* pushes items to edges */
+    /* pushes items to edges */
+    justify-content: space-between; 
     align-items: center; 
 }
 
@@ -283,10 +305,12 @@ button {
     background-color: #88bdf3;
 }
 
+/* drowdown buttons start hidden and get changed by JS when clicked */
 .leaderboard-dropdown-button {
     display: none;
 }
 
+/* first item in dropdown is shown */
 .leaderboard-dropdown-open {
     border-radius: 0.25em 0.25em 0.25em 0.25em;
 }
@@ -295,6 +319,8 @@ button {
     text-align: right;
 }
 
+/* last item of dropdown needs border radius on the 
+bottom corners to make the whole dropdown rounded */
 .leaderboard-dropdown a:last-child{
     border-radius: 0 0 0.25em 0.25em;
 }
@@ -331,14 +357,14 @@ button {
     text-decoration: underline;
 }
 
+/* overflow x hidden and max width 100% so that names 
+that are two big dont flow over into other columns */
 .leaderboard-run-column-container {
     display: inline-block;
     overflow-x: hidden;
     max-width: 100%;
 }
 
-
-/* Leaderboard Fullgame end */
 
 .IL-category-buttons {
     display: flex;
@@ -357,6 +383,7 @@ button {
     border-radius: 0.25em; 
 }
 
+/* diff colour for button when you are already on that category page */
 .IL-category-button-match {
     border: solid #9A7CC3 0.2em;
     background-color: #b59dd6;
@@ -370,7 +397,15 @@ button {
     background-color: #af8adf;
 }
 
+/* Leaderboard Fullgame end */
+
+
+
 /* Player Account start */
+
+.player-account {
+    margin: auto;
+}
 
 .player-account-hr {
     border: none;
@@ -381,6 +416,7 @@ button {
 }
 
 .player-account-header {
+    text-align: center;
     justify-self: center;
     font-size: 3em;
     margin-bottom: 1vw;
@@ -396,6 +432,7 @@ button {
 }
 
 .player-account-category-header {
+    text-align: center;
     margin-bottom: 2vw;
     font-family: 'Alfa Slab One';
     font-size: 2em;
@@ -403,6 +440,7 @@ button {
     width: fit-content;
 }
 
+/* 3 column grid for each run */
 .player-account-run {
     background-color: #eeeeee;
     font-size: 0.9em;
@@ -417,6 +455,9 @@ button {
     padding: 0.25em;
 }
 
+/* each category box with runs in it */
+/* overflow y auto with max height so that you can scroll to 
+see the rest of the runs without the box becoming too large */
 .player-account-category-group {
     box-shadow: 0em 0em 0.75em rgba(0, 0, 0, 0.2);
     overflow-y: auto;
@@ -428,6 +469,7 @@ button {
     padding: 1vw;
 }
 
+/* 3 column grid for category boxes */
 .player-account-3-column-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -439,10 +481,7 @@ button {
     justify-self: center;
 }
 
-.player-account-run-video-thumbnail {
-    justify-self: right;
-}
-
+/* grid column 1/-1 so that hr spans across all the columns */
 .player-account-row-gap {
     grid-column: 1/-1;
     height: 0.2vw;
@@ -450,6 +489,7 @@ button {
 }
 
 .player-account-level-header {
+    text-align: center;
     font-family: 'Alfa Slab One';
     justify-self: center;
     font-size: 2em;
@@ -483,6 +523,10 @@ button {
     border-radius: 0.25em; 
 }
 
+.player-account-level-button {
+    height: 100%;
+}
+
 .player-account-delete-run-button-container {
     display: flex;
     justify-content: right;
@@ -497,12 +541,11 @@ button {
 
 
 
-
-
-
 /* Individual Run Fullgame */
 
 .individual-run-container{
+    margin: auto;
+    width: fit-content;
     box-shadow: 0em 0em 0.75em rgba(0, 0, 0, 0.2);
     background-color: white;
     justify-self: center;
@@ -524,16 +567,22 @@ button {
 }
 
 .video-error-image {
-    width: 40vw;
+    border-radius: 1vw;
+    width: 100%;
+    min-width: 40vw;
     height: auto;
 }
 
+/* make sure aspect ratio stays the same for 
+the video whilst width can increase if needed */
 .individual-run-iframe {
     border-radius: 1vw;
-    width: 40vw;
-    height: 22.5vw;
+    width: 100%;
+    min-width: 40vw;
+    aspect-ratio: 16 / 9;
 }
 
+/* 3 column grid for the information boxes */
 .individual-run-information-container{
     margin-top: 1vh;
     display: grid;
@@ -542,6 +591,8 @@ button {
     place-items: start center;
 }
 
+/* each column has another grid with only 1 column so that each 
+column can have a custom ammount of boxes without it just wrapping */
 .individual-run-information-column{
     display: grid;
     grid-template-columns: 1fr;
@@ -549,6 +600,7 @@ button {
     row-gap: 2vh;
 }
 
+/* each information box */
 .individual-run-information{
     background-color: #eeeeee;
     border-radius: 0.5vw;
@@ -599,6 +651,8 @@ button {
 /* Submit Run Fullgame start */
 
 .submit-run-container {
+    margin: auto;
+    width: fit-content;
     box-shadow: 0em 0em 0.75em rgba(0, 0, 0, 0.2);
     justify-self: center;
     border: 0.25vw solid #9CC9F5;
@@ -608,10 +662,12 @@ button {
 }
 
 .submit-run-form {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: 1vw;
 }
 
+/* text inputs for submit run */
 .submit-run-input {
     max-width: 100%;
     box-sizing: border-box;
@@ -631,7 +687,7 @@ button {
 .submit-run-dropdown {
     min-width: 20vw;
     width: 100%;
-    box-sizing: border-box;
+    box-sizing: border-box; /* measures width and height with the border */
     font-size: 1.25em;
     padding: 0.5em;
     border: solid 0.1em black;
@@ -657,12 +713,6 @@ button {
     background-color: #88bdf3;
 }
 
-.submit-run-form {
-    display: grid;
-    grid-template-columns: 1fr;
-    row-gap: 1vw;
-}
-
 .submit-run-form label{
     height: fit-content;
     font-size: 1.5em;
@@ -679,14 +729,17 @@ button {
     gap: 1vw;
 }
 
+/* time input + h, m, s width */
 .submit-run-time-input-unit-group .submit-run-input{
     width: 3vw;
 }
 
+/* time input + ms width longer bc it has 3 digits*/
 .submit-run-time-input-unit-group .submit-run-input-long{
     width: 3.5vw;
 }
 
+/* line up all time inputs */
 .submit-run-time-input-unit-group {
     display: flex;
 }
@@ -703,12 +756,10 @@ button {
 
 
 
-
-
-
 /* Verify Runs start */
 
 .verify-runs-container{
+    margin: auto;
     box-shadow: 0em 0em 0.75em rgba(0, 0, 0, 0.2);
     background-color: #ffffff;
     justify-self: center;
@@ -724,17 +775,23 @@ button {
 }
 
 .verify-runs-run {
+    gap: 1vw;
     background-color: #eeeeee;
     width: 100%;
     display: grid;
-    grid-template-columns: 1fr 2fr 2fr;
+    /* grid columns minmax so that the column widths are strict */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 2fr);
     border: solid #9CC9F5 0.2vw;
     border-radius: 0.5vw;
     padding: 0.5em;
     box-sizing: border-box;
 }
 
+/* overflow x, y hidden incase of too long names */
 .verify-run-text {
+    max-width: 100%;
+    overflow-y: hidden;
+    overflow-x: hidden;
     display: flex;
     align-items: center; 
     line-height: 1;
@@ -747,6 +804,11 @@ button {
 a.verify-run-text{
     text-decoration: underline;
 }
+
+/* verify runs end /*
+
+
+
 /* login start */
 
 .signup-login-fail-message {
@@ -754,6 +816,8 @@ a.verify-run-text{
 }
 
 .signup-login-container {
+    margin: auto;
+    max-width: fit-content;
     box-shadow: 0em 0em 0.75em rgba(0, 0, 0, 0.2);
     border: solid #9CC9F5 0.25em;
     padding: 2.5em 1.5em 1.5em 1.5em;
@@ -763,10 +827,12 @@ a.verify-run-text{
 }
 
 .signup-login-title {
+    text-align: center;
     justify-self: center;
     margin-bottom: 0.75em;
 }
 
+/* username and password inputs */
 .signup-login-input {
     width: 100%;
     box-sizing: border-box;
@@ -824,11 +890,11 @@ a.verify-run-text{
 
 .signup-login-password-group {
     display: flex;
-    border-radius: 5px;
     width: max-content;
     gap: 0.5vw;
-  }
+}
 
+/* aspect ratio 1/1 because its a circle */
 .signup-login-password-show-button {
     padding: 0 0 0 0;
     font-size: 0.8vw;
@@ -847,6 +913,7 @@ a.verify-run-text{
     background-color: #88bdf3;
 }
 
+/* login signup end */
 
 .page-not-found-text {
     margin-top: 2vw;

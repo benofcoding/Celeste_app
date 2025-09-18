@@ -464,7 +464,7 @@ def leaderboard_fullgame(category_id, page):
     # join player on run to get player name instead of player id
     temp_recent_runs = run_query_select("""SELECT Player.name, Run.player_id,
                                         Run.run_id, Run.time FROM Run
-                                        JOIN Player ON 
+                                        JOIN Player ON
                                         Player.player_id = Run.player_id
                                         WHERE Run.fullgame_category_id = ?
                                         AND Run.verifier_id IS NOT NULL
@@ -1153,7 +1153,7 @@ def player_account_individual_level(player_id):
             own_account = True
 
     return render_template('player_account_individual_level.html',
-                           player_id=player_id, runs=runs, 
+                           player_id=player_id, runs=runs,
                            categories=categories, levels=levels,
                            logged_in=check_logged_in(),
                            verifier=check_verifier(), player_name=player_name,
@@ -1693,6 +1693,13 @@ def page_not_found(i):
     """this route is the 404 page incase the user tries to break something"""
 
     return render_template('404.html')
+
+
+@app.errorhandler(500)
+def internal_server_error(i):
+    """this route is the 500 page incase the user tries to break something"""
+
+    return render_template('500.html')
 
 
 if __name__ == '__main__':

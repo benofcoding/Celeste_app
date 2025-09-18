@@ -46,7 +46,13 @@
           <div class="player-account-run-time-place">
           <!-- run placement and time-->
             <p>{{ j[5] }}</p>
+            {% if own_account %}
+            <a class="run-link" href="/view_individual_level_run/{{ j[0] }}">
+              {{ j[1] }}
+            </a>
+            {% else %}
             <p>{{ j[1] }}</p>
+            {% endif %}
           </div>
           <div class="player-account-run-date-platform">
           <!-- run date submitted and platform-->
